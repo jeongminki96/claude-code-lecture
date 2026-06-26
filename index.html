@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  재정경제부 · Claude Code 입문 강의 (인터랙티브 학습 자료)
+  ------------------------------------------------------------
+  · 이 파일 하나(index.html)만 더블클릭하면 브라우저에서 바로 열립니다.
+  · 설치/인터넷 연결 없이 동작합니다. (외부 라이브러리 0개)
+  · 로고 이미지는 base64로 파일 안에 직접 박아 넣었습니다.
+  · 입문자분들을 위해 HTML/CSS/JS 각 영역에 한국어 설명 주석을 달았습니다.
+  ============================================================
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>재정경제부 · Claude Code 입문 강의</title>
+
+<!-- ===========================================================
+     [CSS 영역]  화면의 '디자인(색·여백·글꼴·배치)'을 담당합니다.
+     · HTML이 '뼈대'라면 CSS는 '옷·화장' 이라고 보면 됩니다.
+     · 밝은(하얀) 배경 + 정부 느낌의 감청색(남색)을 강조색으로 씁니다.
+     =========================================================== -->
+<style>
+  /* --- 0. 색상/공통 변수: 한곳에서 바꾸면 전체에 반영됩니다 --- */
+  :root{
+    --navy:#1b3a63;        /* 메인 감청(남색) — 차분하게 톤다운 */
+    --navy-2:#2a4f80;      /* 밝은 남색 (호버/강조) */
+    --accent:#2f5fd0;      /* 선명한 포인트 블루 (소량만 사용) */
+    --point:#c0392b;       /* 포인트 적색 (정부상징) — 아주 가끔만 */
+    --ink:#14181f;         /* 본문 진한 글자색 (거의 블랙) */
+    --ink-2:#414b59;       /* 보조 본문 */
+    --muted:#6b7480;       /* 흐린 글자색 */
+    --line:#edeef1;        /* 옅은 경계선 */
+    --line-2:#e0e3e8;      /* 조금 진한 경계선 */
+    --bg:#ffffff;          /* 기본 배경(흰색) */
+    --bg-soft:#f7f8fa;     /* 살짝 회색 배경 */
+    --card:#ffffff;        /* 카드 배경 */
+    --radius:16px;         /* 모서리 둥글기 */
+    --radius-sm:10px;      /* 작은 모서리 */
+    --shadow:0 1px 1px rgba(20,26,34,.03), 0 4px 14px rgba(20,26,34,.05);
+    --shadow-lg:0 2px 6px rgba(20,26,34,.05), 0 16px 36px rgba(20,26,34,.08);
+  }
+
+  /* --- 1. 기본 초기화 --- */
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }       /* 탭 클릭 시 부드럽게 스크롤 */
+  body{
+    margin:0;
+    font-family:"Pretendard Variable","Pretendard","Apple SD Gothic Neo",
+                "Malgun Gothic","맑은 고딕",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.7;
+    letter-spacing:-0.005em;
+    /* 한글이 단어(어절) 중간에서 끊기지 않고, 띄어쓰기 단위로 자연스럽게 줄바꿈되도록 */
+    word-break:keep-all;
+    overflow-wrap:break-word;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  h1,h2,h3,h4,p{ margin:0; }
+  a{ color:inherit; }
+
+  /* --- 2. 헤더(상단 로고 + 제목) --- */
+  header.site{
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:50;
+  }
+  .head-inner{
+    max-width:1080px; margin:0 auto; padding:14px 20px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  /* 여기에 재정경제부 로고가 들어갑니다 (base64 이미지) */
+  .logo{ height:34px; width:auto; display:block; }
+  .head-titles{ display:flex; flex-direction:column; line-height:1.3;
+    padding-left:16px; margin-left:2px; border-left:1px solid var(--line-2); }
+  .head-titles .t{ font-size:15px; font-weight:600; color:var(--ink); letter-spacing:-.01em; }
+  .head-spacer{ flex:1; }
+  .head-badge{
+    font-size:12.5px; color:var(--muted); background:var(--bg-soft);
+    padding:7px 14px; border-radius:999px; white-space:nowrap; font-weight:500;
+  }
+
+  /* --- 3. 상단 탭 네비게이션 --- */
+  nav.tabs{
+    background:rgba(255,255,255,.85); backdrop-filter:saturate(180%) blur(8px);
+    border-bottom:1px solid var(--line);
+    position:sticky; top:63px; z-index:40;
+  }
+  .tabs-inner{
+    max-width:1080px; margin:0 auto; padding:0 12px;
+    display:flex; gap:4px; overflow-x:auto;
+  }
+  .tabs-inner button{
+    appearance:none; border:none; background:transparent;
+    font:inherit; cursor:pointer; color:var(--muted);
+    padding:15px 12px; white-space:nowrap; letter-spacing:-.01em;
+    border-bottom:2px solid transparent; font-weight:500; font-size:14.5px;
+    transition:color .15s, border-color .15s;
+  }
+  .tabs-inner button:hover{ color:var(--ink); }
+  .tabs-inner button.active{ color:var(--navy); border-bottom-color:var(--navy); font-weight:600; }
+  .tabs-inner button .num{
+    display:inline-grid; place-items:center; width:19px; height:19px;
+    font-size:11px; border-radius:6px; margin-right:8px; font-weight:600;
+    background:var(--bg-soft); color:var(--muted);
+  }
+  .tabs-inner button.active .num{ background:var(--navy); color:#fff; }
+
+  /* --- 4. 본문 레이아웃 --- */
+  main{ max-width:1080px; margin:0 auto; padding:0 20px 80px; }
+  section.slide{ padding:48px 0 8px; display:none; }
+  section.slide.show{ display:block; animation:fade .35s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+
+  .sec-tag{
+    display:inline-flex; align-items:center; gap:9px;
+    font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:16px;
+  }
+  .sec-tag::before{ content:""; width:20px; height:2px; background:var(--navy); border-radius:2px; }
+  .sec-title{ font-size:36px; font-weight:800; color:var(--ink); letter-spacing:-.03em; line-height:1.2; }
+  .sec-lead{
+    margin-top:20px; font-size:18.5px; line-height:1.6; color:var(--ink-2); font-weight:500;
+    background:var(--bg-soft); border:1px solid var(--line);
+    padding:18px 20px; border-radius:var(--radius); max-width:820px;
+  }
+  .sec-lead b{ color:var(--navy); font-weight:700; }
+  .muted{ color:var(--muted); }
+  .center{ text-align:center; }
+
+  /* --- 5. 카드/그리드 공통 --- */
+  .grid{ display:grid; gap:16px; margin-top:24px; }
+  .g2{ grid-template-columns:repeat(2,1fr); }
+  .g3{ grid-template-columns:repeat(3,1fr); }
+  .g4{ grid-template-columns:repeat(4,1fr); }
+  .card{
+    background:var(--card); border:1px solid var(--line);
+    border-radius:var(--radius); padding:22px; box-shadow:none;
+    transition:border-color .18s, box-shadow .18s, transform .18s;
+  }
+  .card:hover{ border-color:var(--line-2); box-shadow:var(--shadow); transform:translateY(-2px); }
+  .card h3{ font-size:15.5px; color:var(--ink); margin-bottom:8px; font-weight:700; letter-spacing:-.015em; }
+  .card p{ font-size:14px; color:var(--muted); line-height:1.62; }
+  .card .ico{ font-size:23px; margin-bottom:12px; display:block; }
+
+  .block{
+    margin-top:28px; background:var(--bg); border:1px solid var(--line);
+    border-radius:var(--radius); padding:26px; box-shadow:var(--shadow);
+  }
+  .block h3{ font-size:18px; color:var(--ink); margin-bottom:6px; font-weight:700; letter-spacing:-.02em; }
+  .block .hint{ font-size:13.5px; color:var(--muted); margin-bottom:18px; line-height:1.6; }
+
+  /* --- 6. 버튼 공통 --- */
+  .btn{
+    appearance:none; border:none; cursor:pointer; font:inherit; font-weight:600; letter-spacing:-.01em;
+    background:var(--navy); color:#fff; padding:12px 20px; border-radius:12px;
+    box-shadow:0 1px 2px rgba(20,26,34,.12);
+    transition:transform .12s ease, background .15s, box-shadow .15s;
+  }
+  .btn:hover{ background:var(--navy-2); transform:translateY(-1px); box-shadow:var(--shadow); }
+  .btn:active{ transform:translateY(0); }
+  .btn.ghost{ background:#fff; color:var(--navy); border:1px solid var(--line-2); box-shadow:none; }
+  .btn.ghost:hover{ background:var(--bg-soft); border-color:#d4d8e0; transform:translateY(-1px); }
+  .btn.sm{ padding:8px 14px; font-size:13px; border-radius:10px; }
+
+  /* --- 7. 섹션1: 토큰 확률 막대그래프 --- */
+  .token-input{ display:flex; gap:8px; flex-wrap:wrap; }
+  .token-input input{
+    flex:1; min-width:220px; font:inherit; padding:11px 14px;
+    border:1px solid var(--line); border-radius:10px; background:var(--bg-soft);
+  }
+  .token-input input:focus{ outline:none; border-color:var(--navy-2); box-shadow:0 0 0 3px rgba(47,95,208,.12); background:#fff; }
+  .bars{ margin-top:18px; display:grid; gap:9px; }
+  .bar-row{ display:grid; grid-template-columns:120px 1fr 52px; align-items:center; gap:12px; }
+  .bar-word{ font-weight:600; text-align:right; color:var(--ink); letter-spacing:-.01em; }
+  .bar-track{ background:var(--bg-soft); border-radius:7px; height:24px; overflow:hidden; }
+  .bar-fill{
+    height:100%; width:0; border-radius:7px; background:#b3c2dc;
+    transition:width .9s cubic-bezier(.2,.8,.2,1);
+  }
+  .bar-fill.top{ background:var(--navy); }
+  .bar-pct{ font-variant-numeric:tabular-nums; font-weight:600; color:var(--ink-2); }
+
+  /* 토큰 예측의 '최종 출력' 설명 */
+  .token-out{ margin-top:20px; border-top:1px dashed var(--line-2); padding-top:18px; display:grid; gap:12px; }
+  .to-step{ display:flex; gap:12px; align-items:flex-start; font-size:14.5px; color:var(--ink-2); line-height:1.55; }
+  .to-step b{ color:var(--ink); }
+  .to-num{ flex:none; width:22px; height:22px; border-radius:7px; background:var(--navy); color:#fff;
+    font-size:12px; font-weight:700; display:grid; place-items:center; margin-top:1px; }
+  .to-result{ margin-top:4px; background:var(--bg-soft); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .to-sentence{ font-size:17px; font-weight:600; color:var(--ink); margin-top:4px; letter-spacing:-.01em; }
+  .to-pick{ background:var(--navy); color:#fff; border-radius:7px; padding:1px 9px; margin-left:6px;
+    display:inline-block; animation:pickin .4s ease; }
+  @keyframes pickin{ from{opacity:0; transform:translateY(-4px) scale(.9);} to{opacity:1; transform:none;} }
+
+  /* 타임라인 (Mythos & Fable 사태) */
+  .tl{ display:grid; gap:14px; margin-top:14px; }
+  .tl-row{ display:grid; grid-template-columns:92px 1fr; gap:14px; align-items:start; }
+  .tl-date{ flex:none; background:var(--navy); color:#fff; font-size:12.5px; font-weight:700; text-align:center;
+    border-radius:8px; padding:6px 8px; margin-top:2px; letter-spacing:.01em; }
+  .tl-body{ font-size:14px; color:var(--ink-2); line-height:1.6; border-left:2px solid var(--line-2); padding-left:14px; }
+  .tl-body b{ color:var(--ink); }
+  @media(max-width:760px){ .tl-row{ grid-template-columns:1fr; gap:6px; } .tl-date{ justify-self:start; } .tl-body{ border-left:none; padding-left:0; } }
+
+  /* --- 섹션6: 'Claude Code 쓰는 3가지 방법' 탭 --- */
+  .cc3-tabs{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:18px 0; }
+  .cc3-tab{ display:flex; flex-direction:column; align-items:center; gap:3px; text-align:center; cursor:pointer;
+    border:1px solid var(--line); border-radius:14px; padding:16px 12px; background:#fff; transition:all .18s ease; }
+  .cc3-tab .ic{ font-size:26px; line-height:1; }
+  .cc3-tab b{ font-size:15px; color:var(--ink); }
+  .cc3-tab .sub{ font-size:12px; color:var(--muted); }
+  .cc3-tab:hover{ border-color:var(--navy); }
+  .cc3-tab.active{ border-color:var(--navy); background:#f4f8ff; box-shadow:0 6px 18px rgba(20,40,90,.10); }
+  .cc3-content{ display:none; }
+  .cc3-content.show{ display:block; animation:fade .3s ease; }
+  .cc3-head{ display:flex; align-items:center; gap:14px; border:1px solid var(--line); border-radius:14px; padding:18px; background:var(--bg-soft); }
+  .cc3-head .cc3-ic{ font-size:30px; line-height:1; flex:none; }
+  .cc3-head h3{ margin:0; font-size:18px; }
+  .cc3-head .muted{ margin:4px 0 0; font-size:13.5px; }
+  .cc3-badge{ margin-left:auto; background:var(--navy); color:#fff; font-size:12px; font-weight:700;
+    padding:6px 13px; border-radius:999px; white-space:nowrap; flex:none; }
+  .cc3-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px; }
+  .cc3-box{ border:1px solid var(--line); border-radius:13px; padding:14px; background:#fff; }
+  .cc3-box .t{ display:block; font-weight:700; font-size:13.5px; margin-bottom:8px; color:var(--ink); }
+  .cc3-box p{ font-size:13.5px; color:var(--ink-2); line-height:1.6; margin:0; }
+  .cc3-box.good{ border-color:#bfe6c8; background:#f4fbf6; }
+  .cc3-box.bad{ border-color:#f3d9b0; background:#fdf8ef; }
+  .cc3-box.who{ border-color:#cdd9f0; background:#f5f8fe; }
+  .cc3-cmds{ margin-top:14px; border:1px dashed var(--line-2); border-radius:13px; padding:16px; }
+  .cc3-cmds .t{ display:block; font-weight:700; font-size:13.5px; margin-bottom:10px; color:var(--ink); }
+  .cc3-cmd{ background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; padding:10px 12px;
+    margin-bottom:8px; font-size:13.5px; color:var(--ink); font-family:"D2Coding","Consolas",ui-monospace,monospace; }
+  .cc3-cmd:last-child{ margin-bottom:0; }
+  .cc3-cmd:before{ content:"💬  "; font-family:inherit; }
+  @media(max-width:760px){
+    .cc3-tabs{ grid-template-columns:1fr; }
+    .cc3-grid{ grid-template-columns:1fr; }
+    .cc3-head{ flex-wrap:wrap; }
+    .cc3-badge{ margin-left:0; }
+  }
+
+  /* --- 7-2. 섹션1: '오픈 모델 파인튜닝' 만들기 데모 --- */
+  .ft-steps{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .ft-step{ flex:1; min-width:120px; display:flex; align-items:center; gap:9px;
+    border:1px solid var(--line); border-radius:11px; padding:10px 12px; background:var(--bg-soft);
+    font-size:13px; color:var(--muted); transition:.25s; }
+  .ft-step.on{ background:var(--navy); border-color:var(--navy); color:#fff; }
+  .ft-step .sn{ flex:none; width:20px; height:20px; border-radius:6px; background:#fff; color:var(--navy);
+    font-size:12px; font-weight:700; display:grid; place-items:center; }
+  .ft-step.on .sn{ background:rgba(255,255,255,.22); color:#fff; }
+
+  .ft-sub{ font-size:13.5px; font-weight:700; color:var(--ink); margin:6px 0 10px; letter-spacing:-.01em; }
+  .pick-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .pick{ text-align:left; cursor:pointer; border:1px solid var(--line); background:#fff;
+    border-radius:11px; padding:12px 14px; font:inherit; transition:.15s; display:flex; gap:11px; align-items:flex-start; }
+  .pick:hover{ border-color:var(--line-2); }
+  .pick.on{ border-color:var(--navy); background:#f3f6fc; box-shadow:0 0 0 2px rgba(27,58,99,.12); }
+  .pick .box{ flex:none; width:20px; height:20px; border-radius:6px; border:1.5px solid var(--line-2);
+    display:grid; place-items:center; font-size:12px; color:#fff; background:#fff; margin-top:1px; transition:.15s; }
+  .pick.on .box{ background:var(--navy); border-color:var(--navy); }
+  .pick .pt b{ display:block; font-size:14px; color:var(--ink); letter-spacing:-.01em; }
+  .pick .pt span{ font-size:12.5px; color:var(--muted); }
+
+  .ft-progress{ margin-top:16px; }
+  .ft-track{ height:12px; background:var(--bg-soft); border-radius:7px; overflow:hidden; border:1px solid var(--line); }
+  .ft-bar{ height:100%; width:0; background:var(--navy); border-radius:7px; transition:width .15s linear; }
+  .ft-plog{ font-size:12.5px; color:var(--muted); margin-top:8px; font-family:"D2Coding","Consolas",ui-monospace,monospace; min-height:18px; }
+
+  .ft-compare{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:18px; }
+  .ft-card{ border:1px solid var(--line); border-radius:13px; padding:16px; background:#fff; }
+  .ft-card .lab{ font-size:12px; font-weight:700; letter-spacing:.03em; display:inline-flex; align-items:center; gap:6px;
+    padding:4px 10px; border-radius:999px; margin-bottom:10px; }
+  .ft-card.before .lab{ background:#f1f2f4; color:var(--muted); }
+  .ft-card.after .lab{ background:#eaf0fb; color:var(--navy); }
+  .ft-card .q{ font-size:13px; color:var(--muted); margin-bottom:8px; }
+  .ft-card .a{ font-size:14px; color:var(--ink-2); line-height:1.6; }
+  .ft-card.after .a b{ color:var(--navy); }
+  .ft-q{ background:var(--bg-soft); border:1px solid var(--line); border-radius:11px; padding:12px 14px;
+    font-size:14px; color:var(--ink); margin-top:16px; }
+  .ft-q b{ color:var(--navy); }
+
+  /* --- 7-3. 섹션1: N2SF 등급별 AI 파이프라인 라우팅 --- */
+  .ex-btns{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px; }
+  .ex-btns button{ appearance:none; cursor:pointer; font:inherit; font-size:13px; font-weight:600;
+    border:1px solid var(--line-2); background:#fff; color:var(--ink); padding:9px 13px; border-radius:10px;
+    transition:.15s; letter-spacing:-.01em; }
+  .ex-btns button:hover{ background:var(--bg-soft); border-color:#d4d8e0; }
+  .ex-btns button.sel{ background:var(--navy); border-color:var(--navy); color:#fff; }
+
+  .pipe{ margin-top:16px; }
+  .pipe-node{ display:flex; align-items:center; justify-content:center; gap:10px;
+    background:var(--bg-soft); border:1px dashed var(--line-2); border-radius:12px; padding:12px 16px;
+    font-weight:700; color:var(--ink); letter-spacing:-.01em; }
+  .pipe-arrow{ text-align:center; color:#b9c0cb; font-size:18px; line-height:1; margin:8px 0; }
+  .pipe-result{ background:#fff; border:1px solid var(--line); border-radius:11px; padding:13px 15px;
+    font-size:14px; color:var(--ink-2); margin-top:14px; min-height:20px; line-height:1.55; }
+  .pipe-result.show{ animation:pickin .35s ease; }
+  .pipe-result b{ color:var(--navy); }
+
+  /* 가로 3열 비교형: C | S | O 를 나란히 놓아 '등급↔모델' 매핑을 한눈에 */
+  .lanes{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px; align-items:stretch; }
+  .lane{ border:1px solid var(--line); border-top-width:4px; border-radius:12px; padding:16px 15px;
+    background:#fff; transition:.2s; opacity:.66; display:flex; flex-direction:column; gap:8px; }
+  .lane.c{ border-top-color:var(--point); }
+  .lane.s{ border-top-color:#e08e2b; }
+  .lane.o{ border-top-color:#10a37f; }
+  .lane.on{ opacity:1; box-shadow:var(--shadow); transform:translateY(-2px); border-color:var(--line-2); }
+  .lane .lane-top{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .lane .grade{ font-size:13px; font-weight:800; letter-spacing:.03em; color:#fff; border-radius:7px; padding:4px 10px; }
+  .lane.c .grade{ background:var(--point); }
+  .lane.s .grade{ background:#e08e2b; }
+  .lane.o .grade{ background:#10a37f; }
+  .lane .env{ font-size:13px; font-weight:700; color:var(--ink); line-height:1.4; }
+  /* '이 등급에서 쓰는 모델'을 옅은 박스로 부각 */
+  .lane .model{ background:var(--bg-soft); border:1px solid var(--line); border-radius:9px;
+    padding:9px 11px; font-size:13px; color:var(--ink); line-height:1.5; }
+  .lane .model .mtag{ display:block; font-size:11px; font-weight:700; color:var(--muted); margin-bottom:3px; }
+  .lane .model b{ color:var(--navy); }
+  .lane .eg{ font-size:12.5px; color:var(--muted); line-height:1.5; margin-top:auto; }
+  .lane.on .badge-on{ display:inline-block; }
+  .lane .badge-on{ display:none; font-size:11px; font-weight:700; color:var(--navy);
+    background:#eaf0fb; border-radius:999px; padding:2px 9px; margin-left:auto; }
+
+  /* --- 8. 모델 칩/공개방식 토글 --- */
+  .chips{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; }
+  .chip{
+    border:1px solid var(--line); border-radius:12px; padding:13px 15px;
+    background:var(--bg); min-width:130px; transition:border-color .15s, transform .15s;
+  }
+  .chip:hover{ border-color:var(--line-2); transform:translateY(-2px); }
+  .chip b{ color:var(--ink); display:block; font-size:15px; letter-spacing:-.01em; }
+  .chip span{ font-size:12px; color:var(--muted); }
+  .seg{ display:inline-flex; background:var(--bg-soft); border:1px solid var(--line); border-radius:11px; padding:4px; gap:3px; }
+  .seg button{
+    appearance:none; border:none; background:transparent; font:inherit; font-weight:600; letter-spacing:-.01em;
+    cursor:pointer; padding:8px 16px; border-radius:8px; color:var(--muted); transition:.15s;
+  }
+  .seg button.active{ background:#fff; color:var(--navy); box-shadow:0 1px 3px rgba(20,26,34,.1); }
+
+  /* --- 9. 섹션2/3: 기능 붙이기 데모 --- */
+  .stack-wrap{ display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start; }
+  .device{
+    border:1px solid var(--line); border-radius:16px; padding:18px; background:var(--bg-soft);
+    min-height:230px;
+  }
+  .device .device-title{ font-weight:700; color:var(--ink); margin-bottom:4px; letter-spacing:-.015em; }
+  .feature{
+    background:#fff; border:1px solid var(--line); border-radius:10px;
+    padding:11px 13px; margin-top:10px; font-size:14px;
+    display:flex; align-items:center; gap:11px;
+    opacity:0; transform:translateY(8px); transition:.4s;
+  }
+  .feature.on{ opacity:1; transform:none; }
+  .feature .dot{ width:8px; height:8px; border-radius:50%; background:var(--accent); flex:none; }
+
+  /* --- 10. 섹션3: 가짜 코드 에디터 --- */
+  .editor{ border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fff; }
+  .editor .topbar{ background:var(--bg-soft); padding:8px 12px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:6px; }
+  .editor .dotwin{ width:11px; height:11px; border-radius:50%; }
+  .editor .codearea{ display:flex; font-family:"D2Coding","Consolas",ui-monospace,monospace; font-size:13.5px; }
+  .editor .gutter{ background:var(--bg-soft); color:#9aa6b6; padding:14px 10px; text-align:right; user-select:none; }
+  .editor .code{ padding:14px; white-space:pre; overflow-x:auto; flex:1; line-height:1.7; }
+  /* IDE OFF(메모장) 상태에서는 모든 색을 회색으로 — 밋밋함을 표현 */
+  .editor.plain .code, .editor.plain .gutter{ color:#6b7280 !important; }
+  .editor.plain .k,.editor.plain .s,.editor.plain .f,.editor.plain .c{ color:#6b7280 !important; }
+  .k{ color:#0b62c4; font-weight:700; }   /* 키워드 */
+  .s{ color:#0a7d34; }                      /* 문자열 */
+  .f{ color:#7a3ad6; }                      /* 함수 */
+  .c{ color:#9aa6b6; font-style:italic; }   /* 주석 */
+  .squiggle{ text-decoration:wavy underline var(--point); text-decoration-skip-ink:none; }
+  .editor .runbar{ border-top:1px solid var(--line); padding:8px 12px; display:flex; gap:8px; align-items:center; background:var(--bg-soft); }
+  .ide-feature{ display:none; }
+  .editor.ide .ide-feature{ display:inline-flex; }
+
+  /* --- 메모장↔IDE 토글 데모: 에디터 + 기능 체크리스트 --- */
+  .ide-demo{ display:grid; grid-template-columns:1.5fr 1fr; gap:16px; align-items:start; }
+  .feat-list{ display:flex; flex-direction:column; gap:10px; }
+  .feat-row{ display:grid; grid-template-columns:auto auto 1fr; align-items:center; gap:10px;
+    border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:#fff;
+    opacity:.45; filter:grayscale(1); transition:all .35s ease; }
+  .feat-row b{ font-size:14px; color:var(--ink-2); white-space:nowrap; }
+  .feat-row span:last-child{ font-size:12.5px; color:var(--muted); }
+  .feat-row .fdot{ width:10px; height:10px; border-radius:50%; background:#cbd2db; transition:all .35s ease; }
+  .ide-demo.on .feat-row{ opacity:1; filter:none; border-color:var(--navy); background:#f4f8ff; }
+  .ide-demo.on .feat-row .fdot{ background:#28c840; box-shadow:0 0 0 4px rgba(40,200,64,.18); }
+  @media(max-width:760px){ .ide-demo{ grid-template-columns:1fr; } }
+
+  /* --- 10-2. 섹션3: IDE 한 화면 구성(파일트리·편집기·에이전트·터미널) 목업 --- */
+  .ide-window{ border:1px solid var(--line-2); border-radius:14px; overflow:hidden; background:#fff; box-shadow:var(--shadow); }
+  .ide-window .topbar{ background:var(--bg-soft); padding:9px 13px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:6px; }
+  .ide-window .topbar .nm{ font-size:12px; color:var(--muted); margin-left:6px; }
+  .ide-grid{ display:grid; grid-template-columns:170px 1fr 210px; grid-template-rows:auto auto;
+    grid-template-areas:"tree editor agent" "term term term"; min-height:240px; }
+  .ide-pane{ padding:12px 14px; border-right:1px solid var(--line); }
+  .ide-pane .plabel{ font-size:11px; font-weight:700; letter-spacing:.04em; color:var(--muted);
+    text-transform:uppercase; display:flex; align-items:center; gap:6px; margin-bottom:10px; }
+  .ide-pane.tree{ grid-area:tree; background:var(--bg-soft); }
+  .ide-pane.editor-pane{ grid-area:editor; font-family:"D2Coding","Consolas",ui-monospace,monospace; font-size:13px; line-height:1.8; }
+  .ide-pane.agent{ grid-area:agent; background:#f8faff; border-right:none; }
+  .ide-pane.term{ grid-area:term; border-right:none; border-top:1px solid var(--line);
+    background:#0d1117; color:#d7e0ee; font-family:"D2Coding","Consolas",ui-monospace,monospace; font-size:12.5px; }
+  .ide-pane.term .plabel{ color:#7f8da3; }
+  .tree-item{ font-size:13px; color:var(--ink-2); padding:3px 0; display:flex; align-items:center; gap:7px; }
+  .tree-item.on{ color:var(--navy); font-weight:700; }
+  .agent-bubble{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:9px 11px;
+    font-size:12.5px; color:var(--ink-2); line-height:1.5; margin-bottom:8px; }
+  .agent-bubble.me{ background:var(--navy); color:#fff; border-color:var(--navy); }
+  .ide-pane.term .tline{ white-space:pre-wrap; }
+  .ide-pane.term .tg{ color:#56d364; }
+
+  /* --- 11. 섹션4: 가짜 터미널 --- */
+  .terminal{
+    background:#0d1117; border-radius:14px; overflow:hidden; border:1px solid #1c2230;
+    box-shadow:var(--shadow-lg); font-family:"D2Coding","Consolas",ui-monospace,monospace;
+  }
+  .terminal .tbar{ background:#161b22; padding:9px 13px; display:flex; gap:6px; align-items:center; border-bottom:1px solid #1c2230; }
+  .terminal .tbar .tt{ color:#7f8da3; font-size:12px; margin-left:8px; }
+  .term-body{ padding:14px 16px; min-height:210px; color:#d7e0ee; font-size:13.5px; line-height:1.7; }
+  .term-body .ln{ white-space:pre-wrap; word-break:break-all; }
+  .term-body .prompt{ color:#56d364; }
+  .term-body .path{ color:#58a6ff; }
+  .term-body .out{ color:#aeb9c9; }
+  .term-cursor{ display:inline-block; width:8px; height:16px; background:#56d364; vertical-align:-2px; animation:blink 1s steps(1) infinite; }
+  @keyframes blink{ 50%{opacity:0;} }
+  .term-cmds{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .term-cmds button{
+    appearance:none; cursor:pointer; font:inherit; font-size:13px; font-weight:700;
+    border:1px solid var(--line); background:#fff; color:var(--navy);
+    padding:8px 12px; border-radius:8px; font-family:ui-monospace,monospace;
+  }
+  .term-cmds button:hover{ background:var(--bg-soft); }
+
+  /* --- 12. 섹션5: 점유율 차트 --- */
+  .stat-cards{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:8px; }
+  .stat{ background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:18px; box-shadow:none; transition:border-color .15s, transform .15s; }
+  .stat:hover{ border-color:var(--line-2); transform:translateY(-2px); }
+  .stat .big{ font-size:24px; font-weight:800; color:var(--navy); }
+  .stat .lab{ font-size:13px; color:var(--muted); margin-top:6px; line-height:1.55; }
+  .chart{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; align-items:end;
+    height:240px; padding:20px; border:1px solid var(--line); border-radius:14px; background:var(--bg-soft); margin-top:8px; }
+  .col{ display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:8px; }
+  .col .pair{ display:flex; gap:12px; align-items:flex-end; height:100%; }
+  .col .vbar{ width:46px; background:#e7eaef; border-radius:7px 7px 0 0; position:relative;
+    display:flex; align-items:flex-start; justify-content:center; height:0; transition:height 1s cubic-bezier(.2,.8,.2,1); }
+  .col .vbar.openai{ background:#10a37f; }
+  .col .vbar.claude{ background:var(--navy); }
+  .col .vbar .vv{ position:absolute; top:-22px; font-size:12.5px; font-weight:700; color:var(--ink); }
+  .col .xlab{ font-size:13px; color:var(--muted); font-weight:700; }
+  .legend{ display:flex; gap:18px; justify-content:center; margin-top:12px; font-size:13px; color:var(--muted); }
+  .legend i{ display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-1px; }
+
+  /* --- 13. 섹션6: 비교표 --- */
+  table.cmp{ width:100%; border-collapse:collapse; margin-top:8px; background:var(--bg);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  table.cmp th, table.cmp td{ padding:15px 18px; text-align:left; border-bottom:1px solid var(--line); font-size:14.5px; vertical-align:top; line-height:1.55; }
+  table.cmp tbody tr:last-child th, table.cmp tbody tr:last-child td{ border-bottom:none; }
+  table.cmp thead th{ background:var(--navy); color:#fff; font-size:14px; font-weight:600; letter-spacing:-.01em; }
+  table.cmp tbody th{ background:var(--bg-soft); color:var(--ink); width:88px; font-weight:700; }
+  table.cmp td:first-of-type{ border-right:1px solid var(--line); }
+  .col-claude{ color:var(--ink); }
+  .col-code{ color:var(--ink); }
+
+  .formula{
+    margin-top:28px; background:var(--bg-soft);
+    border:1px solid var(--line); border-radius:18px; padding:32px 24px; text-align:center; box-shadow:none;
+  }
+  .formula .row{ display:flex; gap:14px; justify-content:center; align-items:stretch; flex-wrap:wrap; }
+  .formula .piece{ background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:18px 20px; min-width:150px; box-shadow:var(--shadow); }
+  .formula .piece .emoji{ font-size:28px; }
+  .formula .piece b{ display:block; color:var(--ink); margin-top:8px; letter-spacing:-.01em; }
+  .formula .piece span{ font-size:13px; color:var(--muted); }
+  .formula .op{ display:grid; place-items:center; font-size:22px; color:#aab2bf; font-weight:700; }
+  .formula .result{ margin-top:24px; font-size:19px; font-weight:700; color:var(--ink); letter-spacing:-.01em; }
+  .formula .result b{ color:var(--navy); }
+
+  /* --- 14. 하단 진행 버튼 --- */
+  .nav-foot{ display:flex; justify-content:space-between; margin-top:36px; gap:10px; }
+
+  /* --- 15. 반응형(모바일) : 화면이 좁아지면 칸 수를 줄입니다 --- */
+  @media (max-width:820px){
+    .g4,.g3{ grid-template-columns:repeat(2,1fr); }
+    .stat-cards{ grid-template-columns:repeat(2,1fr); }
+    .stack-wrap{ grid-template-columns:1fr; }
+    .sec-title{ font-size:27px; }
+    nav.tabs{ top:61px; }
+    /* N2SF 파이프라인: 좁은 화면에선 3열을 1열로 스택 */
+    .lanes{ grid-template-columns:1fr; }
+    .lane .env br{ display:none; }
+    /* IDE 목업: 좁은 화면에선 패널을 세로로 쌓습니다 */
+    .ide-grid{ grid-template-columns:1fr; grid-template-areas:"tree" "editor" "agent" "term"; }
+    .ide-pane{ border-right:none; border-top:1px solid var(--line); }
+    .ide-pane.tree{ border-top:none; }
+  }
+  @media (max-width:520px){
+    .g4,.g3,.g2{ grid-template-columns:1fr; }
+    .stat-cards{ grid-template-columns:1fr; }
+    .bar-row{ grid-template-columns:84px 1fr 48px; }
+    .head-badge{ display:none; }
+    .pick-grid{ grid-template-columns:1fr; }
+    .ft-compare{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===========================================================
+     [HTML 영역]  화면에 실제로 보이는 '내용(뼈대)'입니다.
+     · 헤더 → 탭 → 6개 섹션(slide) → 푸터 순서로 구성됩니다.
+     · 각 섹션은 평소 숨겨져 있다가 탭을 누르면 보입니다.
+     =========================================================== -->
+
+<!-- 헤더: 재정경제부 로고 + 강의 제목 -->
+<header class="site">
+  <div class="head-inner">
+    <!-- 아래 img의 src에는 재정경제부 로고(logo.png)가 base64로 들어 있습니다 -->
+    <img class="logo" id="mofeLogo" alt="재정경제부 로고" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAAD9CAYAAABEOBMEAAAAtGVYSWZJSSoACAAAAAYAEgEDAAEAAAABAAAAGgEFAAEAAABWAAAAGwEFAAEAAABeAAAAKAEDAAEAAAACAAAAEwIDAAEAAAABAAAAaYcEAAEAAABmAAAAAAAAAGAAAAABAAAAYAAAAAEAAAAGAACQBwAEAAAAMDIxMAGRBwAEAAAAAQIDAACgBwAEAAAAMDEwMAGgAwABAAAA//8AAAKgBAABAAAAIAMAAAOgBAABAAAA/QAAAAAAAAA9T3VsAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAFSGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSfvu78nIGlkPSdXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQnPz4KPHg6eG1wbWV0YSB4bWxuczp4PSdhZG9iZTpuczptZXRhLyc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpBdHRyaWI9J2h0dHA6Ly9ucy5hdHRyaWJ1dGlvbi5jb20vYWRzLzEuMC8nPgogIDxBdHRyaWI6QWRzPgogICA8cmRmOlNlcT4KICAgIDxyZGY6bGkgcmRmOnBhcnNlVHlwZT0nUmVzb3VyY2UnPgogICAgIDxBdHRyaWI6Q3JlYXRlZD4yMDI2LTAzLTIxPC9BdHRyaWI6Q3JlYXRlZD4KICAgICA8QXR0cmliOkRhdGE+eyZxdW90O2RvYyZxdW90OzomcXVvdDtEQUhFWE9xUVpzdyZxdW90OywmcXVvdDt1c2VyJnF1b3Q7OiZxdW90O1VBR2FlUVZqMXhNJnF1b3Q7LCZxdW90O2JyYW5kJnF1b3Q7OiZxdW90O0JBR2FlV0x6NHYwJnF1b3Q7fTwvQXR0cmliOkRhdGE+CiAgICAgPEF0dHJpYjpFeHRJZD44MTQ3ZDI1Zi0wNTFmLTQ4ZGMtYTE0Yi0zNjk2MzY1ZGNlZjY8L0F0dHJpYjpFeHRJZD4KICAgICA8QXR0cmliOkZiSWQ+NTI1MjY1OTE0MTc5NTgwPC9BdHRyaWI6RmJJZD4KICAgICA8QXR0cmliOlRvdWNoVHlwZT4yPC9BdHRyaWI6VG91Y2hUeXBlPgogICAgPC9yZGY6bGk+CiAgIDwvcmRmOlNlcT4KICA8L0F0dHJpYjpBZHM+CiA8L3JkZjpEZXNjcmlwdGlvbj4KCiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0nJwogIHhtbG5zOmRjPSdodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyc+CiAgPGRjOnRpdGxlPgogICA8cmRmOkFsdD4KICAgIDxyZGY6bGkgeG1sOmxhbmc9J3gtZGVmYXVsdCc+7KCc66qpIOyXhuuKlCDrlJTsnpDsnbggLSAxPC9yZGY6bGk+CiAgIDwvcmRmOkFsdD4KICA8L2RjOnRpdGxlPgogPC9yZGY6RGVzY3JpcHRpb24+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpwZGY9J2h0dHA6Ly9ucy5hZG9iZS5jb20vcGRmLzEuMy8nPgogIDxwZGY6QXV0aG9yPuygleuvvOq4sDwvcGRmOkF1dGhvcj4KIDwvcmRmOkRlc2NyaXB0aW9uPgoKIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PScnCiAgeG1sbnM6eG1wPSdodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvJz4KICA8eG1wOkNyZWF0b3JUb29sPkNhbnZhIGRvYz1EQUhFWE9xUVpzdyB1c2VyPVVBR2FlUVZqMXhNIGJyYW5kPUJBR2FlV0x6NHYwPC94bXA6Q3JlYXRvclRvb2w+CiA8L3JkZjpEZXNjcmlwdGlvbj4KPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KPD94cGFja2V0IGVuZD0ncic/PuD7Lh0AACAASURBVHic7F0HfBNH1pdNS2+X3hsBbLoppoeEltAtq9kGYyCmk5DeLqSQ+1IvCXchPaT3Xi+9k957IQnNNt0Ug4us9703O7MaCZWVLNmS/f75vayQd2dmZ0e777+v2WwMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoORGgCAjCDJjCIB+zf1+BkMBoPBYDAYDEaKQSMWraQEkIkGtquTFr19JicMBoPBYDAYDEZzh0YELJMAn8/XDvc9AOVwlKNRjkU5EaWDlBPkd0ehHIayP0pbi+PRyU9mw86OwWAwGAwGg8FgNCk05T4k2ZB/PwilMxKNIbj1oJyPshjlEfzuFdy+h9uvcfsrynKUFfjvNShrpayh7+Tffkb5CuVdlJdQHka5GeUcFCfKIJQsSWjCjSmDCQmDwWAwGAwGg5EGiKS8y+/JWjEaScMC3N6O8ibKj0QkcFsHyUctSjnK9yj/Q/kvyjyUkSjHhCIl4HfdYrctBoPBYDAYDAajqRGOdMjv26O4UK5HkvEOblej1EcgCD4p9bi/l6SeYBwjBOELFtD/buxjHi+/V+2GA5EfsqK8jnI1ykQiJCHOlckIg8FgMBgMBoPRFADpXhX03b4op6BcivIWyrowCn89hCAVyDagzkviFeJFboEkIgJvCA9kIKKtWtFWPXhRTNIiiYo2hlDjK5MuYOQSNgBl96BzZTctBoPBYDAYDAYjmQC/tSND+25PlFEot4IRp1EbpMwHWCiIUJDRwiAa9WCVX/jkMTV1XqiuqYMd1TVCamrrTLJiFbSnVyM59cYgdEIS3Fg1ynco16MMBi3IHaLEuTAYDAaDwWAwGIwYIZXsYBerHig3oPwiXZ10+C0bGuGoD0MSdlbXworyjfDJ93/Bc+9+A0ueehcW3vkizL/xMSj8571w2pn/gdySa6B74SLIcl0OJ+b9E44aexEcPe5iOCl/IXQtuAr6TLkGBpXeAMPn3QJjz7kVihbeC+cufhquf/B1eOjVT+H9r3+HlRWbYGdNMD+SA/b5xxiCkOigBr5BuRKlg5yLDLllqwiDwWAwGAwGgxEvgokHEo198N8FYASP60HjPhVvUS+MFT4gd6r6EOaNHUg2flxeBo+98TlcsuR5GHfOEkEmdhswFzL7zgJbj+lgy5oCto6TwNapGGzZ+LlLCdi6TgNbdyXTjf1I6HM3/K7bVNwHpctUY386ruNkQ/BvGX1mwu6D5sHRYy+GEXNvgQU3PQl3PPM+fPz9cti6fWdIQqLOoV6LS4FA6whZRp5FGQuai1bwvDEYDAaDwWAwGIwwAH9tDN3NiupsXIoK+F+KcOikQ7lVkQRTjs1bq2DZd8vhlsfegsmXLxUWjDb95xikocMkgyj0RBLRawbYes+ADCQhrfrNhtYorZTkzobM3FmG9DUkQ4r4d65faF8lrWU7Gfi9rfdM7KPUIC1EUDoafRMxOXb8JVD4z3vgP0+8A1/+vAK2VgUSEuJRyjISREbUXBAos9ZclEOD5pGJCIPBYDAYDAaDEQohiEdPlNtR2d4YaBwQGaZAuVfpho7aWi98+9sq+C8q855L74bjJl4Kmajk2zpPMSwaZMFAokHEobUiF4JMzBRi65McIaKhSEurXOp7DhKW2cbfhdUFx9a5RIypo2MhTFq4FO59cRksX71euGaZZATAJFs6CdPmZxXKNaC5ZzERYTAYDAaDwWAwNAQryPi5F8p9KFWmEUCzdnj9CrgAKeg//LEGbnzoDTh51r+Fq5NwiSKlnpR7VPKVVUOQgCSRjHhFJ0PCUtJdEhLc7j/sHBg1fzHcgOdGxKqmzu95RnOgZeoKCGCXpO0mRURCzTODwWAwGAwGg9GiEIJ4dEW5C2VbKOJRH5QWd33lNhHgPfacJbDfqWeLGIwMisHoNUO4Q5FSL+I6UoBkxGopUWTJllOK51QiYkv2GXoWDJtzM9z2zPtQtqFSc9EKmJvgTFrrwciedayc411c3BgMBoPBYDAYjGaNYCUYjCrg16ECvUn3NAIZUK5bO6iexsff/wnnLX4aOjovFwq6iKnoVSpcmsiKkExXqkYnJHguRgzKbHGOgoz0mA7HT/wnnHvL0/D5T38HzE8EIkKuWRehHCTnnK0hDAaDwWAwGIzmD13xxe2+qCwvQFkZTDx8QfEd23dUw7Pvfg3jzrkV9iAXK1LEu0+HjD6zmh3piEZGMlS2LpyDvYacCY4L74QXP/hWZPgyLCIRiQjVE5mMspt2PdgawmAwGAwGg8FofgiyegxD+SSIeMgYj3rT1WrztipRl6Pv1GugFSnilOpWWjtSwb0qI0go4L2VJq2DpFWQZAYdb7VfI/vWbCN7F85Jm9xZMLD0erjvpWWwrao60DVLGkc0EkLbl1B6ateFrSEMBoPBYDAYjOYB6XLVSn4+CIzgaBVgbhbb07I7wbYd1bD0hY8gZ/K/zFobQsHPndUk1g6dJBhkYgZkkvIv0/ea+/bWpM8sv/SdHfhvcx+130wjDTBKKxRFVhRBiTQuMSeCnE3DMZXinP0f3PfiMlFg0T+v9Wq2FdkjUHzI+Sh7ymvDFdUZDAaDwWAwGOkN+XZdkY/TUX6ORDzqvF545LXPoOfkq2Whv2lGvY3cxs9elaGsGEQMegWRjH5zwDZoPmSgtB0wF9ohKfpHn1LIHjAbhgyeDeMGzQLnwBlQ0G86FPeeCiU5U6C4z1T89xngGFAKYwfOhMG4T3b/WXBg7zNgNyQ0bbAd28B5YOuP29w5AWSGyE7rCIQkgIhQjZMeZ0CfkmvgmXe+MgsyasUZTVc3aSn5SLOGcDV1BoPBYDAYDEZ6QhEPVHDb4ecrwajcHeAOVK+5W1HBwBHzbjGIB1k8chuXeOgWDrJEmFaMfnMhc/B82D13NhKGmVCAxGJuBwcsPmE8vHjSBPjwmNPg8/0Gwrdtc+CP3XvD6j16w3qUTbv3gsrdesLWtj1ga5sesKVdD9i8Ww5sRFlH+6H8jvJtmxz4Yp/+8A62s/T4sXDBkaOhtFshjEEic0z/2bDbACQjA+f7rSiSkCgLSUgiQlYiygrWczqMOvM/8PWvKwPcsqQzlkkCEZRWa5q8bhlMQhgMBoPBYDAYaYMgl6vjUd7cxeqhZbcqX18J065+EFqTlaFziVldvLEsHSJuo/dMvysVKvoZA+fBQf1nwfh+Z8D5HR3wxInj4ceDT4ZVRCSQUOzMyIatto6wCWWjrRNssGXDOltnWIvbMpQ1KKvx30pWaZ9J1sj91srj1uOW2tmC7VXhtiqzC2zEvv5ulwPfHDkcliDZKe0xCbr1LYU9kJBkDJiH4zXISEbv0pBkpJWs3E5FGHdD8rTgpidh05Yqv1uWP6Wxbg15CDf7yWvHLlkMBoPBYDAYjNQGBGa5Oo34hVRsvX6rh89Ugh997XM48vQLwNZpskEEVHXwRrB2ZPYxYi6EVSF3Duw2YC50zJ0BM1DRv++EsfDLgYNhU+vuUI1koxKJwTpbFpRLMrEyowusyugKq6WsIbF1MaXMguj7r5FtUFsrScT3naFCkJNOsB3739EK92nbEz4/cgTc2MEOhQNmwFED50DrwWQdkWSEaqAEuWlREcZMOs+sydAhfyE8/9430hoCegrfenmNCN+j9NGuJ5MQBoPBYDAYDEbqQSMebVCuoJAO7Q27YfWQb93/XLMeHBffZbha9ZgOrfvNSbqrlcpSZbpXIdlp038O9M4thcuynPD6kSNh1Z59YTuSi62o9K9FwkHWCiIDOsmwQi4SJYqcrJKkpFwSkh0ZWbAFydEfSJIez86HOUNmwQlD5kMGxZEIMjJDkI5M89xnIRGZI2JqWuWcAdOvfgjKZTFDuiZagUd1zbawSxaDwWAwGAwGI2WhuVwdhfKCZvUwA83VW/fHXv8cjhpzkXC3atUI7laB1o6ZIoD8mH4zYWb3Inj+6NNg9R59kHR0hs22jqjgZ8Mqm2HdWJPRuGTDqhhWki6CHBFJ2oKEZCuSkd8OPhnu7uyA8f1L4YCBc41AeZlZSxERUayRPneeAlmuK+B/H/8YGBsS6JJFchv+bR95bZmEMBgMBoPBYDCaFkHxHjlgFLoL6XK1btM2mHXtI9AGyQAFmpNrUDJT6iriIWI7+qLi3X8O5OSWwnWd8uHbAwbBlsyuSDqyTNKxOoVJR1gLibSOGGSEYkiyYMNuOfDhUSPgwj5ToOOQ+WAjq0jvmSYRyVA1RLpNg93wGlx254uws8afslfCTNeL1/IVlCPlNW7VtCuOwWAwGAwGg9Fiobvm4HYMKqlrNPIR8Fb9g2/+MGp6dCkRSnAyrR4BFg9UtCloe3SvElh63Bj4c+9cVNKzYb1wrzIsHWVpRjqikxEKaM+CSiRYvx4yFBZ3cUKPATg3SMBsffxERBRzpDlCIjLunCXw15oN4loZhSCVYcSMC/kCpYe81kxCGAwGg8FgMBiNiyDyUYKyVY/38GlxBfc8/yHsf8oCVHSnCqU3I4kVzM0Yjz6zRX2OfCQerxw5Eira9hTWgQrT2tH0hCFpkmFYc4hgGVaRbPhr3/7w34550CV3hlFnRMWIKBc4JIYn5v0T3vvqd9MS4vOzEEVCVqGcKq85kxAGg8FgMBgMRuMgiHzMQ6nRyYdXWj2276iG2dc+Kqpz23JKDbefZFo9ZHB5BirYw/pMh2ePOQ3Wte0Bm5B4lFH6WxlI3uQEobGtIrgl4lWJ8vve/eDGbCd0GDRHxIiIyut9Zgh3OApQ32fwfFjy1HvGxdSSBtSbpdSBzCTj5LVnEsJgMBgMBoPBSC4k+ciQny/U3o77lPuO0FIrt8GYs28FW/YUEfTcKFaP/nMgu99MuKf9BCjfLUcQjzUtlHiEktUmEekMPx84GC7oUQT7U7B6X8MVqzUVMCSy2H06zLn+MajeNS5EkZDtKE65BpiEMBgMBoPBYDCSgyDLxyJNKTXIh9fQT/9YtR5yJl2N5KNEBponh3yQ1aOVzGxFivTCLm74Y+9cEViuLB5lTDwCZI2NXLO6iuxZmzO7wEeHnQoTek6RGbNmQmu8Vq0oMUCXEsi74HZBJHWrlkZCyOpVJNcCkxAGg8FgMBgMRuIB/mxXF4cjH1/9shJOmHCJUGCFW08SrR7C5QoV59x+M+Dtw0fA1ozORowHE4/oRETGiGygrFmtu8Edx42FQ/vNMrKFCWvIbHENB51xA6xauzmYhKgPZCKxyzXRumlXJ4PBYDAYDAajWUEjH3N2IR/S7WrZ93/CYSPPE1mVkk0+aLvbwLlwfrcCqNirD2yydULi0SW5rlaK2FiSpicZVsSo5N4FtuH8/fCPQXB6n2kiSD2z1wxoQySkcwl0L1gEy1evD2cJIRPJSH2NMBgMBoPBYDAYDYJGPkrCkY93v/wNDh5+jogfSBb5MAPNUTE+sf9MePq4MbA9kxTpbMPdKlEkI7NboLSSW1tn0VeZcPHqFCRZUrLlfl2N41oFtZWZmtaZlTgmsoZsadsdru/mgb0pNqTPLGgrM2Rlu66AX1dUhCQhPp9vI24G6WuFwWAwGAwGg8GICxr5GINSrSueKjHSm5//DAcPM8hHZrLJR785MLHPNPh1/4Gw1dax4VYPnXCIdrJhja0DSnuUE6WcIL4ra9UdyvfOhYpDh0LFkcP8ctgpUHHQYKg4YAD+vS+UtemJ+2drx54o22svyUrnIKKTGoRktSxouD0jG94+YgT06meQvTZEQrpOhY6OhfDL32FJyN+46SLXCldMZzAYDAaDwWDEDvAHnPdGKdcVTq9WYPCwUecZ5CNJaXaFy1XvmdBuwFw4v4sHNuyeA+tsWUasR4MIRxdhtVDkYI3tJCjbsw+s7TAWNpw6HTaX/BO2XnYrVP3nEdjxyMuw89UPofaT78D7+wrwrioH70opy1dB7U/LofabX6Dmk2+h+o2PYefTb0LVfc/Dtuvuhcq5/4KNY+fCuh4OWHvEMChr11MjOe2l5USzmDSxhWQlzstmJEq/79cfCrtPEqSylbSE9CxaBCvKNxoLoX6XOiGfohyqrx0Gg8FgMBgMBsMSNPJxFMoPuqKpFM8vfloBx4y7yIj5SDL52G/AHLi7Y54INI/d5aqr5kaVrRGOLKg4cDCs7+WGzdMvh6q7noKaZd9A/cZKSAZ81bWCrNS8+7kgJ0RM1vctENaTNajwK0uJsJBkNi0ZIXK3lirGt+4Oizrmw+6UzUwGpueWXAPlG7aEIyFPouwh105G065iBoPBYDAYDEZaAPx1PvZFeS2QfBhuV+SKc5L9MkE+kmr56DMLDus3E54+drQgH1RUz7LLlVDiuwuFnqwbJORCtWHIVNh60c2w86nXofb738C3oxpCgorw0fnWeQ2hTF/1Uuhv4u9KtL/Rfl51jNfYLywpqYG6H/+AHY++CpWzF8H6ni4o36O3Zh3J9pORJnDJojoqla26wtL24+HAQXOFS5at8xQYMfcW2LJ9ZwAJAX9g+s1qHTEJYTAYDAaDwWBEBAQWGvxvAPmQinTFxi3iLbhItZsk8iHqe/SdBScg+Xjj8OGiivcqq5mlhOWAFPaOqEAfD2VtusH63h7YdvWdUPvFD+DbqQq3B8EryYMgF2E5Q3zwgZ+06P0EoX7LduHGRWNdP3gKlO/VV1hGysg9jM5fEKrGIyFriIggCdmC5O+FY0+H4xQJyS6G/AvugJraOpBrRJ2lwgy5htgVi8FgMBgMBoMRHuB3vZofoDpLZbkKlfcxC24V6VmTTT66IPl4/+ChorCgpXgP6bKk4jkqjkTiMuMKqH5jGdRvqwrS9CURqPdFtFAkHdR1fWhC4ttZjYTpJ9h6xe2wrosd1mRkiaD2MnJDIyLSiKl+yfJEleU/OHIkdB80xyQh869/TIy13j929YH82IbLtcSZsRgMBoPBYDAYuwL8Ga9GoGzXFUrlZjPjXw+BLas4iTEfBvno2n8mfPaPwUZ9DyuuVpldZQxFR1jfywPbb3scvGvWBin7Pr/7VKoizBjrt2yDHU+9DhtHz4Gytt3xPI9DApLdqESESCBdjx8OGQq98fpQ0UJb92lw06NviTGGqBHyO8rRck2xJYTBYDAYDAaD4Qf43a4OgaCgc1Xr44aH3pBuV7OSGvNxEiq3yw4eKt64RyQfgnh0lxaPDrDh5Kmw85k3wVe1Uyrz4RX6tICyjtTX+7/zeqHm429Ehq7yPXs1OhFZJeqFdIJfDx4CvQbOFgkCdu83C17+6HtjeHKsWlD60/r6YjAYDAaDwWAwBMBPQO6RimO9rlC+/unP0LYvEo/eMyCjb+IJiMp2dSgqs+8edipURrJ8kKJNxCOjE6y2nQDrc1yw46k3REC31H7Tl3SEQ4hzogD6yumXQ9nuPXEekIhkdmmUYHVFQn4/cBDkDMC10OMMaD/hEvhj1ToxrhBB6XPl2mJXLAaDwWAwGAxGgOtVsa44Kr/+P9esh+PGXoSKJtX6SDz5yBDkYwbsMWAuPHX8GNhmy4KVEa0eXURwecUhQ2D74odFrEQ4Jb1ZwszEZfyz9offYXPhRVDWxnBDE4UNM5NLRIiEbEQS8tOBg6ELxYR0ngqj598C1aGD0rehdJdrjF2xGAwGg8FgMFoywB90fiwqjSuViiv0R59hARl7tgw6T1KVc1HhHMnH4mwn7MjIDk0+ZAFBUSwQFe3NUxeKIoCmQu5VHj8tCEFEpPrdz0WKYYqDWZPRUavunlwS8sWhp0CHIXPB1mUqXH3Py3Jou9QH+QCltVxr7I7FYDAYDAaD0VIBfgLyiK4wKgXy/+57VQQaZybB7crMeNVvDszqMQm2tO4Kq6gI3y5WDyIfncXbfSoaWP3uZyC127DpbFsUtDgRX00t7Lj/BVjbfrS0hnROqjWESAhVTX/7yBFwWL9Z0G7gPHht2Q9yWLu4Yl0o1xq7YjEYDAaDwWC0RIDf9SpfVxSV4vjOl7/C3oPng61XcuI+WlHGqz6zYHi/Uli3Vx8opyrlwW/shdWjI5S16w5bzr4e6iu37qJ0MyS8/jnxrq6AylmLoGz3HiJA3whST441hEgIxew8fvTp0LrnGZDtvgIqVKX0QFesDSid5ZpjVywGg8FgMBiMlgQIzHr1u1QQ61W9j8ptO6DftGtlpfPkxX0cNmAOfHXwycKVZ7WuIJsuV+2h4ohTYMfTb6gRGoo2IzSCrEI7X3kf1p54ulE/hCxJySIhKFSs8LrObhGUftYNj8vh7OKK9QL4rW7sisVgMBgMBoPRUgB+68ctuoKorB8L73opqa5XGeR61X8O3HXSRNgiqpwHkw+joCCl1q39XvIjdreyDs1C5F1VARvzzzEsSZSyNwkuWWuEdIZ17XrC9G5FYBs4F17+4Ds5lF2KFBbpa5DBYDAYDAaD0cwB/jfQfZB47FDKoVIUl327HPY9+Uyw9SpNTspdIh+5s6G4ZzFsatMNVutxH0Q+MkiZ7QSbz7jc73Ll9QdbM2KAig2p88K2fz8A5XvlGIH8md0TT0Lw2q21ZcHf+/aHnt2KIWvyv2DbNmN5SUuIMl19g3KAXINsBUktZCxcuDAzmsRw3Sy1R5LUs2q+sDy//FtrGGj+YljLLX6uE7Emrc45r20GI00AfverZ6Vy6FWGhZraOjjtzMVg6zoVMpNQ7VzV+zh+wGz4+sDBsA4VVjPuI8MINi9D8rHlwpvBpzJbcaxHwyCsIcYFrn7zE1ibNV5Yl5JRM2S1qJaeBcsOGwb/6FYClwdlxQJJI3HNXSLXICueDAaDwWAwGM0Z4He9siuF0Ic6oVIQH3zlU7D1PCMplg+/69VcuK1DHlTasmF1gOWjs7B8bL3idnNkUM9mj4RA1UhB1K0ohw2nTjPiQpJAQigeZDte2yXHjoF9RpwHP/9ZJvoNCkinLzvItcgkJEVQVFS0Z15e3jEOh+PocOJyuY6dMGHCP6y0h/sfhNLH6XT2Didut7svbjsvHDKkdbLPr7lh1KhR7dx2e9dIc4zz2wu3uR6Pp31TjzdNIV7Y4TweQvMo5zPseqZrMXr06P31Y1sahg8fbuk+gmvywEjtFBQUHB9pzul7un9gWyckcvxkVcExtoom6Wq5be7nx0hBgLR8+Hy+dvj5Q6kImoHnm7ZWQRfPlWDrnpyCg61o23c2nNZrKpS3y0FltbOIHVDkoywzC7bdcL8cFcd7JAWShNRXboNNhRf4SUiCg9PJrW7rbj1hwklOmHD5fUafvl3S8t4g1yXf5JoY9LChrdvhcLocji0oZSgVIWQNShU+/JfIQ0MqWOrBhfuV4P61bqdzG263h5Ct2Gcdbr8gshKpzWDgusmw8hBNdYE43EfU/JKSh3P3M85vDW7DzfEW/DvgPD8Ry/yG67ep56uxlaYhkhjjPM71uFwgfx+h5nm7XOfVOI5xar4SOZZUh7qP4Haiy+msdEe4j+DfqnB7lzw0YE2qecN97o4y53T/8Lny8x8M1Q6DwUgRgN/64ZQKoLB+eKVSesNDb4CtS0lSs17tPWAOvHrkSOGmY2S9UgHnJ4oYBQEONk8uVJHAmlrYPGuRUS8kwSSE3OrIve63AwZC+34z4X9f/Cr6lGtNXdwKlGy5JlvUgzrVoJQsj9M5ubioCArc7vpCjwdCiHfKpEmAitZjtP9Cmy3kdVMKBCoIpUUFBdSeDwWCBZWL+kmFhYD9/jR27NhD5OGsRESBml9U9I7DOVxBc0xzGWqOUbzFeM3w78/Lw3l+Y4BGQM6mecT5rAszz2Kd07VwuVx5dIxSyFsK1FzheRfR7zrifWTyZChwuZ6k/SGIhKv1jWv2wSkR5pzW/GS8X+G1eVIe2uC1jWNv68zPv9rpcCzBdhfj9j+7SH7+Lbi9G/ctTlS/jQW6Rq68vLNx/HeEOz/5Pf39zKYeL6MZAPxxH3tACOtH+YYtcMzoC8DWY3pSA8+nd58Em1prgeetuqMCfBxsOfcGOSImH40CIiEq5fJZ1/rT9NoSR0Ios1kVkpD7jhgJ/efcYnYtu1VWkMX6+mwmyEgTMaEUJXzgTJLKrBfFF0Lq6IHvdrkeov3DveHVFOQzSOEgRSFMe17qDwnNjxMnTjxYm7+w0Nruh+O4H+UuPP7utBMcN873/eSyE2kuI82BcGNxOv+ScxzxmrmczngJiNif3L1wvDfh2Jem5JzjmPBc73Oj8jhmzJg94jzXXaCUarfDsYDmEfuoDTPPPkUCcd+J+nWKca7TRXaBdh8psHIfwe3jtH/w/d+0gDidDxRHnnMvER1c249r8xcvMuQ57FXg8WwkgoRj9NE4Q4h3+tSpRKQe08eb4hDnl5ubuzue32dTp0wBnLv6UOdH39PfPW73xzb/nDanZzSjMQF+68dkUw/0+a0fC+94AWzZU6BVv8QHnmfIwPND+8+CTw4ZChuU9UOSj00F50ulmMlHo8LnJyFbzrneH5ieQEsIxYNUt+0Ohd2K4J63vxZ9eb0BVpB1KFlybabDTbxZQikOzvz8yZIQ1bvoyAAAIABJREFUEGGAEOIVBMTpfJj2t0BASqVy7AvVHvUj+nM4frJKQMyxOp3T6SGJ46mnN9NpKPUlqOTQnNP5DIkhBka3gOAc/k1zHO2aeRpIQMaNG7c39lNZUlxMY/elwPwFCK0DWg9FbvffjhEjDojzXHeB+Vbfbl8wmax1qDyHmWexzomAuOz2FmkB0Vw5PZbuIy6XcAuEMC5YSCwelAQk5JxT+4KAJMC9UB1L5BXbXS0tLHWSRAVLzSRjLTyojzfFYb5IwHn/sMi4Z9SGOj/6nu4pOK9vBx/PYMQE8Fs/2qK8JRU/0/qxsmIjHDri3KQFnyvrx/xuBVCZacQHGOTjRFifWyjiEUyFmNG40ILTtyy4Dq/N8dISkjhXrPW2bPhuzz5QMPtG2KHcvwLT8i6S6zMdbuLNEskiIG6/BSThBAS3k2TbNVJRSCtBBaemwPBvd+nnZQVqfsePH3+sq5EICCUowDbWSMWstqnnL4TUiPXgdP6E87JfnOe6C5iAWEewBSSNCUh5pPuW1ftgisFvyXQ6l9G8hbs+6r6M8/pe8PEMRkwAf92PUSi1SvVU1o+Lb30WbFnFSbV+HNh/Nnxw6KmwkawfosJ5J6g4bAjU/rTcGA1XN286aJaQyvnXIAkhS0hiXbG243Vf3H4CPCyLE8q1py7670hIjpRrNC1vclrQdSE+VN8gdxe8ib+YcuJyvYDb1/DBcq1Ne6CkIwGxMNZUF+Efj4qtRz+vWNZbYxMQ7GNtFMWsyURTmn5LVwKCY78qpe8fTudzKO8TwQh1fkxAUhpMQBiNC12hw89PSIXPtH6sKN8IBw47G2w9k1R0kLa5s2FKj8mwqU13I+2uKDSYBVVLnwOpjTaOos0IDy3l8ebSy4VrXCJT9FagLMf2Lp97I2zxqS4DrCBnyjWaDjfyXWC6Hjid10i3IG8Y3+EmFfLtJRcaVEY/1x6aGWnpgsUEpFFdsNKBgBQaa+m34vQiIKaPPc7t2yl+/6gtnT6dtpfTgEtLS9voJ9KMXLCaNQFxEwGJcH2YgDASAvBbP/qibFHqprJ+XHLbc0m2fsyAtv3nwHNHnwabbZ1gtXS92lxyqV/xZc+r1IAkIPXbqmDjmDkyO1ZiKqarAoUvHD8G3vziF6OfQCvIFyh7yrWadjc6LevT5TL4ktyCQvkON6mYvr35+e9pGayYgDABiQQmILZGISCkuL+W4vePnTKj2mU0XiYgTEAYjLAAPwG5zlQzpfWjYuMWOGr0hWDrkaTYD7GdBf36TIfVe/SGcooJsHWEte1Hg3dleYDSy0gRSGLqXb0W1nXNMwLTMxNjCSlHErICSeiT5y2GHdQJJYEOLE44Rq7VtPOb1lywrpTBid6mVsiiPFg+YAtIkwsTkASv7WZAQN5I8ftHLWWHws+X03iZgDABYTBCAvzB5wej/KJUTGX9uOWxt2Tdj8RbP8zg835zYFGnfNhmyxaxABT7UXXPM8ZI2PUqNSHXR82n30H5oYORPHRMCAkxAtI7wsftx8Kvf6wRffjqBQnxyp4f0ddtOkFLG5nWBESl4U2HGBAKQi8gxdvlqkGpS5REUDqor/qE9eN201vutApCJ8VMBqHT2/D6xpRI18VcS8Y8/BomBkR8RuI62+lwvIjz9iTO/VPRBPd9Gvd9BD9/K8890jiYgNg4BiRFEU8MyLvBxzMYlgB+60dA6l1CXV095E69FmzdpiW18OC+/WfDR4cPg41EQGwnwYZTp4Fvx041msZSqRmxQpKQHY+8DGWtZUB6AtLzGlaQbPjmlkcNs0dgYUJyEeygr910AVtAQs9HstPwTispEelsSSlKlEgXmJBC1zaBfYl4nHRJw0v1EbCtDTQH2J8vTIG5pIlU/iOu7SgWEPGZqmaXGNdZKK9WRa7jaMIExNZyLCBETLXzbuq6LNFEzCneZ3ZjCwgjqQC/9SMTSccrQsvz+bzK+vG/j38w3a4ykmH9kO5Xp/SdDmvb9UTlMxvK2vaA6v99FKDgMlIYKj3vRTcb8SCJcMXCNiqQiP46YDJUbtku2vf5/FYQ3F4i121auWGxBSTMfCTBAmK27Xb3wjYWo9yA7dzYUPFQkT2H4//w888hxiwUS6fD8Qr+fRHKzQ3uD8eNCswtbru9R6S5jDQHjWkBIcUM18enRHhQfse5+qMxBfveaWVt476RLSAOx91yvuoSaYHR10lLJyCxWkCC134aEBBLBVlTDOL8cnJy2uA6+5CzYDGSBvBbP7JRtkqV0lcvrQ5Tr3wAbJ1LoFWS3K9a9aHaH3Pgkk4O2JHZBVagArtxwpkcb55OUCXLK7fBhkGTExMPktEVym2dYQW188K7Rj9aMDoSkM/Av3bT5oaXhCD0iG4e8bbrjhKEng4EJBlQ40US0gfHtDaEq42I13Dm57+TyBSvDR1vLASkAZXQFTLo3AsKCvZvLMF1eUBxcfF+tMU18nGktWmVgODavyeJsUMNIyBOZ6KC0MO7ERrnnZQgdGXFw99JYTMnID5Zc2Yl9v0krqlncftMOggScEqlvDGSOyETEEaDAP7K52eCUvOkQrlq7SY4YvQFSSs8qNyvWg+cB68ddzpssnWANW17QvVry4yRcOxH+kBeq5qPv4XyffoiichquCuWIDEnwoqii6DG35MRjW5YQnLk2k2Ht0oCehpecqvBh6I3FveOWNw96MEQb7vkdiLeYIZJw+uw24tT3QVLAddHBik8DRUcY1sx1rFjT8Qx/RnuzSB9J8/9OXJjoHOkt4kN7R/iINqN7ILVlDBT1OL5fRCNgFh0wUpVApJR6Ha/nYj7R1h3Nfx+UsPuH7VnTJ3KaXil0D4NuU5NJVbcGZmAMOKC/kAL5X714KufJI186C5dR/edAX/v0w/KbSfAhhGlqMzKWGOO/UgvyHWzbdEdsMZ2UoKsIFnw96FDYdP3f+h91Mker5Tr2LJPfFPDjAHJz3fjw/cVVHKeiusNVX7+s3j8E/h5ebgHIP7t83jfurnz85/G7Uv4gLnapj1QkmUBSSYBSRBEX0OKi8kv+sXJ0dxf3G4vKXBOh+M6eXyTkOQmJCBN4rdOW3IbaaYExARZUBt0/6A33EaxwK2h3nCTBRT3easBb+2fxPG96QqTOKEFBaGb19uTAumR45DoCR2YgDDiAfhdWNqD5n6l9P6iy+4FW5epSQk+N9yvyAIyC5wDZkBlu+6wytYRqpY+a3TO1o/0g1w4vu07YP2ASYlxxcqkjGgdYO2/HzD6CKwJ8g1I8gFp5IaVAIhzpYcv3vg/CX6Aq4ctWVnUfonqOJ2C0BMJ5YaG4/yXdH2J5nvvE0omfsZjpsljGxSvRHMVh4jfx4QJE05AJW1Fi7CAJIiA4N/v1q61LwZJOgFpCEylfcKETrgm1gcREHP8yRxbCyQgzVKYgDDiBvjdr2aDUu9kvY2/yjbAMeMuFrU/MpNkAWkt0u/OhQs7OmAnKpmrjxkB3jVrA5RZRppBEsfqtz6F8t0oqUDnhrliIYGhwPaNI2eCr04ZPswQIeqsl1zDaeOGJRH3214tvWw/vPGrB7cv+KGAD+2vUfH8h+wvswF9mmiJBESbbxedl4UUq2rMhpLpdG6y2+2nRpqHJELM0fjx44/C8fzJBCQmAnKvDPSup+sYizQCAYn7/qHiL9x2+/xQ86Qp6/fTfgsbdu8IuYZamgtWcxUmIIy4Af4MWE8JrU5zv3rglU/AlpM89yshvUrBNvhMeLzjRKi0HQUbii+R6iWTj7SGXEOVC66D1Q3NiiXISzaU79UHaj7/3mxfqwlyrlzDaeOG1VBoCvEVYTLh+JQCjIrvabRvohTfZBGQVA1CV+eLCnx3HEd5FAU+/Lidzt/z8vKOjzQXUcbRlgLfUfoVOp25VoX2L3Y4ckjRdcvxR1CWWgwBsVIHxJWffxv9hlC2oVRZlO3kvtQIBCQR8/RKqBSrgqBRAgqnczmO62jaGRJsYWYLSPMQjYC8Gzw/DEZYgJ98HIhS5tfrDOW/5Mr7k+p+pQLQdx84D74+7nRYb2sPVY++aqiUKgaEkZ6Qa8hbtg7WnjhKuFCRK1XDrCDtYdv1S432AwnIy039W2pkiN9taU5OG3zo7uJ+pT+46YHrdDhupv0TTUBaQhYskPdIkVnJ5fpskjXXq5BzIR/Sb4wePXp/0bb1sYv9CgsLj8R2quTbdZXqNVaJOk4mIH7gdT8RCfwgJI4DLMpgbK+Lw25fbMFNr0kIiPq94W+oG67HYPerXcbndDoLkzE+JiDNQ5iAMOIC+N2vTldqo8p+taFyO3T2XAm27skpPqgHoO/Xdyb81qYHrD9kCNStqghQYBlpDOmKtf2uJxteG6QVEZATYOP4+f72la8gAC2aw+VabvY3Pq2QYS4+AHaEUyA0N6zvEpkOtiW5YGk1W5ZGDTq3oNwTgXHl598ZaT5CQCcgYa93gqTFEJAoLlhxQUste5ZcLyGVYSlNSkDw3BdEsuZpcWQPyEOTYgFpQS5Y9XJs6SYchM5IPMAfvHuNVOTqlE733pe/QtsBc4WFIqNvctyvMuW22+C5Ivh802mzGkcxZjQOFIms88L6/p6GkRDhhtUJKo44Fbx/rjbaNRarIiHj5VpOq6KE8UDLorUwyoPbcMPCrd1uH6Ef2xC0FAKipRs+N5ag82hKCL15x4f1hXofUZAoCwgTkBgJCN5PMmIJ+FdpmvH6np2iBMRIXmGzUfKK/0WdI4OgLHeNH3+UmI8EroeWRkBoH6qLkm7CaXgZCQdob4rx87uGvujzKgvIontfAVu3aUkLPicxMmDNhAmnzIWNtvZQufBWQ5Vk96vmA3ktdz7zppGWt6F1QWxZsPP5t422A92wrpBrubkTEPG7pdoSUdyvzIe3eOg6nbfQcUxAYjzHvLxhBdLqQLEAkR7EuA8plFZScdK+ddjHRL2vCGALiDWkjAUESeuCVCQg5suLiRM7u3fNfhV2jHg+Tv34RKAFERCfJHJ/4DncjuO8Bz/fnfLict1Fll936GKrTEAY8QP88R8HoRK3Wehz/rfJcPqC/4CtSwlkJqn6OUlrsZ0FxYNmwtZW3WD78+9IpZXT7zZHbBg6RbhRxW0FkW5YWy+62WjQG5CO9/Xgtd0cYT5s7fZBeOPfGU2BUA8HVCh/SpQbVnOPATHn2OU6wR29boappCFR2YTbLVauiThPt3uD3W7voc9pGDABsYbYYkAiV0KPCyYBcTgWTI6gDDc5AcnPnyfvC9HWkVcq7ffKJhJuAWkBMSB1xcb479fHm+JQc5OJ5/d+mEQnTEAY8QH88R8jlIKo3K9Wr9sMJ9kvA1uP6cm3gCABKepfCtv2HwA1v6+UA+H4j2YFaQXZ8fTrDbOCCAJyPGw8fZbfvcsfB0J+WYfINd1sb37mw9bhuDxcFe5QQrUoXAlyw2rmWbBEe6NGjWqHytmrkR68mohx4XwU5qOotK3RFDt1Lm63+/BI82NjAmIVMRMQ/B39FoWAxJRulqrd00EpagHR5+dFK2tbd8MaL92wbAlaEy2IgIjx4/geoWOoIjydeyoLEWl6jtL54Xx9HCpTGhMQRtwAf/zHxVKBq6uXqVPf/+p3aN1vdlLjP0wC0nc2uHOnwbYOY8BbtdMYCQegNy+o4oQ7a2Bdr/z4ixNmUEHCTrD2yFPBW77eaNtPQKhAyDC5ppurG5bpfoUKxMcxVGgWb+DwAbGYjm+ootOcXbA0MnRdpIduCOXodtWGy+W6Sb79jkZcvKSkYl8vKMU1zPlwFixrYBesCDDXtt3eFc9/YwxEVrgQOZ1Ot95OQ9GCXLAs3QdTDOaLGBz3MiYgjIQC/C5Yjxg6os+rdLn/PvEO2LpPT279D0VAcmdDfs8psOO0maYvDTD/aH5QGbGWPBZ/MHoGbTuLdL41H39rtBtYFX2mXNPNkoBocQmD8aZv+U24qbg7nb/QA1M2F/cDorkSEM09pdCi0q7cUz6lNL2qjRwjPbJV64lq4wY5jFBzZNSkcLmOwvnZQXOAW6EUxiIWi+MxAdFAhIKUMKsyfPjwPek4XA/nWbj+TUJAcK2dGcPLC3NNuKQLESTIwtzSLCBMQBgMWwD5aIPEQ2py9C7Z0PxL//UQ2DqXQKskxn+YBKTfHMjrNhmqp1xq8A52v2qekGurfv0mWHviaUhCOsZXF0TWAyEiI2C4dykC8m+5rtPhBh8zNAXiKotv5wNEFBaT1bgbouyot7zNKQZEjcE+blwvVL4rrMZ94D4bcC5z6FiaU9VOXl7eMfi33ywqevWFVG8hP3+GaidoeMoCchie+19Uu4GUHtxWWBXaH49db4UQNQsC4nR+kIhChPj3i1C+wDn8AOfvo2iC+y1z5ee/R9fJaoB3IxEQ06ffScUHY0gpbcYsOZ1/4e/usBBzFRe0lMWF4vcW3m0xgIAE30eYgCQFJgFxEQGJ4O7LBIQRE8BPQA43A9DrDf2/zlsPw+bcLALQG4uAnN65CKrPv9HQUzkDVvOFqo5+9vUiloNiOmImIK27w2rbMVA5e5HRZmAg+qvBa7wZwf/Ai839SokKhLyV2mmIstPcYkDUG1U8r4Mos5gFcmdaRshqE3xuan6ogB3uszFaBi36m9xns3PcuGHh5oraJSsIVaaORYgMkeLozMsbgH2s5krolmJAFAF5YMrkyYD7CuXVqsg5jiaNRkA0K2MWnvOmOOKIfJKE2BM1VraApDSYgDCSA/AHoA9VypsiIGvWbYYT8v6Z9AB0k4D0nwuDswqgauESoUH66piANFtIAlL94ddQ1i7HcKeKNSBdZsLaMKIUfLI9XMGKgPyEsq9c283qBqgVHyQlsipWBUJ747u8oW5YzcwFSwUQZ1J6TKuBuUVGQcHbgtrYZY4cdvtUerNb4CcuEduk64OEoWOk+YoVQVaZv6JYd1oMAYnigmUQEIfjbjlfdXSMVbH422w0AqLFW8yJ4+WF/lteSu0kMp03x4CkJNgFi5EcgD8AfbqpGkrXpy9/WQHtBia3AKGSTElATjjJDRsv/Y/onwlIdJCrnNdbL4Q+605r5Onkw/8F7IPXNiXi+lUwem0dbBheasSCxGoFyewq3LfWHjsS6jdWGu36A9HXoWTLtZ0ON3nL0CpyRys+GPUtJj74R1Nb8So8zYmAaG5tZ1spJqY9bD/2eDwHRhqDds2ukYUMI14zre23J0yY8A86FoKIdCxF8TQR93skIMe7oqcVZgKifUaSeU8Dfm+pQkBM9ytcWy/H4n6lzZeygKx0jB59RIj52qVPWruRRK1LtoCkJJiAMJID8FtALjf0Qn8A+tNvfQW2XqVJJR5KMiQB2fMEF6y+8nZDOWUXrF1AV8YgEg2rj0LEBC801DclG5HnsP2mB+LLhiUsJtlQ3rYn1P283GjTaxKQGpSh+hpvJhA3cwpwxZv8h/HEf0ipo8q2eOwd1F5LJyDqPFAxH4btb7NAQAxXKZdrndPpzI10TvrYsJ/dnQ7Hc5YUWbfbS9cX919q87edEJKF4zjOzQSkxREQM77Jbs/G+0fUOjWRxltkvMBwJWK85n3E6XTL3x4TkNQBExBGcgDy7TBu7yatTScg/374zUbJgGUSkH5zoF3WJPj15oelfspFCBXomtQHBeUTifht5Vp4/v1v4ban34OLlzwLkxYuhYkX3Ab2C+6AosvuhZnXPAyX3Pa8yGb2zDtfC6tW5bYdu7TjbYqCj/L61n7zC5Tv219UNo+vLkg2VL/2oXEuxnmoiXLLtd1sCIhWGM9S8cFwooJJcfsnPlj2kc3H/KBIViHCxiQgmlsSWQV+sxB0LhQkmvt8GSxuRZHQzu1obP87aQmJWldEWqou1Oc7XjABadkERHMHnB9L7aAIa+MBai/M+leua+OQWNyGcjPKLSHF4fgPbq/D+8j/otzTmgUBwX4fldejLQXgp7KItOA4r0XDh+/p5jogjEQBNJM+fn5N6ISaC9aZNz4Ots5Tkh6AbpIQ6qdLCTx3zf2if29K+Ao1LYKJx7Yd1fD6pz/BwjtfEgkCDjvtfMjsPQNsXadGlYxeM2D/YWdDlusKmHLFfXDfS8vgr7INZtuNTkR0N6xTpsdnBVGZsO5+2mirLiAT1nlybafDWyZL0Fx5rmygAqErPWOozXiUnmZgAVGWibZWXVJM5cXpvEdrw1Lf6vw8DsdAj6q/ELkCtbhGHre7On/iRIc+5/GACUj8BKQZxICY54TjspL9KuK6FJn0HI41qHiHdD/UEkrcXDJpEhR5PPWkvEYSCwH76U5A6uS47tPHm+Iw58blcr3HldAZCQH4M2C1RflRKm31PqkY0lt0WzYSkH6NQ0BaSwJy/pk3if7rGkcNTkkoFyl1LVZWbILL7nhBkIc2ZJHCebJ1Q2LR8wzI6DMLMnOji7BkkUtd9+nG8T2mw0Ejz4O882+Hlz/6HmrrDL2d3LKCrS1Jg7SCbLvq9vgIiMiEdTRsvTwgcYEiIP/V13kzgOl+Fe1NlKZARFIwRN0Jp8Mh3LDieRjGZAExlPZHZF+tI8UoOJ3OGY1BQLTg1xst1+qgB6zT+fno0aP3j6dfjbSVeCzUGBEKskFUNuC59tTbiBVMQBpEQO4nt0WcM7H2rEqqZMHSrKcnoQK/NZr11G38FiJmbJPKZkg3LC2m6toii8QtCulJewJi3rdcri/xOsxFOdvtdi9IAzkLx3qeSlwR7fyYgDCiAvwE5ECUVYY+aGieO6trYfCMG8Wb88aygLRCJdnWbRqMnXSVPxVXCzSC6FaPNesq4dLbn4fDTr9A1GPJIJc4CtpXxCIW97i+MwUJoWNMQpJzhlHnpfcMGFh6Azz77tdm3/UaAUriyYpN9VufQlmbHrFnw5IEpHKOSsUbQECeiPYbSCeY2a8mTsxFpbA6ggLhk8r5Rx5ZBC+M8iXeYlKdgniV6TjqgERy2dALAJYkm4BoRKAwit+5qXDRnKNscdvtvfQ2YoWunMVSpBCv5w+q/kI8hFEdM378+GOtBqG70p2AWKkDYqyliHVAkKgvovoXuP+PKD9bkF/oeuF2bSrUATHJdn7+WZMjrzmx1nA+HkP5Q7oKhhq7Wh/qpULImhzY3/UNiFWLSEDSsA6IENqHyGy6SbQCpkxAGJYB/viPk1DWS6VTaJybtlZB98JFghCQstooLlhCIS6Fg085C9aWG65BSVeAUwiG1cM4XyKANz36Jhw04lywZRVDRs8z8DrMTvi1oDkngklWFOGq1X0anDzrRvjsh7/EOELFniT4pI1+NlTCuu75sMZ2UmxWkFbd8ZjjYJPzHKM9Gqs/eOhNba2n/U1QszZcFsX9Sjykcf8FpFyLfcMr1z7pBjRB7yOOMUUlINLa8orH4+mIx3V3Op3dgsXtdvfAv3XAcV+ZTAKiBb12K3S7N0Wrz6ErLXjs1HjmKgjK9asVnsMLURRC1b+ySLyqiF8s50wwFTQkIFYtIExADNC1Ilc9q6JSXOPnc1OpEnqBy/XGJEM5DzseUQzT6cwlN0NSPMPs65PrZ70nhBtWWhAQp/Px4HHHAZ2AlFkhIPLvdWkmES1i+m8JnwfvBs8PgxEA8BOQ3ijbDIXT0DbL1lfC8RMvbZQaIIEK8UzhVvTcu98IDdLbQgLRfZrbEwWK959+Pdg6TRbEg1zgGuMaEBER/XQugd2Q6Fxy+/NQtbNGjKkxSMjmKZca6XhjIiCyFsjQaf72/ATkc5S2co2n+03QzKKED98PI1k1lLJKVbkLCgqo3kOkbDfqbWdcblgxxIDE9uCN0k5DCIhaC6Q0YTtfWwwGN1zIXK479fNuCNRck0UDz/cni+MwfMgdjptiOefgPtkFK3AtRXHBiguKJDrs9gWSYIZUhtXvIpkEJMD9KoL1VP2u8Jr/QfvTCwzpMhT2RYC0JEzSz1nvM5kEJN1csJq7sAWEYRngT8E7EmTIhSIgf65ZDwcOP0dYJBojC5apBFO8SXYxnH3zk0KDbAkEhMiHkiVPvwd7Ue0Vqj7fL/EWD6vXQAS2IwEiN7yf/yoX4yTrTFJoiErHu+QxwwISiwuWDEJf38tltqMVI6S4pgPkGk/rm6DpmpSXN0B7qIZVIFCZ+lIoA3jelFkm3BtYlQ0L9/ld1ZuwxWNJsE5AoMCCWH3QxUFAdMX0ISuWB4+fpH2G57tvrHNkZf7sdnsvPO9NkhBEVF5QefRK17kFdGywEhYJTEBCryWLBCQjFhHZg2ypQUAUMcB+zpwc2foh0nPj/WAx7Y+E5ShyIYugVHtle0/S/vp9lglI0xOCxhYmIAzLAD8BsStdWBGQn/4sg3YDUBHulfwihLqIN/Ddp0HPSVdDdW2dVNCTofWmBlQdjh3VNTDvhseExYmyVTVW4H84IdLZmsbQuQSOOP0CeHXZD+Z4E345ZOat6vc+j70quihG2AHWdRwHvppac1rl9k+Uo+UaT4dsI2FhKvoOxxVR3DmUq9MidSw+DM6NoIApi4kPyc1Yva9YxmXBBSu4z2hi6UEXKwEBqSAhYTpHvgWOGvdRaLhnrUeS0IOOTXTmGjM1qsPh8bjd9VHmwEfBvHINfBfJZSgU4okBaQkERCpNv8U6n5GQShYQBSS5b0VzB6Nx4L1gmDoG5+XJCKTFdMNyjxt3uDxEzF0wAfH4XXji/t17mICktDABYVgG+AlIvlTYTALy/fI10Kb/nEapgh6o+M4UfbbFvt/98lepnzZPBqLiWzZvrQL3JXeBrWsJtOo7q1EtTlasIZQ1a+9B8+C+lz4W40148ULZnrdsHaw98XRBKIhYWC1GKKqhHzUcfDuqjfbkGsb5XYObk+QaT2cCIm7gWVlZbfHB+okF96t6VGAGqoPJFQu/q4zmdqHcsGwxPDDisYAk8kEXCwFRysm4ceP6IqnYVhC93odQioRi6HBM09tINMwAYZlemYoQhhqP5rv+BZ53NyvnrYMtIKHXUnN2wTKv+bhxWdhPjYUnHffmAAAgAElEQVT7wK+UaU8dj2OZJucvrBtWoaF0TtLHzhaQpicEjS1MQBiWAREIyI/Ly5qEgAilN9d48z7zmkeSo/CmAFRMxbpNW+H0s/4Dti5TRRawxp5rKyLcwHJKoR1ulzz1njH+RF4T1RS2uWHo1NjS8QpLSScoP2gw+LZXBU6ukVihq1zjaUtAtOxXvT3+t5DhFQiX6zsiK+p4Coh1U+BpGOKi3LBIAXOPHXuIPMzSQyOdCIj6e0FBwf443n+jkl8rrRvhA+epEnl+/m10HCTXjc+sR4IK/+NFQW+ppfKnHu5PlDgcB+nHWQUTkPAKdHMlIBq5PSeK+5W43k6HY4k+fo/H0x6P3VAYJY4Mlf4nZZfCBa2lEZBSJCDYb5l4sYG/VYqbaYHiLTLSlL8bPD8MRgAgRQmIsAD0PAOOGH0h/LVmfeIV3iaGsnxs3b4Txp19q5EGt5FSHTeIhPQiEjIb7n7+IzH+hAamyzmpnHllHAQkC8r36w++rdshaGBbUPrINZ62BETL2LTQiv+2x+G4gfYnBcJ8INvtF1hww6LMNzFlw0ozAqKg3LCmY1vbwgR/eyVhW4bneECM7ccFU2FDEoj9fqHmUxFEcs/Kz8+/UsUWNCQNb0siIDj+96MUEKyT1rBfmiEBMefBFSUbmEe6U7lcrl0KkyIpeTGC65ZPZpFbl5eXdwztr69NJPzHY1un4L1lMG6HhJFTKA6KLIBWKomnIgGhSuHY9lpqF89BzGVLE1wH9cVGpfcPQ6xBBsMPSFECIhTevkZNkKvueTnxym4Tgs5CEZBZ1z5iBJunOPkIICE5pbDnwHlmlrKEXRcZB7J98cPxEZC9+0L9pi0QNCjyyRqsr/U0hLh5kzKDD7fPo71JLDDSZw6lY0iBMBXOCRP64HFhi4+JBzK9ubLbb9f7jYY4Y0CanIBo8zKEXE60YHTxJk8oQU5nBZ6fILCNVbFY9UPKGPVP10s82F2uTQ6Xa4raB+K0xsSThjfdCQjO3aclxcVUFFAoncFC30+ZPJlSzy6Ptx5OKKQCAdEIZ/do2a8KjTf3f+q/J61ezawI9UBojdRL8jIlnvHrcVCFRhauyPWEFAEJ+h00ZRpeylCI8/QVBe2jrEJZ3eLE4ViJ2404D081YD4ZLQHgJyATlX6sCAhlPtodFc3GDkIPICA9psPxEy6Bv8uMmiDNwQqidOMbHnpDpjieKQoENjW5sE5CjJiQY8ZcDL+tWBtwTg2CUUAQdj7/NhKQzpJcxEBA9kICsrEycJIBKCp9qL7W0w3qgepxOPppD/9I7le/jBo1qp08XGXksQ0pLt4N9/koHEkQxxtuWD9PHDnyMO34iIiDgKjq7NHEUr75BhQizFBjx+OPxPbeJMWGMkxR26SoqXofjUU+FExLiN3uRKXYRylRKfuZ9re4lSU9CB3Pc7l8c10b5hrUyBoyz8rD04mAmEBCXoLneDXKQlynlwcLfU9JG/Dz3Hnz5um/nQZBERDs/yxpPaiOsN6FooxrbiIdk6g1pxUfPD9a8gpZKHQp7Q9SsdfiRzqQG1a0dN5Bblg21YasoRJJhMuo5YKmqUVAFDLcbvfheC5HU/awlip0/kX+ezKDERrgJyBjQHriKwLy24oK2PvkM4XbTVMFRYs37l2nwjk3P5U4RbcJoVIKv/f1b7B7vzmS3KVOwLlVUTE6Yxb8F3mDcU4NvjJybmo/+Q7K9+2HpCLbWiYsRUDwmBAuWDtRBulrPd1gKjGoIMmCYOHeogakz9TfQJoKrQxwjuSGRYLKrj24jXCI1QWL3pKGegsd4q10Mi0gu4yf3l7iHP9HVShGpVEPyG8KxVv0iySkyG63izim0tLSNsqqBYbiFfPYTAVtwoQTCjyeNXSuOI++MNfBO3XKFEBi+pI2ppYCM45BKdDqs1USuFD9dlH5p3nE+ayLsOZ9wnXF5XLQMQmygPjjYPLz34vqfkVk1OHIF2P3EyA9lublSG5YwmrocKwh61pQG1GhvcgoiImApIYLFoPBiBUQoQ7IH6vWwf6nLmj0OiC6qMro+59yFnz+099BumV6Qbldbdm+E3oWLRLEqqlT7TaYHHYpgZsffVOcV4Ovizze+/caqDh6BJKKjtYyYakg9H8MBN+2XYLQiZH0k2s8HWNAjOBGVDwpsDyagk9+7HkyfaauwGgxJINxvx1R3bCczjv1/iNBESQLby6Vn/habP91sjiEEvzbW7h9jYiFHGdSCQhBUyqJpJ2F5/JGQ9uMF0rZpXkFa25WGbSvvMaW66Dg/ofiXD+C6+pdSlAQ5lq8jrIM5+Mq/dh0A82jTh5CiZpzPW7KAjK1/XeZG/N3h4Qe5/ATsa7DrHsp76jsdYmwgAS5X0V0v5TuVyvGBaXS1dtBcnSmld84vYzQz98KhvjJWqEciyUCkiKV0E0QIWIxJBHzyWjGAD8BOQUMd5UmL0QYUtFFZf3kGTfCdplm1ZeGrlgqlXDpvx4CW1ZxWpMPnRweMPQs+OHPMnFuDXKRk8f6dlbDuq55RkFCK3EggoB0hIrDTgFf1U6jrcAg9N5yjacdAVEP0wKnc4CmjId3v3I6f6NUkPJw/QEgPhcPGbKbOz//44huWNKNixTUEO3sAqU4IBEosvLm0ulwPKyfW7hzpgDxSMGoiSQg2rFCNGW+0R6i1CeEcCcpGD16f1T8OqH0x32GI4kc5pgwoR9ZMIYXFe0ZPEadTDGiQ5EPW9A8UqA/fn8Qznc3CpL2OJ0jXXb7ySKltdt9uObmGNBW8DVsSmhWhUh1gMzfJu73kDw0pFWB5gIV9k3R0vjG4/8f630kVQkIg8GwCPATkEFguKuYBGTV2k1w5JgLRTaqpnYTMt62T4XLbn9B6pfpVR29To73wZc/EWQqMw3drkKJIFGdimHywqXi/BpkBdEOXT94ivVAdFmIcG370eCrloUI/XVANuKmu1zjaaeUaekz/y9a9is9fWYoBVRLiXm1FVcpVZQwmjIbs+LgdFoiIHjupY1MQMTxIVxPkomMYKWV4lHw3Avw/G5E0vGWDO6sdcu3y9KKRPVAqvHc/yK3GCRrV6NyONbj8Ryo2gH51r8RziEtETw/RDio0CTO5TxUoO+lOis4x5vVb04o3TT3lF7V6dzqcTi+pbWM1+pcnPtcnZCkCBFR/We6rLhf4W8Nz6WYDgixbpTVrBWe66vR3LCwnzIiyGHaCgndAtKoBIRdsBiMpoFSykhJQ6k0dDdDeaP6FJ2cl4uA46ZWmBUBat1nFjzwyidCx0yX4oQqRuKj75bDfoPnN7lFKbHXBbe9Z0IbJCJfJNBFbuP4+TEQkG5i3/U5LjOORBvEakjfQoQq+9Vu+DD9sShytiIjfabdvkv6TAXNHWSox+ms8UQPJjVqX0R5MMcQA5IOBEQh6coIrscMkEoqKV94XUaSUoUK0Xo6L4rNmGyk84RQrmgqOxbNKe0rFb8VSELvoIQFah71fhgGwB8/YxsxYsQBFHyOc/8h/S5ozmVcDMj1t+vc4/fmNZJKLrbxpcNuvwDXopnAoaEJAxoC84WD290Lz21bBKuFT7o8rUbCG5Y0aNmwzrZIZkQCh1jTeePv2cMxIAxGCwD4CcixKBWG7mYobxSr0HvK/4Gt21TDAtHkyq5RG+SAoQvg7S9+DVDuUxVqfH+Xb4QOeZeJtMKZaZJy16oIK0h2MXguvUecayLcsDZNuRRJxYnWCEirbmJfKmCoQS2M31AOk2s8rR4wWnD0KfrDPdSDVCqff0VRxI1c9UVFe+LD+dtwhEZz5/pZV6aijbOZEZCkQp1jjhFUfgqShueUFavAXxixzuPPBuYLmgf173q5T51SJKVCvIPiO5yBldLTjYAnA6bVQxajnIEKqIitoiBwtU7lfNaHmHvz30HXyAzkx+9/p6xXDlkosqlIiHb/iFT/R3/hoLsi7TJe7XeZg7+5LdHiyDwxujYxAWEwWhiUUobb/VBW6MpbTW0dDJ3175SqU6FSwB55+gXw1S8rA5T8VIPKeLWiYiPkllxjBJ2nyDwmUoQVpNcM2G3gPPj573JxznGTEGm4qDzruhgISHfc9zjYZF9gtGH0rRYFFSvZW1/r6QLtgXydlfSZqMQ+QPtHslhovtzXRQ1oN9LQRk0JGkMa3pgICJ73Gc2QgJipf13jxx+Fc/YonkutvL4qPXHE9MNRRBASvHY+4dPvdG4h96zCwsJ9qM9EVtdON4DmcmW320fg3H9D60dbsw2de69MZe2TcRA/u+z28dRfE7hkmZY1SupgqfigwzFNjTVSm5QuF39z70eII1M1dFbm5eW1j9KmCT0LVixB6MHzygSEwUgTgJ+AtEX50VQDpf6Yd/7tYMueklIB04KEdJsGx427BD789g9T2U+VwHQahyJFVEul1+R/GXEfKWBFSpYoK8hldxgxOt54Y3TkcVv/+V/rBKR1d1htOxoq5ywy2jDqiagBLAO/lS+dHjBmYSu3VJSipc905eeL9J2WyILdfiq2pwhNJDcskQ0rEqlhAmIZ/qJudvsgVKC+kcRDKb/xKr4h14QiItQHEs5lVNhQjqMlWkLM5ALkQoRzs1UV9LRQtyYmUW3KNNJVOPeXqviQxi5m6Zw4sSfFsUSo3WEW3ESy0DHaGDU3rH9aITV47tOtnjcTEAajhQH8BIT8hN831cB6rVI3EZAUe3NvWEKmiQxMT7z1pRy0r8mD040xGHP3EZKjjvmXCRe2VJu/xF8Po2p9t4KroKbWKCgYFx+UxG3bDUuRgJwQEwHZesUSo426AALyfLTfQCpCS5s7FB+U6gEa1v3KY7hfWSkeqIjNXvjg/SFcFWw9q5ZyJQnXLhMQy1BzP5WUQqmgNvSte1RlWJFJ/FyOxOc0OYaWZAlRrkP7OvPz75ExNb5EE49Qc4/9iDWK/T4e5JKVVGiZ5M6XWe1CnqtSwp0OB9V5Met9RGsX11F/PDZSXIlS7p8M11Yw0qkOCD5XMlTKZpbYJZa5ZjRzgJ+EPGIojj6vUqIX3fuKEbeQgkHTQuntWQrtcHvlPS9DraF4irfvjV0xXVg9JPmhvu994SM4aMS5RqXzZk4+SIxg9BnQut9seO+r38zrEDPkNay640mDgLSyGoR+Imy/80mjjUALyH/1NZ4uMBUIhyOaq5R3svEQDZk+M2LbTuctUVy7hBsWZVfSjwtGsmJAmhMB0eboHKq0rsV5xKLUhooFsawMS7K5GedrlD6mZg5/3JPD8bLKJEduQrHMu7JqaHEhVufdp36j+PkDtU6TTEJ0V6l3ovwm66X71ZkWx6UnxvggmhsWZXCLFNiuI50ICIPBSBDAn4r3WqlMmwTkvpc+lml4m17JDan4IvnIRMWXSNL4c5fAbyvWBhCCZLtlBffz5+r1MPmK+6BV71Kw5ZzRIsiHEmHlyZ7SMDcsRUDuecY6ARGSDdX/+xBkx/R/1fm5cm2nk9uJeBCOGzdub3yIfhfOSqGUI6lATKJjYnJ1sNtP80Qo9Ofxx5aETe2rt+ew24s5CH1XaG+jSyTZi+Xtu1cqUGYKXi0jlgqCtqoQe+VaWeGcOLGzPrZmCjOYGs/5Li2NtZX58unzTvOmRMy/QSyszj1d7zqpNL9MbpXa+BIOLc6lF/YbNlhcnRveYzZQoUL9WCvt45xeZqnwaPjUvgFIkyB0Yz25XMeSexlup7FYF5oz/O2U4LU+IIY5ZzRnoHLWWm7nS6XaJCDvf/2bmWo1IwWU3JAkpO8ss1jhwSPOheseeB22aQULhUUkwSl7qT2deGyt2gnXPvAaHHra+Ua8B44rFa1GyRR1DUbOXxz/xJoWkCesERBRhDAbytv2hLpf/hTH+gzioy64S67ttHnbq6XLHRbF/Uq9ZVwVY859neAsl/7W4bNrORx/jBkz5kD92FDjTbQLlqMZWEBMcjZhwhCPTIVqhXyot+2TZKrXQuO4avxbFdUEoX0myXSxco4sKdZaobgvqZieHGazJCHaOrpKc3ezQjyEhUrMrZHNaYeot+J0/o6/l79xu5PmnP4ulXur8TvCFc4j01sni/zt4n4VZr2pteB0OF7TrGGWLagijgnnIgLB8UoF/1ErbaeDBUQjXy4aA2VOozZYLIlIjIHX1otEpKc+n4wWDPBbQPKl0uZTCvvvK9carkQpXrsiQyrAGTlniJiLLgVXwf0vfQxVO2tM3ZbIQp23XsSJ0GerxhFjX5+oOyJIh/gPTOKx5Kn34KT8hSJbWEbPM4xxpMCcNDoBofXRYzocPe5i2LS1ypy7mGC4T8H2Wx+NgYB0hIqjhkH9hs1GG362SRd/qL7G0wHaQ+7aONJnWoJJchyOJVEKHKqc/uP043QkrRCh3Z7uBESMZcKECf9ApfMnq0qwOi95bp+hInklHj+BMgrh/B9ht9uzKTYIP0/DNXI/Xv81Mn2vVcuKcR0cjrv1cTYnaCR+pCIU0QiadJeql7+HdTivt+Ac5eP1O4lS9pLQm1uUDpTwgerk4HXZQETEYxQntEQAiUySu6I+zgRCd796M5KLpUZGz6NjYlAGzQQZeOxXVtywJlh4QZIOldBV23jd7bIdlYaZJbrUyRcrtVTwM8Y1x2iuAH+WoB4o1YYOZ+jYm7ZUQc9JV8v6FalLQHQlWAVE09v44yf+Ey6/80WRHjaUFURZSMJJqFgS+u7XFRVwxV0vwbHjLxFuRxndjViPlmb10EUQ1N4zYI9B8+Hj75YHcQGrBEQGoV+/1BoBETVAToANp04Hn7SeaFXQ1+Cmvb7G0wB6kHjYh7tHIwduWfArlpu55u4wOpKSTw+NYiOd653h+uAg9NAwz8PpvFkqqZbIhwwY/8uRlzcpioJqEhwkkv/ncbu3SZITjYT4pCWmlhR0fazNBGJexowZsweujY+sED9SlqWrlZcC1TXrULj1pFxxKJXyQ0T+JAGMRnJU0og/qOJ9lD5ihpb9qnekIHFtDWylffVjY+mHXpJEiSPzUb0hh90e9R6lCAjOTeNWQo+TgIQqDspi6b5TF4vLH6OZAwJrgQQUIySMPftWsHVOvUxYEYkIkQEiIkgMbFnF0HbAHDhl9k1w40NviNS96zdvsxyjUFNXBysrNsJLH3wHlyPpGDbnZlSy52G7k40q8aqvFDjvphZVLPKJN43MZDHXaFFpeBfeai0LlsiAdQxUzrpKJzD1koB8jZvd9DWe6tD8t0/GG3VNgbxxh7qZy7eLa62kzwwBk+hQvn7ZViQ3rL9GjRq1j36sglIcmID4oRdtw4dujSf8ddRFzDWSiSc9Ho9yecskEkIiXU1EKl8Smne9yB2umf6oTP1ghYSYRMfh+JAUddlXSsxdQ6HN/QK5fqLOhXRD3ICEzC6byVDzbvPHkgiBXf9Gc+/B4zdHidcyfwdS8f23Pt5EnrvT6byoyCCyEd2v8Df7YU5OTht1zlb7MV86uFynRnIT9agAfAtuTuo+ggSQCUjzFCYgjF0B4VLxyrf/5y1+Gmxd0rOOBY1Z1KigQPXOJaJWBblHHTH6QkFIihYuhQtvfRaue+A1WPz423DXcx/CDQ+9Dlfd87L4vviK+6D/9Otg31MWCMXa1qnYaKfXDNFuOs5JMkWQ1C4lcOPDb0o+ECsBMdbclgUWCxGqDFi3PCQJSEAGrKea+rcVK/TsV5Oi+G/L9Jkv2iykzwwF0wrict0u39CHfFB7VKD7hAnj9eOC22EC4ofyS8exPR3Fxc2c4yKjbsKVqg1dwY0ERUZEf273IahQvRqtyKSYP1TMqU+33T5HtZOk6Wg0qHPIGz36eJz7ldEIgeYmVI7zPYSO1Yidpf7U3Ofl5Q3ANldbmHuliFHwdxd93A2E8VIhK6sttv1OtOKlMv7h8jj7N/rKzY1Wp8ic3/Hjxx8bqa9464AsDIphaowYECYgcQkTEEZogN8Na4nBPurNQPQHX/lEZsJKX2WbSAcRBrOgIpEJVJSFFSOrWLhrUewIxTCIz0Qy6PtO8m8yBqa1bKMlxnhYEUHIcF6JtEoWGxsBkaR3c/El0QlIhvrcGarf/lTRZtCKwVylr+00gHgA4oN6P3x4fh0xgFQqjy6Xy2r6zF2gHvj4MB1ryQ0rP/++UH0xAQmE5gbTjQLHo8UfaNaIO9TxDbmeuD0Ur8UnFpRvEeSOn78cNmzYvrKZJp+/hsBUEF2uCyMR+CCFaLuKcVoYX40CskoZb++dztPJrcnSNacAcKfzen3ciTh3CvDF9qssuF/txH0Hx9u/Fkd2Y1Q3LLK2uFyT9OPCtdfoQehsAWksMQkIx4AwAgD+TFhzDT2QMmEZetwnP/wJu5PLUe8ZaU1CAhRlESsyWxCK1tKFSgSPy+9bqb8JK8dskQmMSYdFAoKEbcY1D0s+EV/2sY2nz0IC0j4KAaEA9E5QcfAQ8K6qMPoLzIBVJNd0WgSga4r3KSrTURQFYmMDb+Qm4cG2VoRzw/L432KuDqWosgtWIDRF6l/R6qyY5+B0fkrucLKJuB/Kqu+Jo0cT+VlnIfjaJ2u9TKDj0lwhUG6F+1LwvhVLhExLfLE8rkH3Ca3Wy1kFkQm9XpflVyKM+vgb2j8q+udNsuJ+hWtOVWiPp2+tvxH6nEb43T8WqS/TBcvpLIxCnpusEnoIAqLqwjSVxEwCmlDqVewZW0AYAQC/BaSfUgJVIHrFxi3QyXm5jHdoHgSEJTmiCEjBP+/RDRrWoHb2emFdb3d0AtLKcL/acHIJ+Gpq1aJVPW5B6aav7VSHqXjn519jJX0mPjj/Z4shfWakPp0Ox9KIrkJITKSyn0/768oaW0ACIPonv3pKdWvFFYrEZbePoeMSkRVJezN9hYX+VUasiLVe0gGmcuhwDIlmedLWzmcUxC+baOja8SeQiFCkT1MEBeF35uWdLo9ryLUXfWc5HG2x77esuF+hon81HdOAa24UeRw+fE+cx18jkAYzXo3qZ+jH6ojXBauJCQiLdWEXLEZoqB+xz+fbBz+XG7qc33/GfsEdwrWGCQhLJFEExH3J3aCbImIhIPVrN8DaE09HctERCUjXiARkte14qJz3fyZjBn/8xw8ou+trO8Whu199boWA4E1cFFlsyE3cjANxuydaccPCvh8I7pMtIH5oAdBdomQhMhVBVGbe0sadiPGbGZrI9z7aHApXJZfrs9zc3KQWyEs2tMxM51m1fjjz82fQMYlKh6u5wRVbccOSdTiu0MffkHO3u91UfDBSbQ5FfOoplXNDz13LpndzpBcY2kuTKeH61IPQ04iANKVFIR4rCFtAGKkJ8Aejv2jog/6ChDc98ibYuk9rNi5YLMkRRUAmLVwaYNSwBOnyV/vNr1Bx0GAkGVnSzSqyC9aOR1/1H++P/7hPX9OpDk1xHR4lq4yqLrzFbbf30o+NE2J+RjkcB2luWGHfYlLNieA3xkksRJh2ldA1hcxpNfZD1WFIZE0IzbL12OQo/vlSKdjkHjcuWurZVIeqen5/tJgELfC8Ax2TKEUoIAg+8u/JJKA43if18ccDzf3romi1P+Tv+IdEVGTX1vtw+VsNJ8rSphKDRLSApGohQpv/nneAx+HoV+h05jaFyL57Iol0R3O11FzuPnE04ZiV4HOrb6k/8x6DYQD8cSCXSiWuTmUx+uCb36HdwLkyDqTpFV2W1BRFQKYtekASkBgYiEzZW/3qB/76H+EIiPg+CyoOHAR1v/ylExhFQGbJtZxW8R/4MLzBkv92nOkzI/WNysH9VooSulwuB+2vve1Vys9kJiBSIXM6z4mmBKu3gfbEEMkAaG+Tz4o2DjWXbre7b6LH0YgQ153OO5oLkhZ3876aJ1vi1o1qJ1MVAoz2W8b9ljkaZn0Sx9B1wzbfteR+5XBcR8ckgPT6ixI6ncuLorthbQxHdNOEgKQETKKbl9fe7U+jHn6+jCQXr8jD0+Y8GS0I4K+IPtR8KQ3+goRdPFemTUFClqYRlQXr/MXPSE4QOwHZftvjFuM/ToANI0vBV1enFqvqbCdKjlzL6aBM6cGz0eIGAtJnJjRmID/fHcUNS9UveFAfN7tg+RFLgTZxbg5HRUFe3jH6sYmAFiA8JphshCNDTqdzrH5smsGfUMHl+sKKCyPFPenHJnosuAZutzIOj9P5g3vs2EPiHUuQ21+k2BfzO5fdfqo8JmH3D2x3caR03lq2t2LaXyN/Nv3fsbpgNbgOSHwExKzH00TSWs59FiUHiZBAxLxv4zp7na4VHa+2TSUxzjWjJQD8Llj7oqwwFMh6n3qLXfqvhzgOhCWiiDognUvghofekJwihjogqgbI2ddFJyCy/se2q++UxwZYP75Daauv6VSG+cA0ig/WBysLwYoi7rMD9x1ExyRIWVSVo48mFyv58A/Zv8waVEb1JtSxTED80AjIrZbewjscPxclYeyaUtqPrCxR3MF8stikRx6TtgSEFHmPLMYYlYA4nTfrxyYKmvvbomjjkIrj8rwGkFDt93eelTgM3P6eCPcrBS2ObFS0FxhifE6ncDkLvjc3GQGJIQ1vqkCzgHSMgYC8ZktsrBmDkVioN8ZIOh40dEKfVymRVN3a1quUXbBYwoogp92midoxhDqrldA1Q8nGkTMjExDhftUZytrlQM3H3+oERJpC4Ga5ltNCkbL61lxzv/okUe5XGtRb2yesuGE5NGU1WS5YaU1A7HZLBASVnx9HjRp1kDw84QSEqqNbICBKIS+kY1oKASGSqB+b6LGQO6VFAvKXyg4VBwExFUqP2/1+FKtbHVkosC9x3gm8zmIMU6dO3RvP5c9IcWTyBcpW7PuIoPGzC1YMiIeAuJmAMFId4HfDmq7eSys3mr/LN8Cx4y8WxfoyORidJUgEMe09A3YfOA8+/OYPuXgsumCZGbA2wtoOY5CAdAhPQIT14yRY39sNvi3b9eON//l8efpaTnGIB0FhYeE++EC16n4lCiwmI2gZlbfJVtywVDYsG1tAAmCO3em8zmLJnj4AACAASURBVHIg9JgxR8vDE+6ChXMzLihbT+ixkAtWXt4E/dg0QzwuWI9Fa7QhY6HfSKRiiJpF4ueJI0ceph9rFaa1xenspina0Sxdo+mYZNw/8FzumBxB6Vf3ALxXlNL+uhsWW0Csgy0gjGYJ8LthHY+K3GZTPZQK4uSFS8HWZSq7YbHsIiJDWs8z4PDRF8DajVvUwrFGQKSVrWbZN1C+Z28kGtnhA9Cl+9WWi27Wj1UdrUM5UF/LqQztTfWpuqIQSnmQD00v7nsyHZMMBcI1fvyxkdyw6CGn3toWTpwolKbS0lJhjeEsWAFvcc+zGvxNGW3omGQEoVsdB20dSRhHI0Kvv/K2Jfc3l+uzRLoi6e3Q/CPBeccKAUHF8JPhw4fvGc84tOt8cTT3K/W7LSoqiquvSNASUoyOUh9DvcB4MXgMbAGxDraAMJotNBLyglQiTTesx9/4Amw57IbFsquoDFhDZtzoN2xYox9mAHrV3c8Y1o+I2a86Q9kevaHmg690AqLcr+6XazctlCjtzeH18iFRG0rh1txGfiguLt5NHp7Ih4jZFvbxVAgFzicVAvpO1I4glyvaHxUHEW/DWbACFLFY0vCeqx+bIBhuQPn5L1vMxrU5lFtMmsFyGl6Vetg5cWJPOibRaXjddntXbH+DlTowSFSe1scf6/nSlkiMIDPhLQ+qjs8ddEASrFxiLKNHj97fHToblrh3KCKEn3dQBic6Rvu9MwGxCCYgjGYL8LthzTDfT8s32eUbtsBx4y8BW48zuCYIS4C06jcbbFnFcPGS5ySniCEAXa6vyhlXCOtGZPer9rBh8BTw7ajWj1VcZ6y+hlMcRvarIUP2KnS7v5syeTLgg6S+QL0ZNxQon/7QRWVFxLckw00mhOLvlUqDsHqQUiDf2FbjOP5QRcWUBQSJQBG7YJkKaLbHeiHChKaDNd1yJk7shtdoe7QaATIz0cejRo1ql6gxNAVMxdPlOjtaIUKN0F9MxyS6ECG1a3kMLtdl+vhjPV+3290D2xGpVvH34k+rbPRtWrjot2S328ck8nxDjQcV/3vk77xWkUDqm9aZnJOtOD+fB9cxUr8By/cRdsFiFyxG84N6e4zb9mC4tAgFT5GQaYseFJmORMajFFB8WZpeMtTn3jPgpQ+/j42AyHXl214F63MLIwegZ3YVFpJt19+nqLH4v2zpd0iv6ucCZEGgt3744F1KyjQ9MIvwgUFWBvmm1iAjTicFCo+UxyRPgXC5OmF/5fTQQlGuG5twjO9hv1dRCk+tGGHsikMzJiA2zQXHFT2lsqEY4jV25eVNouMScV21pAb3RnIBCkVs09T9SkBbv4PckauBB2egOl4/vqH9jx8//tgowdjmuNxGRfJ4f9NGrInbfQj+Bubj9X4Wtys9eN5K2Zd91NFcoKL9N1ko9GMTCS0exU7nTmQI15+wNuHY1qC8gOe4AP/eW3N9M6HHgDABiQwmIIxmC115w89PGzqi3w3rzc9+NskHu2KxkAhrWI/pcNyES2Dz1irJK2KM//j0OyjfOzd8/IesfF5x8BCo/Wm5eSytTdnSLXLNpoP1IyTwwXwQVUPHh/Q1lO0KHypV+DD2kXUEH+S/jsnJURVkk/EA8bthOZ3PkFsOKjRPo8xBJaer9oY8eMxJqYSepgTEX1fF4bgiiiuQqQijcvAXKa768Q3pWxDayCmdAwRJ5Wl0XDoTEJu89uPGjdsbldNlMVhB7qXj5HMv3vWjjs3Ea3l3hIJ8gX07nT+M8XgO1MffkPOndL74e8hHuZsyrBH5wDXonTplCv1ORN2TJF5jNf+Hu8lCiuQOycQ9VF8I1+VxtihJFvS1G0sQevDLJnbBCk1A2AWLkTbQrCAu8z21ylSE28EzbhT+/hyMzkIi3K+yi80K6DEVIJQEZPt/HhbZraIFn28quECuSO3/xra/vnbTCfRACX6Q4gN5L1Sse+MD8kx8mH6gsl81hpLocrlOwP5PtO36oMqUioL5fdIsIHZ7WhIQUwGaMIEsSdHcsPxuUE7nK2PGjBEEM5634ao4GVVWx7bK5NxFtH6IflFZV/3aUmD+GoJY3LAUORMuj/n5Z9FxqkBbjN1maKmozy+Mcr3NtatltGvIb5ruG6HWi2fMmAOdTudQIsL0MkNlOUv2/UOk5h4/vstEmaRil78F3T8UTAuI08kWkChgAsJo1gB/IPo/UH5QqqJXBgvf/sz7sighu2GxSAtIt6nw7Dtfi/Vh3f3K/3GTfYGobk5VzsMGnyMJqX7lA5Cd6NaPN7U1m84314xQlWLJTUvLlNPo44lUvTZpFpA0JSAETQm6L0pa0uC3sY8Ol1mKSCH7//bOBDyq8urjWbDVurT18QPr9gilKpsQAgVrRVSQLWHLSljDEjYpfgKKtApVsS6IX61UpaWKUhdKFdF+Lqgt1lZFRXH7oKggS0jYEkgCSWZyz3febe47NzPJTBaSTP6/5znPTMKdmXvf+zI5//ec854InMV422nm5z9lx2xbhM53lVipZ6c51z7nFo6qq8rIOJ+v/z+1pEEpAaIEQzm/5hfmPcI5yd7Psu+RqIliMVNTJ/LAZ+rzymeReol4bQOOfcj/qyJ66e08fpIw32e1Xp85vzFRChAUoUOAgBiE3CjIvUaAmCjIoaOl1H44eoLA3OaDndIXU9mJCqUrIg2A6EiJf+c+KrhwAIuMy0JHQHTx+cGrJpJTUUnWh6g9eB1nmp6rLTb9KgS1Ov+NhfW5tYIUrOoEBMHw4Z35XI9F4JTK8dGd5t8cqR1TJl4IauGcmdVjKTj457XWqrfYfpaFxFQekwO1pK8EPktvKPBGSy8+92KJsdk6GlFrFMTcGx77R8dYKVHivcQmC/b4L3ZFhxwvET3KSku7Wzi6umar1vssd7/KzLzLPt9GICGa/8cNSV0+t84pWBAgqAEBsYclQPqwlZo1axMFWbLyJYrrNEGl3zQDRxjWNGZ2v7r/ydflvIi4+7mUD+rY48+9Kus7wqdfXS7Ts0pXrlOv8wf1/tjLdr6eq7H6xVqf/PRGBUXoobG2WP51Ld3lq10TO0UH2KldlJ2dfZ5+u3DXJVLirhaiRTi/bE4kDrc8Vqz6jxp1rX2uMYLZCOBUsXHCeFWMXdvYy3HTK8U7WcxNt9LSQiJSJFlEZPNnbNG1PvauUzXeX9Gt/STP2Wb7/WHALliRAwECYh4KLkZ/PrBmrZe39x4oonMGzpPN57Alb+s003yw3aAFVHjkmA5MRFH/oY8VdR374jqETr+S4uMyOnBJClUdLg68zkq/ekDP0VhyoloMjSVAWmIfEA/yXPr27Xua6M5dW0G6dV1iZyxngnKOjrK9zE7ubWJ3oaysrCFihZgd5Bv58SH+t495jEyKhVNLulGQQ8Kv/a0+z5j7f2NW03MyMwew0PJHGIFy9KYAjh7PPey0PcXjfAuPfS6PfQo/pvLvb2R7kufdnvF6a2rPlrc1WZWMkmRkpNvnCZpQgLSSCAhSsECLg9woSAq52506Jsd/4cPPy9VvREFap5nox00PrtWBiWiiH0p8+HZ8SwXn9g8fAdHpVyXLVpP+EDkH9buIlutJ9lwFJxerALfVNyL0YsYmLS3tZ3zOpda2yrVGQoSJ48WYTRw/XvZSED+LaxY/T5wwgfTqvhOJsDH3YJzq+7Fx8ODBZ+nTbFZj1oCYCNTScZFFQYLGXoy3HGc2syW2935Y/TYiGXufbjz4O3FeMRZ1qjfm/wrPzTGoAakZCBDQKiC3sPdUtk0B11GvXO/af5jaDZqPKEgrNHm/e+XRWVffSF9+s99MjMgFiN/sfvV0+N4fOvpR2GEwVR04rOVvUPRjtT1PwckHAqRmrOuZMiY7u3JshCLErMqLccsWTpS7yu5op6oyivdR4kPUmGRmfpqVlXWhfW4xSiDtKCs9fZW1GUAkkQoKMc5m7P369xGPvdgOd4ISfn/r6/bAaHZztSmBAIkcCBDQaiC3M/pUMi6gI/xH5WzeuuIFiusyCY0JW5nJ+911Ek1buiZ68WGaD1b66NDVk1T381DpV4k9aG9cByq5d5UtWswHiYr3a/XcjGVHqlkDAVI7ZozS09Nn8bmXj3M7zUfqDNfHpNOsa0v2ZY4a1ds+pxgn0BuEHdLXTS1OBIXiDTr22mF+V/T5EecT48KvTthF6BAgNQMBAloN5EZBvs/2nnb+AlGQPYVFdFHKQopLQhSktZgb/ZhLn2zfE70AMc0HN32gIx9dKT8+VOrVJVR42TCqKjoWEC5W9OMFio2td1s0xnHgx3FjlePgM6kpHqscr5zgNeL4xWFqD2KlCD0EplP0yDEZGbuNkxVlFCMqM++v+318mp2W1kucQ2tygM084/l5dlZ6+nPjVDpVlRXVaLSxHyO2OlYNB180fTFa09hHg/U9kqMd6vDfI6qoWhaPe7/7IUAgQECMQW4UZFJgDZudQdNwbtmajWhM2IpMRT9yaeY9T5vJELn4UGpFPhTl3lZD8blqPFi2er16jV/qDvNBJ9gG6jmJP+hNiNVALDd34kRRoyD/sIcw1ZE5TPGowYqATLOa6TkhzK+d+C9aiAAJXFtaWloXdnw2ivMXRc96Vb4hhYh4L7GtryN7fWRkPGt21GolkQ8vcl6ILYd53G8fk51dpp0yOU6NIfp03Uk5j/1943RvF4iP8AS+R9LTJ4gam3Fjx9b4PTI2J2edOD6cABEbBWgBUhnu+yNGdsHaY/W7CXWdPr0A8WocBAhoiVgrzaezs7k54EZqx7PoWBkljb1L9oOACIltk9GP5DxqO3Aeff51vpkIUYsPUXy+/4c/Y7HRuXrxeWJ32ZTw0DWT3depl5kq92eb+v8EUARSsDIzB4ndnvgP4dv8+E41U7//mB2MxfqlIf8IWhGQGeIPp3CixR9Yr4lVbJ1Ssy01NbVdTe/ZjAh0rRZF4OwMLxIrmOI6xRa6ZtW8Hg6w3wgP7WDv53H8hXHuWrMDLP6GmevnuTqUHc8tYh6NCy7kr2tExIhIR7yfrrX5PD09PcN8ttdRBsEEUrDS0q7nsfuAvyv+GfJ7JCtrk/geMV3k48KkYPH/pzW5EyaI7wpfqO8PsXucEDr8Wc+Hep/mjLVII/oM7TffHzVdZ05W1sY4N+rcYq4VAAm5UZBxtktooiDPbfyA4npPb3IHGda4JgXm5ZPptkc3qEkQbfRDF58fW/J7Hf3oEbrr+SndqeLtj+zXmA8qY7tKz8VW61A1N4QDIXon1Gaiq3stbyX/OIooAR/736JDdShjJ3KO/Pe0tHEZLa+wN9DILmvkyB+zKFvOTlWxEFQ6ImIcYn8NK5uOtYIvV/HZ+XV0WslBfs/f5owe3UF8RlM1pGuGxFvO2/d5nKawA/q+cN7E2FuNBGscd2vsfWa3Mi2WZZE/v/cNPNdlQ8OmaCTakonke2TgwIGnWw00vaj/Vyxk+L0WiHsR7vuDbR5/zww5iZfXUMhrzBk27If8/TeZr+NG/X0Y9jqzsrJGNPVJA1BnyMq3Z3tNO59+27fMXvQHiuuWy04qCtJj0aT46DGVOmcuoYLDde/74RSXUGGHQSxALpU7XYUqPC+efZd6jbu1r3nyqD0fAWiJkLsiL+dxdlra5dkZGSvYod1htns1Tq3ZAjaHRYY0/bOouRHHmeJqdn63Zqal3WV3Uo+zxA6QBI27cGh1Q8EXeOyPmG2OdXpc8NibcdeRE3OPWDyWiCJ3IWgGsLAJ9TkAAADqAblRkCst8eGYKMjnX++jcwctwLa8MWoq/WoardrwL60Noo1+qClT+tAaKTKqRT9k3celVHjJUPLnH3RFi/tBout5Rz0HsaLbvIiPwiJ6P7NyX5s1wrWcNLzXIIul09KGsBj5DTu2bwlBws5t8ZjMzPIx7hawFfz7Iv79Nj7uVVHXwE50P9Gd27yPJXBACLzjI57n5OR04DGcxGP7OI/pBzy+e/h5mSh81lERsSXvCZHaxvdjC//706JrelZWVieT5mbeCwskdaZBvkfM/a3NWvh9ivg7soVfJwAKcpsTPqGdQp90RvXq9oNPv0FxPaZQAgRITJksPO+WS6MWPEI+nUYVlfzQ80PsaFXY0UQ/uofs+1H21MukFY55tXmyyJ6DAMQKocTUYnZqJ44Y8YPs4cPPGz169E/S0tKS2EHukZGa2lHsqiTSiLxF5bEgyk4y8aEctIy+fU8bk5JyTkZKykUZw4d35nFO5jHvmjVixMWjBg5sm5eS8r1Q7xOHiAcAADQO5KZiXcyWH+xeshrx+yn1phXSWUWH9NgwU3j+XwPn0Wdf7dPaoG7Rj5L7VtHeuPbVox869aoo52bPjAqIjy2O45xlz0EAYhBZqB7FblXyeDi/DUKCHvdIBVx8lMcDAACoD1R9W94q2yn94pt8OnewSMXKQypWDJiMZiVNpWV/3qjFRyAyERl6Xvh3F1DBhdfRvrhOwTtfydSry+S/+f7zrX5NtaaD19hzD4BWQCDdJETaWbQpbSA65NhSiFSeOIw9AAA0HeSmYq1TC9aqJsSvndMnXn5XrprH95khramdaFjdTEaxuuVS6n8/TJU+FcWIMvYRSKUqvmGp3F43KPVKCBEpRjpR2cp16niT4uXWGS235xwAAAAAAGiFWAKkI6niYOlqqgVv5aLecP8zcsvWROyK1SJN7nrVcxpdMGwhbdtVoLVEtE0HlZgo3/Qh5X+3p+567o1+/ISKptxup10F5hLzGdvZeq5hxREAAAAAoDVjiRDTMc7RK9fyh5Lj5XTtzOWoB2mBZlLnEnvPoL+8uUUHJqJMvTLb7lZU0qEB06TQCIp+SPFxCR3sPYb8B47Yr7E7nv9czzGkXgEAAAAAgKCi9FX2yrVZKd+x5wC1T71V7YyFSEiLsUQR/eiaS7c/toHs+xkVWrCUPvw0Cw1Px/MElXa1v93VVLH5M3W8J/WKH3+p5xbEBwAAAAAAUFgC5FxS6TIBB9IUK7/98Q76Qf+5soeETOtpBg42rAbxIaJVXSbR6AWPKOHheLOjIhcfvv/7hgrO14XnpumgrPsQQqQLla1+MaT4YF7j59+15xgAAAAAAAAScnfFGspO43HtQDrKr1SO5do3PqI2vWdQfO/p6BHSjE0VnU+my3PupP2HjiotEa36cJQ5fO+PjLmZxUdHyk/sHrTlrihGPzpvWZBYIR094zm0mx8u03MKhecAAAAAAKA65NaDLLKdSSlC9Or2ctGkMGkqxf90BrbnbYYmU+T4/rQbOJ8+3r6bbAEZFSb16rG1Msqhoh1GfCSx+GhPh1Nnk3OiXAuWoLqPSrYMe04BAAAAAABQDXJTsRIcx3lKr2T7XZ9UOaW/eeIVuTOWiIJAhDQfk+IjeRqdddUcevW9L7T4qEPdhxablVu30/62V8k6j0Dth4x8tKeDV4ylqiNH9cTQherV6z4gPgAAAAAAQM2QGwU5lx3JrUGOJbm7Yy36/XpZ4JyAHiHNwuJFXU6vPDql9wxa88r7dRcf+v5WHS2lQ/1zdepVj6C0qwOdh5N/b6EWH9XqPkQjkDZ6DqHuAwAAAAAA1A659SDd2fZrxzLQ1trUE9y6Yr2KhPwU6VhNLj6S8+g7fA/+9NK/tfioQ9qVeqF8KJ57j4x0BOo+EtV2uwUXXUe+bTuDjiU3Ve9Dth/puYPoBwAAAAAAiBxLhKRYRelVZpHcREJue3SDqgnpDRHSFCZ3JOs1ncXHLPrD+n/WU3yoIEbZEy8G73glxcelMh2r/N2tQcda4mMPWxc9ZyA+AAAAAABA9JCbSjPTcjYdI0JMX4m7H3+F4pPzKL4Xdsc66eKj5zT63pWz6cn/fa+e4kN3O//Hh5R/ZjILD93zI0GJj4Jzfk7lb74XdKwlPkQxyPV6rqDfBwAAAAAAqDvk1oTcWZMIWbn+n3RmvzkUlzQNHdNPgskxTppC5wycR2s3fqh1QR1qPixB4duxmwraD5SpVvkJPVzxcd61VP7WZn1sIPJhPkxsgzVBzxGIDwAAAAAAUD/YqYy3RMjSmkTIy+98Rj8acrOsC0nsOwspWY1gYkxlh/NuufTjUb+if239SmuIOkY+9OuqCg7RgaR0WWQui84TVM1HYcehVP7OlnDio9JxnGl6biDtCgAAAAAANAweEbKsmgixHOCtO/bQlVPvl43wRHE6UrIazkTKlRhTIT6un/MQ7dhd2DDio6SMDg2dwYKjA+W3SdI1Hx1ZkGRQ5Wc7tPgIfIZuUSjv/0w9JxD5AAAAAAAADYsWIVKIsC33ihDlo6qnx8pO0NzlaykhOU+lZPVFSlZ9TDR9TLhCNRhM7DWdbv7dX+n4iQqtIeqYdqU3EXB8fiqa+Eu13W6bHlp8/JgOXTuFfN/m1yQ+Zul5gcgHAAAAAABoHCwRksh2bygRIhxi7dvSn199n84beotcsRciBNGQ6E2MWWIfFh9dJ9EFwxbSure2aP3g1F18mMaBlX4qnn23qvmQ4uNyKT6OZM63mgwGiQ+Bj22Gng+IfAAAAAAAgMbFEiHx4USI7Rx//vU+umbWg1KEiJ2yxEp+fDNw7Ju7iTEShebxPadRXI8pNHz+I7RtV4El8uopPo6XU/H0O1zxkdBFPi+e/wA5J8q94sM8qbBqPiA+AAAAAADAycEjQpZYK+TucrlVnF7Kzu69T75GP7jmRorrMklFQ5CWFdbE2CSKaFGXidRu8ALZ36PS57fER920h0mlEjUfR8beyoLjJ5R/SpJ83H9mLyp78iVXpJgULbfDeRnbeH3/IT4AAAAAAMDJhYIL028Qq+Oe1fKAw2w6p3/21V5KmbdC7pIV330K0rKqCY+ZantdHhsR9UhbuJJ2fFuoNUE9Uq7UjVCCovQ4Hcmar8VHD9ntvLBTKlX8+xP3uOriQxSDDNH3GuIDAAAAAAA0DR4RMpId1sOW4xoyJUs8Pvv6B9Qpc4mMhsT3zJOOd2veslfWeYhti3tOlbUenbKW0Lo3twSJuDqnXAl05MNfcJgOD5mp+3yolKui8YuoqkjXe1jb7Fri40u27voeQ3wAAAAAAICmRYuQRP38Crbtxm+2RYhxpI0QOVp6gu5c9TdqO2g+O925stYhXmwzK8RIMxAFjW3xOuIhrlnWeXTLpYuGL5Kpasd4bLzjVSeEaNGiQmyne6B7miwyl80F2/ajspXrAtEOT72H+eENtgv1vYX4AAAAAAAAzQdLhLRleyGEMxvwie0V/b2FRfTrP/yNLki5leK6T5apRwHnvE/TC4UGFx59LJHVY6pMR7sw9Va6+/FX6FBRiR4jp361HkZQaFFxfP1bVNCuHwuPi9k60+Hhc8i3bac6zu+mXJl7paMf97GdZt9bAAAAAAAAmhXkpmO1YVvIjuxxy6ENcqeFk+23nOz8g8V0/1OvU/dxSylROOfsmMf1mq6a77XwqIgQUqrwfibFJU9TneL5912z76DfsPDYf+hoSHFWJxxy6z18Piq593Ha952utJfFR2HHFCp7bC05FZWuSAncjkDK1X62HH0fAyl2AAAAAAAANEtINSo0QmQQ2zZrdb1ay25vmpFIzfrLGx9R6k0r6Iz+c1XBeo8p7MhPV7tD9W0Z2/jGy7oOJZ6EkJKCiq+j7eAFlPOrVbR+0ydUfKwscN1+q1i/zlQ5AVHhP3iEjmTMpz1x51P+GUlUPGsp+fcUWMcFRT3MfdnE1lnfO9HrJb5pZxMAAAAAAAARQMF1IReyPWu7yeSJhoQSIj5/FW3+Yhfd9ugG6jl+qdqWVjjxwnpPl7UTgahCsxAcKsohu76L1LHkPIrX53vG1XPpulkP0oPPvEnbvy0ISq2qd50HkRv10G9cvvE9Krx0mIx6HBqQRxVvf+geK1Ou1KusqIdo/HE32+n6nkF8AAAAAACAlge5kZDvsM1lO2iJkGrREO0VV6t/KC45Tq+++wXd+MBaSp5wN5368zns2E+RO0bFiZ2jhADQW9jKCEkfVT/SGJES+b6ijqOP/rwrtOAwUY6uuXxO0+ic6+dTv7xldPtjL9EHX+6iikpf0DX6WTDUK9XKYNV6OMdK6egtD1J+m+50oONQKlu9gZzyiurHKeFhxl9EqFL1fULKFQAAAAAAaNmQSsmK18+7sT1HwcXOYb1w4aR7owNHS4/Tvz/9mh7480YafctjdPHIX1J87xnK+e88UT2KXaV6T3dToVgktNFmRIOJniRoMWFqTUwUwxxnXhdonCjeV9RxiF4dXSYqwZGcR2f2n0t9J99LN9z/DD3z2mb6cud+Kq/wBZ17g0Q7DI4TFPU48fImOtgzkwo7jaDSR56jquIS9zh/yB2uxAHL2M7z3icAAAAAAABaNBTcL+QUtmyyakOsVKAafO3qxdnid2IXLREdue+p1yj3jtV05dT76UdDbqZTfjZbiQVRP9JlEsV1Gk9xl7F1mqh+7pard92aSnFJU5WgEOKl22QVWRHHCEEjXmOETXKeFCJnD7iJkicsZQH0KC1asZ7WvvERfbpjLx0rO1H93LXoaCDZ4Q6IHgvf13uoePZSOnjVRCp9aI3b08MIFPXJjkfsvcXWz743BPEBAAAAAABiDQouUD+H7S5SK/FST9QmRFy/Ovw2tSfKK+WOWl98ky+FyR/XvyO3uF244gWafd8zNH7J4zRywSN03az/oT6598iGiJek307dx94lIxj9ZyynIXMfolF8zPjFj9Pc5Wtp8cqX6Hdr/04v/P1j2vzlLtpdcIRKysrDnJ/jnl8EWiJq9Js6xSVU9sSLVJy3hEr/+Dw5JaXWAGlznKB0K36+ix+msp3qvR8AAAAAAADEJORZcefHy9letFzssPUhoaiyHP5odpHy+6voeHmFrC8pOlZGJcfLpXip9FVF3H/DFkP17tsRKZU+qvzwcypb9TydeOUdcsqO2ycTUniQKjJ/mNx0K0Q9AAAAAABA64I8q+/8fAQ7zZtt/57C7JhVEyo7EYVXzAAAA9BJREFUyQkIE1FHIs2vLBqRIo41rzP1KFXKuVcWzYk1AKKg3Ld9J/m+2i22CdO/JLsWxPEID1GEsoEtWY8xhAcAAAAAAGjdkCVE2Hn+Lj+fwPaJ7XdTHYRIrc6844oV1/TvGvrDGgqr6NwuQq9Sle12V0EhQl5n6x9qnAEAAAAAAGj1kNV7gh9PZ5vE9q6nLsSkZzVLfXBScAvQbWFmwh8iH0uks4kGkKYPC4QHAAAAAAAAoSDdwJBcIXIaWyrbX9mO2W44RVkrEit4UqzM7/bxwwq2PuSOXaAZJAAAAAAAAKAGvM6z/rkn251sn5KqbajRKY8hwqWglbH9g+0Gtvbhxg4AAAAAAAAQBWRFRPTP32cbzvZHtq9COOaxkKblLSY3iN2sPmK7h+0KUTNjjQuEBwAAAAAAAA0FKSGS4PndeWwZbKt1jwuvFy+ceB81b0FiajiqwnSGr+TfbyXVtfwatjM9Y4AaDwAAAAAAABoL8tSJGNhJv4BtNKl+F5+GaWoonHsfNZ0oCYgNcQ41NF4U6VWb2O5gu5bth54xEKID0Q4AAAAAAABOJtoRr9bXgn8+Wzvuv2Jby/Y524mwqsCNlPis1CenBvMKCq/JNDD7fakGscPHFfHDe2x/YpvDlsx2muea0MMDAAAAAACA5kI4MaL/TdSNdGHLJlXI/he2L/W2tScTR4uN99meYFvINoztYrbvRXNNAAAAAAAAgGYCudGCsM47//4Mto5s17NNYfs1qQiEaOD3EQuFnVosiMhJTelSJq2rglTq1AG27aQiGqIL+e+F0ODXj+XHq0SqGD+eGuacEgiiAwAAAAAAgJaNR5BUqx8Jcbw45lQWC2fx40VsXdl68s99+bEf2wBt4rnovZHE/9aJH9uxna47utf2GeZcEvX5QXAAAAAAAAAQixiH3xImbbQ1aGE3uQXzbfQjohsAAAAAAAAAF484sSMnCZ6oRaJHVCR4X9vU1wIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgOfL/ap1U9qoLL5MAAAAASUVORK5CYII=" />
+    <div class="head-titles">
+      <span class="t">Claude Code 입문 — 손으로 배우는 AI 도구</span>
+    </div>
+    <div class="head-spacer"></div>
+    <div class="head-badge">완전 입문자용 · 클릭하며 익히는 인터랙티브 강의</div>
+  </div>
+</header>
+
+<!-- 상단 탭: 6개 섹션 이동 버튼 -->
+<nav class="tabs">
+  <div class="tabs-inner" id="tabBar">
+    <button data-go="0" class="active"><span class="num">1</span>LLM이란?</button>
+    <button data-go="1"><span class="num">2</span>IDE란?</button>
+    <button data-go="2"><span class="num">3</span>CLI란?</button>
+    <button data-go="3"><span class="num">4</span>왜 클로드가 핫한가</button>
+    <button data-go="4"><span class="num">5</span>Claude vs Claude Code</button>
+    <button data-go="5"><span class="num">6</span>Claude Code 쓰는 법</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ====================== 섹션 1 : LLM ====================== -->
+  <section class="slide show" id="s0">
+    <span class="sec-tag">SECTION 01</span>
+    <h2 class="sec-title">LLM이란 무엇인가</h2>
+    <p class="sec-lead">
+      <b>LLM(거대 언어 모델)</b> 은 “방대한 텍스트로 학습해, <b>다음에 올 토큰(단어 조각)을 확률적으로 예측</b>하는
+      방식으로 인간 언어를 이해하고 생성하는 AI 모델”입니다.
+    </p>
+    <p class="muted" style="margin-top:12px;">
+      🍞 쉬운 비유 — “엄청난 양의 글을 읽고, <b>다음에 올 말</b>을 가장 그럴듯하게 맞히는 거대한 언어 모델”
+    </p>
+
+    <!-- 핵심 특성 6가지 -->
+    <div class="grid g3">
+      <div class="card"><span class="ico">🎯</span><h3>① 다음 토큰 예측</h3><p>문장에서 다음에 올 단어 조각을 확률로 골라 이어 붙입니다.</p></div>
+      <div class="card"><span class="ico">🌐</span><h3>② 거대한 규모</h3><p>수천억 개의 매개변수와 인터넷 규모의 데이터로 학습합니다.</p></div>
+      <div class="card"><span class="ico">🛠️</span><h3>③ 사전학습 + 미세조정</h3><p>먼저 폭넓게 배우고, 이후 용도에 맞게 다듬습니다.</p></div>
+      <div class="card"><span class="ico">📖</span><h3>④ 문맥 이해</h3><p>한 번에 기억하는 분량(컨텍스트 윈도우) 안에서 앞뒤를 봅니다.</p></div>
+      <div class="card"><span class="ico">✨</span><h3>⑤ 창발적 능력</h3><p>규모가 커지면 가르치지 않은 능력이 갑자기 나타납니다.</p></div>
+      <div class="card"><span class="ico">⚠️</span><h3>⑥ 환각</h3><p>그럴듯하지만 틀린 내용을 지어낼 수 있어 확인이 필요합니다.</p></div>
+    </div>
+
+    <!-- 인터랙티브: 다음 토큰 확률 시뮬레이션 -->
+    <div class="block">
+      <h3>🔮 직접 해보기 — “다음 단어 맞히기”</h3>
+      <p class="hint">문장을 입력하고 버튼을 누르면, LLM이 <b>다음에 올 단어 후보를 확률(%)</b>로 매기는 모습을 보여줍니다. (실제 AI 호출이 아닌 시뮬레이션)</p>
+      <div class="token-input">
+        <input id="tokenInput" type="text" value="오늘 날씨가 정말" placeholder="예: 오늘 날씨가 정말" />
+        <button class="btn" id="tokenBtn">다음 단어 예측 ▶</button>
+      </div>
+      <div class="bars" id="tokenBars"></div>
+
+      <!-- 그래서 결국 무엇이 '출력(output)'으로 나오는가 -->
+      <div class="token-out" id="tokenOut">
+        <div class="to-step">
+          <span class="to-num">1</span>
+          <div>후보마다 <b>확률</b>을 매깁니다. <span class="muted">(위 막대그래프 = 모델 머릿속의 점수)</span></div>
+        </div>
+        <div class="to-step">
+          <span class="to-num">2</span>
+          <div>이 중 <b>딱 하나</b>를 골라 내보냅니다. 보통 <b>가장 확률 높은 단어</b>를 고르고,
+            <span class="muted">설정(‘온도’)을 높이면 일부러 덜 뻔한 단어를 골라 다양하게도 합니다.</span></div>
+        </div>
+        <div class="to-step">
+          <span class="to-num">3</span>
+          <div>고른 단어를 문장 뒤에 <b>붙이고</b>, 다시 1번부터 <b>반복</b>합니다. → 이렇게 한 단어씩 이어 문장이 만들어집니다.</div>
+        </div>
+        <div class="to-result">
+          <span class="muted" style="font-size:13px;">최종 출력(output)</span>
+          <div class="to-sentence"><span id="toBase"></span><span class="to-pick" id="toPick"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 대표 모델 카드 -->
+    <div class="block">
+      <h3>🏷️ 대표적인 LLM들</h3>
+      <p class="hint">전 세계 주요 기업·국가가 저마다의 LLM을 만들고 있습니다.</p>
+      <div class="chips">
+        <div class="chip"><b>GPT</b><span>OpenAI · 미국</span></div>
+        <div class="chip"><b>Claude</b><span>Anthropic · 미국</span></div>
+        <div class="chip"><b>Gemini</b><span>Google · 미국</span></div>
+        <div class="chip"><b>Llama</b><span>Meta · 미국</span></div>
+        <div class="chip"><b>Grok</b><span>xAI · 미국</span></div>
+        <div class="chip"><b>DeepSeek</b><span>딥시크 · 중국</span></div>
+        <div class="chip"><b>Qwen</b><span>알리바바 · 중국</span></div>
+        <div class="chip"><b>HyperCLOVA X</b><span>네이버 · 한국</span></div>
+      </div>
+    </div>
+
+    <!-- 공개 방식 토글 -->
+    <div class="block">
+      <h3>🔓 공개 방식 비교</h3>
+      <p class="hint">모델을 어떻게 공개하느냐에 따라 두 갈래로 나뉩니다.</p>
+      <div class="seg" id="openSeg">
+        <button class="active" data-open="closed">🔒 폐쇄형</button>
+        <button data-open="open">🔓 개방형</button>
+      </div>
+      <div id="openDesc" style="margin-top:14px;"></div>
+      <p class="muted" style="font-size:13.5px; margin-top:14px; padding-top:14px; border-top:1px dashed var(--line-2);">
+        ⚖️ <b>핵심 맞바꿈(trade-off)</b> — <b>폐쇄형</b>은 성능이 앞서지만 자료를 밖으로 보내야 하고,
+        <b>개방형</b>은 내부망에서 안전하게 돌릴 수 있는 대신 성능이 다소 낮습니다.
+        그래서 기관은 <b>“보안이 중요하면 오픈 모델 + 파인튜닝”</b>을 자주 택합니다. (↓ 아래에서 직접 만들어 보세요)
+      </p>
+    </div>
+
+    <!-- 별도 섹션: GPT vs ChatGPT (엔진 vs 완성차) -->
+    <div style="margin-top:44px; border-top:1px solid var(--line);"></div>
+    <h2 class="sec-title" style="font-size:28px; margin-top:30px;">GPT vs ChatGPT</h2>
+    <p class="sec-lead"><b>GPT는 ‘엔진’, ChatGPT는 그 엔진을 얹은 ‘완성차’</b> 입니다.</p>
+
+    <div class="grid g2" style="margin-top:18px;">
+      <div class="card"><span class="ico">🌾→🍞</span><h3>GPT = 밀가루 / ChatGPT = 빵</h3><p>재료(GPT)만으로는 먹기 어렵고, 빵(ChatGPT)으로 가공해야 누구나 씁니다.</p></div>
+      <div class="card"><span class="ico">⚙️→🚗</span><h3>GPT = 전기모터 / ChatGPT = 테슬라</h3><p>핵심 동력(GPT)에 차체·핸들·화면(ChatGPT)을 얹어 완성품이 됩니다.</p></div>
+    </div>
+
+    <div class="block">
+      <h3>🔧 직접 해보기 — 엔진에 기능을 하나씩 얹어 완성차 만들기</h3>
+      <p class="hint">버튼을 누를 때마다 <b>GPT(엔진)</b> 에 기능이 하나씩 붙어 <b>ChatGPT(완성차)</b> 가 됩니다.</p>
+      <div class="device" style="max-width:560px;">
+        <div class="device-title" id="ccTitle">⚙️ GPT (엔진) — 그 자체로는 ‘다음 단어 예측기’</div>
+        <p class="muted" style="font-size:13px;">아래 버튼으로 기능을 얹어 보세요.</p>
+        <div id="ccFeatures">
+          <div class="feature" data-i="0"><span class="dot"></span> 💬 채팅 화면(UI) — 사람이 편하게 대화</div>
+          <div class="feature" data-i="1"><span class="dot"></span> 🧠 대화 기억 — 앞에서 한 말을 이어 감</div>
+          <div class="feature" data-i="2"><span class="dot"></span> 📎 파일 업로드 — 문서를 읽고 답함</div>
+          <div class="feature" data-i="3"><span class="dot"></span> 🎙️ 음성 대화 — 말로 묻고 들음</div>
+        </div>
+      </div>
+      <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn" id="ccAdd">기능 하나 얹기 ▶</button>
+        <button class="btn ghost" id="ccReset">처음으로</button>
+      </div>
+    </div>
+
+    <div style="margin-top:44px; border-top:1px solid var(--line);"></div>
+
+    <!-- 인터랙티브: 오픈 모델을 파인튜닝해 '우리 기관 전용 AI' 만들기 -->
+    <div class="block">
+      <h3>🏗️ 직접 해보기 — 오픈 모델로 ‘재정경제부 전용 AI’ 만들기</h3>
+      <p class="hint">폐쇄형 모델은 우리가 손댈 수 없지만, <b>개방형(오픈) 모델</b>은 내려받아
+        <b>우리 데이터로 다시 가르칠(파인튜닝)</b> 수 있습니다. 4단계로 직접 만들어 보세요.</p>
+
+      <!-- 4단계 진행 표시 -->
+      <div class="ft-steps" id="ftSteps">
+        <div class="ft-step on"><span class="sn">1</span>오픈 모델 가져오기</div>
+        <div class="ft-step"><span class="sn">2</span>학습 데이터 고르기</div>
+        <div class="ft-step"><span class="sn">3</span>파인튜닝(추가 학습)</div>
+        <div class="ft-step"><span class="sn">4</span>전용 모델 완성</div>
+      </div>
+
+      <!-- 1단계: 베이스 모델 -->
+      <div class="ft-sub">① 토대가 될 오픈 모델 (이미 똑똑하지만, 우리 기관은 아직 모름)</div>
+      <div class="chips">
+        <div class="chip"><b>Llama 3</b><span>Meta · 오픈</span></div>
+        <div class="chip"><b>Qwen</b><span>알리바바 · 오픈</span></div>
+        <div class="chip"><b>Gemma</b><span>Google · 오픈</span></div>
+      </div>
+
+      <!-- 2단계: 학습 데이터 고르기 -->
+      <div class="ft-sub" style="margin-top:18px;">② 무엇을 더 가르칠까요? (재료 = 우리 데이터를 골라 보세요)</div>
+      <div class="pick-grid" id="ftPicks">
+        <button class="pick on" data-k="budget"><span class="box">✓</span><span class="pt"><b>📒 예산·재정 용어집</b><span>기관 전문용어를 이해</span></span></button>
+        <button class="pick on" data-k="rule"><span class="box">✓</span><span class="pt"><b>📑 내부 규정·지침</b><span>우리 규정에 맞춰 답변</span></span></button>
+        <button class="pick" data-k="style"><span class="box">✓</span><span class="pt"><b>✍️ 과거 보고서 문체</b><span>공문서 말투로 작성</span></span></button>
+        <button class="pick" data-k="faq"><span class="box">✓</span><span class="pt"><b>💬 자주 묻는 질문(FAQ)</b><span>민원·문의에 정확히</span></span></button>
+      </div>
+
+      <!-- 3단계: 학습 시작 버튼 + 진행 막대 -->
+      <div style="margin-top:18px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <button class="btn" id="ftRun">③ 파인튜닝 시작 ▶</button>
+        <button class="btn ghost" id="ftReset">처음으로</button>
+        <span class="muted" style="font-size:13px;" id="ftPickMsg"></span>
+      </div>
+      <div class="ft-progress" id="ftProgWrap" style="display:none;">
+        <div class="ft-track"><div class="ft-bar" id="ftBar"></div></div>
+        <div class="ft-plog" id="ftLog"></div>
+      </div>
+
+      <!-- 4단계: 같은 질문에 대한 Before / After 비교 -->
+      <div class="ft-q">같은 질문을 던져 봅니다 👉 <b>“예비비를 다른 곳에 쓰려면 어떻게 하나요?”</b></div>
+      <div class="ft-compare">
+        <div class="ft-card before">
+          <span class="lab">🔹 파인튜닝 전 (오픈 모델 그대로)</span>
+          <div class="a">일반적으로 예비비는 예측하지 못한 지출에 대비한 예산이며, 사용하려면 보통 내부 승인 절차가 필요합니다. <span class="muted">(두루뭉술 — 우리 기관 규정·용어는 모름)</span></div>
+        </div>
+        <div class="ft-card after">
+          <span class="lab">🔸 파인튜닝 후 (재정경제부 전용)</span>
+          <div class="a" id="ftAfter">아직 학습 전입니다. <span class="muted">위 ③ 버튼을 눌러 파인튜닝을 실행해 보세요.</span></div>
+        </div>
+      </div>
+      <p class="muted" style="font-size:13px; margin-top:14px;">👉 핵심: <b>오픈 모델 = ‘똑똑한 신입’</b>, <b>파인튜닝 = ‘우리 업무를 가르치는 교육’</b>.
+        같은 두뇌라도 무엇을 더 가르치느냐에 따라 ‘우리 기관 전용 AI’가 됩니다.</p>
+    </div>
+
+    <!-- 인터랙티브: N2SF 등급(C/S/O)별 AI 파이프라인 라우팅 -->
+    <div class="block">
+      <h3>🔀 그래서 — 모델 ‘하나’가 아니라 등급별 AI 파이프라인</h3>
+      <p class="hint">국정원 <b>N2SF(국가 망 보안체계)</b>는 데이터를 <b>C(기밀)·S(민감)·O(공개)</b> 세 등급으로 나눕니다.
+        그래서 AI도 <b>모델 하나로 다 하지 않고</b>, 업무의 보안등급에 맞는 모델로 보내는 <b>파이프라인</b>으로 짭니다.
+        아래 업무를 눌러 보세요 — 어디로 보내지는지 보여 줍니다.</p>
+
+      <!-- 예시 업무 버튼 -->
+      <div class="ex-btns" id="pipeBtns">
+        <button data-tier="c" data-task="국방·외교 기밀 문서 요약">🛡️ 국방·외교 기밀 문서 요약</button>
+        <button data-tier="c" data-task="정보·수사 자료 분석">🕵️ 정보·수사 자료 분석</button>
+        <button data-tier="s" data-task="내부 예산 보고서 초안">📊 내부 예산 보고서 초안</button>
+        <button data-tier="s" data-task="직원 인사·민원 데이터 정리">👥 직원 인사·민원 데이터</button>
+        <button data-tier="o" data-task="대외 보도자료 작성">📰 대외 보도자료 작성</button>
+      </div>
+
+      <!-- 파이프라인 -->
+      <div class="pipe">
+        <div class="pipe-node">🔀 N2SF 등급 분류기 <span class="muted" style="font-weight:500; font-size:13px;">— 데이터 민감도에 따라 경로 결정</span></div>
+        <div class="pipe-arrow">▼</div>
+        <div class="lanes" id="pipeLanes">
+          <div class="lane c" data-tier="c">
+            <div class="lane-top"><span class="grade">C · 기밀</span><span class="badge-on">▶ 처리</span></div>
+            <div class="env">🔒 내부망(폐쇄망) 전용<br>외부 전송 금지</div>
+            <div class="model"><span class="mtag">쓰는 모델</span><b>오픈 모델 파인튜닝 / 독자 파운데이션 모델</b> (on-prem 직접 운영)</div>
+            <div class="eg">예: 국방·외교·정보·수사 자료</div>
+          </div>
+          <div class="lane s" data-tier="s">
+            <div class="lane-top"><span class="grade">S · 민감</span><span class="badge-on">▶ 처리</span></div>
+            <div class="env">🛡️ 통제된 환경<br>(접근·로그 통제)</div>
+            <div class="model"><span class="mtag">쓰는 모델</span><b>프라이빗 배포 오픈모델 / 통제형 클라우드</b></div>
+            <div class="eg">예: 대부분의 내부 업무자료</div>
+          </div>
+          <div class="lane o" data-tier="o">
+            <div class="lane-top"><span class="grade">O · 공개</span><span class="badge-on">▶ 처리</span></div>
+            <div class="env">🌐 외부 클라우드<br>사용 가능</div>
+            <div class="model"><span class="mtag">쓰는 모델</span><b>폐쇄형 상용 API(Claude·GPT)</b> / 오픈소스</div>
+            <div class="eg">예: 공개 보도자료·법령·통계</div>
+          </div>
+        </div>
+        <div class="pipe-result" id="pipeResult">위 예시 업무를 누르면, N2SF 등급과 처리 모델이 여기에 표시됩니다.</div>
+      </div>
+
+      <p class="muted" style="font-size:13px; margin-top:16px;">💡 핵심: 보안 등급에 따라 모델을 갈아 끼우는 <b>하이브리드 AI 파이프라인</b> —
+        기밀(C)은 내부망 오픈모델로 안전하게, 공개(O)는 강력한 클라우드 모델(Claude·GPT)로 빠르게.
+        <b>한 기관 안에서 여러 모델이 협업</b>합니다. (우리가 배울 <b>Claude Code</b>는 O·S 업무에서 큰 힘을 발휘합니다.)</p>
+      <p class="muted" style="font-size:12px; margin-top:6px;">※ 위 매핑은 개념 이해를 위한 단순화이며, 실제 등급 판정·보안통제 항목은 <b>N2SF 공식 가이드라인</b>을 따릅니다.</p>
+    </div>
+
+    <div class="nav-foot">
+      <span></span>
+      <button class="btn" data-go="1">다음: IDE란? →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 섹션 2 : IDE ====================== -->
+  <section class="slide" id="s2">
+    <span class="sec-tag">SECTION 02</span>
+    <h2 class="sec-title">IDE란 무엇인가</h2>
+    <p class="sec-lead"><b>IDE</b> = <b>I</b>ntegrated <b>D</b>evelopment <b>E</b>nvironment (통합 개발 환경) —
+      <b>코드를 쓰고 · 실행하고 · 고치는 일을 한곳에서</b> 하는 작업 공간입니다.</p>
+
+    <!-- IDE 한 화면 구성: 여러 도구가 한 화면에 모여 있다 -->
+    <div class="block">
+      <h3>🗂️ IDE는 ‘여러 도구가 한 화면에’ 모여 있습니다</h3>
+      <p class="hint">실제 IDE 한 창에는 <b>파일 트리 · 편집기 · AI 에이전트 · 터미널</b> 이 함께 들어 있습니다. (Claude Code는 이 중 ‘AI 에이전트 + 터미널’ 자리에서 움직입니다)</p>
+      <div class="ide-window">
+        <div class="topbar">
+          <span class="dotwin" style="width:11px;height:11px;border-radius:50%;background:#ff5f57"></span>
+          <span class="dotwin" style="width:11px;height:11px;border-radius:50%;background:#febc2e"></span>
+          <span class="dotwin" style="width:11px;height:11px;border-radius:50%;background:#28c840"></span>
+          <span class="nm">재정경제부-프로젝트 — VS Code</span>
+        </div>
+        <div class="ide-grid">
+          <!-- ① 파일 트리(탐색기) -->
+          <div class="ide-pane tree">
+            <div class="plabel">📁 파일 트리</div>
+            <div class="tree-item">📂 보고서</div>
+            <div class="tree-item on">📄 hello.py</div>
+            <div class="tree-item">📄 예산안.xlsx</div>
+            <div class="tree-item">📄 index.html</div>
+          </div>
+          <!-- ② 편집기 -->
+          <div class="ide-pane editor-pane">
+            <div class="plabel">✏️ 편집기</div>
+            <span class="c" style="color:#9aa6b6;"># 인사 프로그램</span><br>
+            <span class="k" style="color:#0b62c4;font-weight:700;">def</span> <span class="f" style="color:#7a3ad6;">greet</span>(name):<br>
+            &nbsp;&nbsp;<span class="k" style="color:#0b62c4;font-weight:700;">return</span> <span class="s" style="color:#0a7d34;">"안녕 "</span>+name
+          </div>
+          <!-- ③ AI 에이전트 -->
+          <div class="ide-pane agent">
+            <div class="plabel">🤖 AI 에이전트</div>
+            <div class="agent-bubble me">인사 함수 만들어줘</div>
+            <div class="agent-bubble">greet() 함수를 추가했어요 ✅</div>
+          </div>
+          <!-- ④ 터미널(CLI) -->
+          <div class="ide-pane term">
+            <div class="plabel">⌨️ 터미널 (CLI)</div>
+            <div class="tline"><span class="tg">$</span> python hello.py</div>
+            <div class="tline">안녕 재정경제부</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid g3">
+      <div class="card"><span class="ico">🎨</span><h3>문법 색칠</h3><p>역할별로 색이 달라 코드를 한눈에 읽습니다.</p></div>
+      <div class="card"><span class="ico">⌨️</span><h3>자동완성</h3><p>입력 중 다음에 올 코드를 추천해 줍니다.</p></div>
+      <div class="card"><span class="ico">🚥</span><h3>실시간 오류검사</h3><p>틀린 곳에 빨간 줄을 그어 즉시 알려 줍니다.</p></div>
+    </div>
+    <p class="muted center" style="margin-top:18px;">대표 IDE로는 <b>VS Code</b>(표준)와, AI가 결합된 <b>Cursor</b> 가 널리 쓰입니다.</p>
+
+    <!-- 왜 중요한가 — '메모장 코딩' vs 'IDE 코딩' 직접 토글 -->
+    <div class="block">
+      <h3>🤔 그래서 왜 중요한가요? — ‘메모장’ ↔ ‘IDE’ 직접 바꿔 보기</h3>
+      <p class="hint">아래 토글을 눌러 보세요. <b>똑같은 코드</b>가 메모장에선 밋밋하지만,
+        IDE로 바꾸면 <b>색칠 · 자동완성 · 오류 빨간줄 · 실행 버튼</b>이 하나씩 살아납니다.</p>
+
+      <div class="seg" id="ideSeg" style="margin-bottom:14px;">
+        <button class="active" data-ide="off">📝 메모장</button>
+        <button data-ide="on">🧰 IDE</button>
+      </div>
+
+      <div class="ide-demo">
+        <!-- 왼쪽: 살아 움직이는 에디터 -->
+        <div class="editor plain" id="editor">
+          <div class="topbar">
+            <span class="dotwin" style="background:#ff5f57"></span>
+            <span class="dotwin" style="background:#febc2e"></span>
+            <span class="dotwin" style="background:#28c840"></span>
+            <span class="muted" style="font-size:12px; margin-left:6px;" id="edName">hello.py — 메모장</span>
+          </div>
+          <div class="codearea">
+            <div class="gutter">1
+2
+3
+4
+5</div>
+<div class="code"><span class="c"># 간단한 인사 프로그램</span>
+<span class="k">def</span> <span class="f">greet</span>(name):
+    <span class="k">return</span> <span class="s">"안녕하세요, "</span> + name
+<span class="ide-feature" style="color:#9aa6b6;">                              ┌ 자동완성: name.upper()</span>
+<span class="k">print</span>(<span class="f">greet</span>(<span class="s">"재정경제부"</span>)<span class="squiggle ide-feature">  ← 닫는 괄호 빠짐!</span></div>
+          </div>
+          <div class="runbar">
+            <button class="btn sm ide-feature" id="runBtn">▶ 실행</button>
+            <span class="muted ide-feature" style="font-size:12.5px;">⚠️ 5번째 줄: 괄호가 맞지 않습니다 (실시간 오류 검사)</span>
+            <span class="muted" id="plainNote" style="font-size:12.5px;">메모장에선 색칠·자동완성·오류검사·실행이 없습니다.</span>
+          </div>
+          <div class="runbar" id="runOut" style="display:none; background:#0c1424; color:#d7e0ee; font-family:ui-monospace,monospace;">
+            <span class="prompt" style="color:#56d364;">▶ 출력:</span>&nbsp; 안녕하세요, 재정경제부
+          </div>
+        </div>
+
+        <!-- 오른쪽: 켜질 때마다 불 들어오는 기능 체크리스트 -->
+        <div class="feat-list" id="ideFeatList">
+          <div class="feat-row" data-f="color"><span class="fdot"></span><b>🎨 문법 색칠</b><span>역할별로 색이 달라 한눈에</span></div>
+          <div class="feat-row" data-f="auto"><span class="fdot"></span><b>⌨️ 자동완성</b><span>다음 코드를 추천</span></div>
+          <div class="feat-row" data-f="err"><span class="fdot"></span><b>🚥 실시간 오류검사</b><span>틀린 곳에 빨간 줄</span></div>
+          <div class="feat-row" data-f="run"><span class="fdot"></span><b>▶ 한 화면에서 실행</b><span>창을 옮길 필요 없이 바로</span></div>
+        </div>
+      </div>
+
+      <p class="muted" style="font-size:13px; margin-top:14px;">👉 핵심: IDE는 <b>‘실수를 미리 잡아주고, 흩어진 작업을 한곳에 모아주는 작업대’</b> 입니다.
+        그래서 <b>Claude Code</b> 같은 AI 도구도 바로 이 IDE 위에서 함께 움직입니다.</p>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="0">← 이전</button>
+      <button class="btn" data-go="2">다음: CLI란? →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 섹션 4 : CLI ====================== -->
+  <section class="slide" id="s3">
+    <span class="sec-tag">SECTION 03</span>
+    <h2 class="sec-title">CLI란 무엇인가</h2>
+    <p class="sec-lead"><b>CLI</b> = <b>C</b>ommand <b>L</b>ine <b>I</b>nterface (명령줄 인터페이스) —
+      마우스 클릭 대신 <b>글자 명령으로 컴퓨터에 직접 일을 시키는 창구</b>입니다.</p>
+
+    <div class="block">
+      <h3>🧪 직접 해보기 — 가짜 터미널</h3>
+      <p class="hint">아래 명령어 버튼을 누르면, 진짜 터미널처럼 결과가 한 글자씩 출력됩니다. (안전한 예시 · 실제 실행 아님)</p>
+      <div class="terminal">
+        <div class="tbar">
+          <span class="dotwin" style="background:#ff5f57"></span>
+          <span class="dotwin" style="background:#febc2e"></span>
+          <span class="dotwin" style="background:#28c840"></span>
+          <span class="tt">terminal — 재정경제부</span>
+        </div>
+        <div class="term-body" id="termBody">
+          <div class="ln"><span class="out">명령어 버튼을 눌러 보세요 👇</span></div>
+        </div>
+      </div>
+      <div class="term-cmds" id="termCmds">
+        <button data-cmd="claude">claude</button>
+        <button data-cmd="ls">ls</button>
+        <button data-cmd="mkdir">mkdir 보고서</button>
+        <button data-cmd="pwd">pwd</button>
+        <button data-cmd="clear">clear</button>
+      </div>
+    </div>
+
+    <!-- 왜 중요한가 — CLI는 강력하지만, 지금 AI 도입의 병목이기도 하다 -->
+    <div class="block">
+      <h3>⚠️ 그런데 — 지금 AI 도입의 ‘병목’ 중 하나가 바로 이 CLI입니다</h3>
+      <p class="hint">요즘 강력한 AI 코딩 도구(예: <b>Claude Code</b>)는 GUI 버튼이 아니라 <b>CLI(터미널)</b> 를 기본 무대로 삼습니다.
+        성능은 뛰어나지만, 현장에 퍼지지 못하게 막는 두 가지 장벽이 있습니다.</p>
+
+      <div class="grid g2" style="margin-top:16px;">
+        <div class="card">
+          <span class="ico">⌨️</span>
+          <h3>① CLI 환경에 대한 낯섦</h3>
+          <p>대부분의 실무자는 <b>마우스·클릭(GUI)</b> 에 익숙합니다. 검은 화면에 명령어를 직접 쳐야 하는 CLI는
+            처음엔 진입장벽이 높아, <b>“좋다는 건 알겠는데 손이 안 가는”</b> 상태가 됩니다.</p>
+        </div>
+        <div class="card">
+          <span class="ico">🚚</span>
+          <h3>② 배포·설치의 어려움</h3>
+          <p>설치·권한·내부망 정책·버전 관리 등 <b>‘조직 전체에 안전하게 깔고 운영하는 일(배포)’</b> 이 만만치 않습니다.
+            개인 PC에선 써도, <b>기관 전체로 확산</b>시키기까지가 또 다른 산입니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="1">← 이전</button>
+      <button class="btn" data-go="3">다음: 왜 클로드가 핫한가 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 섹션 4 : 왜 클로드가 핫한가 ====================== -->
+  <section class="slide" id="s4">
+    <span class="sec-tag">SECTION 04</span>
+    <h2 class="sec-title">요즘 ‘클로드(Claude)’가 핫한 이유</h2>
+    <p class="sec-lead">짧은 기간에 <b>점유율 · 기업시장 · 코딩능력 · 화제성</b> 모든 면에서 급부상했습니다.</p>
+
+    <div class="stat-cards">
+      <div class="stat"><div class="big">①</div><div class="lab"><b>유료 사용자 폭증</b><br>유료 구독 2026년 약 2배 (+75%)</div></div>
+      <div class="stat"><div class="big">②</div><div class="lab"><b>기업시장 첫 추월</b><br>34.4% vs OpenAI 32.3%</div></div>
+      <div class="stat"><div class="big">③</div><div class="lab"><b>압도적 코딩능력</b><br>SWE-bench 80%대 (실무 문제)</div></div>
+      <div class="stat"><div class="big">④</div><div class="lab"><b>화제성 사태</b><br>美 정부, Fable·Mythos 중단(2026.6)</div></div>
+    </div>
+
+    <div class="block">
+      <h3>📈 기업 시장에서 Claude가 OpenAI를 추월</h3>
+      <p class="hint">개인 시장은 여전히 <b>ChatGPT</b>가 1위지만, <b>기업 시장</b>에선 Claude가 앞섭니다. <span class="muted">(막대는 탭에 들어오면 자랍니다)</span></p>
+      <div class="chart" id="chartB" style="grid-template-columns:1fr; justify-items:center;">
+        <div class="col"><div class="pair">
+          <div class="vbar claude" data-h="100"><span class="vv">34.4%</span></div>
+          <div class="vbar openai" data-h="94"><span class="vv">32.3%</span></div>
+        </div><div class="xlab">Claude vs OpenAI · 기업 도입률(2026.5)</div></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--navy)"></i>Claude</span>
+        <span><i style="background:#10a37f"></i>OpenAI (ChatGPT)</span>
+      </div>
+      <p class="muted" style="font-size:13px; margin-top:14px;">📌 사상 첫 추월 — 그 <b>동력</b>은 <b>Claude Code</b> 등 개발 도구에 대한 기업 수요였습니다.</p>
+    </div>
+
+    <!-- SWE-bench: '코딩 80%'가 무슨 뜻인지 쉽게 -->
+    <div class="block">
+      <h3>📏 ‘AI 코딩 실력’은 어떻게 재나요? — SWE-bench</h3>
+      <p class="hint"><b>SWE-bench</b>는 <b>S</b>oftware <b>E</b>ngineering(소프트웨어 개발) 실력을 재는 시험이라는 뜻입니다.
+        위 <b>③ 코딩능력 80%대</b>의 근거가 바로 이 시험으로, 장난감 문제가 아니라
+        <b>실제 오픈소스(GitHub)에 올라온 진짜 버그</b>를 AI가 직접 고치게 합니다.</p>
+      <div style="display:grid; gap:12px; margin-top:14px;">
+        <div class="to-step"><span class="to-num">1</span><div>실제 GitHub 프로젝트의 <b>진짜 버그·이슈</b>를 줍니다. <span class="muted">(실무에서 마주치는 그대로)</span></div></div>
+        <div class="to-step"><span class="to-num">2</span><div>AI가 코드를 읽고 <b>직접 수정(패치)</b>을 만들어 냅니다.</div></div>
+        <div class="to-step"><span class="to-num">3</span><div>원래 <b>실패하던 테스트가 통과하면 정답</b>으로 자동 채점. <span class="muted">(사람 주관 없이 객관적)</span></div></div>
+        <div class="to-step"><span class="to-num">4</span><div>맞힌 비율이 점수. <b>80%대 = 실제 이슈 5개 중 4개를 사람 손 없이 해결</b>한다는 뜻.</div></div>
+      </div>
+      <div class="to-result">
+        <span class="muted" style="font-size:13px;">100점 만점 환산</span>
+        <div style="font-size:20px; letter-spacing:2px; margin-top:4px;">🟩🟩🟩🟩⬜ <b style="color:var(--navy); letter-spacing:normal;">≈ 80점</b></div>
+      </div>
+      <p class="muted" style="font-size:13px; margin-top:12px;">👉 그래서 “코딩 80%+”는 시험 점수 자랑이 아니라,
+        <b>실무 문제를 실제로 풀어낸 비율</b>이라 의미가 큽니다. (프런티어 모델 대략 54~81% 구간)</p>
+
+      <div style="margin-top:18px; padding-top:14px; border-top:1px dashed var(--line-2);">
+        <p class="muted" style="font-size:13px; margin-bottom:10px;">📋 이 외에도 — AI 코딩 실력을 재는 방법은 여러 가지입니다. <span class="muted">(보는 각도가 달라 함께 봅니다)</span></p>
+        <div class="grid g3">
+          <div class="card"><span class="ico">🧩</span><h3>코딩 테스트 풀기</h3><p>알고리즘·코딩 문제를 정확히 푸는지. <span class="muted">학습 이후 나온 문제로 ‘외워 풀기’ 방지 (LiveCodeBench).</span></p></div>
+          <div class="card"><span class="ico">🖥️</span><h3>터미널 실전</h3><p>진짜 터미널에서 작업을 <b>스스로 끝까지</b> 해내는지 <span class="muted">(Terminal-Bench).</span></p></div>
+          <div class="card"><span class="ico">🙋</span><h3>사람 블라인드 투표</h3><p>두 AI의 답을 사람이 비교해 더 나은 쪽에 투표 → 순위 <span class="muted">(LMArena).</span></p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 최근 화제: Mythos & Fable 사태 타임라인 -->
+    <div class="block">
+      <h3>🗞️ 최근 화제 — Mythos & Fable ‘사태’</h3>
+      <p class="hint">2026년 상반기, 클로드는 <b>역대급 성능</b>과 <b>안전·규제 논쟁</b>의 한복판에 서며 화제가 됐습니다.
+        사실관계를 시간순으로 정리하면 —</p>
+      <div class="tl">
+        <div class="tl-row">
+          <span class="tl-date">2026.4.7</span>
+          <div class="tl-body"><b>Mythos 공개 + Project Glasswing</b> — Anthropic이 차세대 모델 <b>Mythos Preview</b>를 공개했습니다.
+            주요 OS·브라우저에서 <b>제로데이 취약점 1,000건 이상</b>을 찾아낼 만큼 강력해, <b>일반에는 공개하지 않고</b>
+            방어 목적으로 약 40개 기관에만 제한 제공하는 <b>Project Glasswing</b>(애플·구글·MS·엔비디아·AWS·팔로알토 등)을 함께 출범했습니다.
+            <span class="muted">(앞서 3월 26일 내부 문서 유출로 Mythos의 존재가 먼저 알려졌습니다.)</span></div>
+        </div>
+        <div class="tl-row">
+          <span class="tl-date">2026.6.초</span>
+          <div class="tl-body"><b>빠른 확산</b> — Mythos 접근이 EU와 <b>150여 개 기관(15개국 이상)</b>으로 확대됐습니다.</div>
+        </div>
+        <div class="tl-row">
+          <span class="tl-date">2026.6.9</span>
+          <div class="tl-body"><b>Fable 5 일반 공개</b> — <b>Mythos급 성능을 안전하게 다듬어 처음으로 일반에 공개</b>한 모델입니다.
+            소프트웨어 개발·지식 업무·과학 등 대부분의 벤치마크에서 최고 수준(SOTA)을 기록했습니다.
+            (정부 인접 사이버보안용 제한판 <b>Mythos 5</b>도 함께 출시) “AI가 너무 위험해지고 있다”는 경고 며칠 뒤의 공개라 더 화제가 됐습니다.</div>
+        </div>
+        <div class="tl-row">
+          <span class="tl-date">2026.6.12</span>
+          <div class="tl-body"><b>중단 ‘사태’</b> — 공개 <b>사흘 만에</b> <b>美 정부가 국가안보 우려로 수출통제를 지시</b>하자,
+            Anthropic은 <b>Fable 5·Mythos 5를 전 세계에서 중단</b>했습니다. 사유는 Fable 5의 ‘탈옥(jailbreak)’ 보고였는데,
+            실제로는 <b>보안 방어자들이 흔히 쓰는 코드 분석 기능</b>이었습니다. Anthropic은
+            “좁은 탈옥 하나로 <b>수억 명이 쓰는 모델을 리콜하는 건 부당</b>하다”며 공개 반박했습니다.</div>
+        </div>
+      </div>
+      <p class="muted" style="font-size:13px; margin-top:14px;">👉 핵심: <b>강력함</b>(취약점까지 찾아내는 코딩 실력)과
+        그로 인한 <b>안전·규제 논쟁</b>이 맞물리며, 클로드는 ‘성능’과 ‘화제성’ 모두에서 주목받고 있습니다.</p>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="2">← 이전</button>
+      <button class="btn" data-go="4">다음: Claude vs Claude Code →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 섹션 5 : Claude vs Claude Code ====================== -->
+  <section class="slide" id="s5">
+    <span class="sec-tag">SECTION 05</span>
+    <h2 class="sec-title">Claude vs Claude Code</h2>
+    <p class="sec-lead">앞에서 본 <b>‘엔진 vs 완성차’</b> 처럼 — <b>같은 두뇌(Claude 모델)를 다른 껍데기에 얹은 두 제품</b>입니다.</p>
+
+    <table class="cmp">
+      <thead>
+        <tr><th>구분</th><th>🟦 Claude (채팅 앱)</th><th>🟥 Claude Code (개발 도구)</th></tr>
+      </thead>
+      <tbody>
+        <tr><th>정체</th><td class="col-claude">LLM을 얹은 <b>채팅 앱</b></td><td class="col-code">LLM을 얹은 <b>개발 도구</b></td></tr>
+        <tr><th>어디서</th><td>웹 · 모바일 앱</td><td>터미널(CLI) · IDE</td></tr>
+        <tr><th>누가</th><td>누구나</td><td>주로 개발자</td></tr>
+        <tr><th>무엇을</th><td>대화 · 글쓰기 · 질문답변</td><td>코드 작성 · 수정 · 실행</td></tr>
+        <tr><th>형태</th><td>묻고 답을 받음</td><td>AI가 <b>직접 파일을 수정</b></td></tr>
+      </tbody>
+    </table>
+
+    <p class="sec-lead" style="margin-top:22px;">💡 한 줄 요약 — <b>같은 두뇌(Claude 모델)를 다른 껍데기에 얹은 두 제품</b></p>
+
+    <div class="formula">
+      <div class="row">
+        <div class="piece"><div class="emoji">🧠</div><b>LLM</b><span>두뇌 (Claude 모델)</span></div>
+        <div class="op">+</div>
+        <div class="piece"><div class="emoji">🧰</div><b>IDE</b><span>작업대</span></div>
+        <div class="op">+</div>
+        <div class="piece"><div class="emoji">✋</div><b>CLI</b><span>손</span></div>
+        <div class="op">=</div>
+        <div class="piece" style="border-color:var(--navy);"><div class="emoji">🤖</div><b>Claude Code</b><span>우리가 배울 도구</span></div>
+      </div>
+      <div class="result">정리: <b>LLM(두뇌)</b> + <b>IDE(작업대)</b> + <b>CLI(손)</b> = 우리가 배울 <b>Claude Code</b></div>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="3">← 이전</button>
+      <button class="btn" data-go="5">다음: Claude Code 쓰는 3가지 방법 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 섹션 6 : Claude Code 쓰는 3가지 방법 ====================== -->
+  <section class="slide" id="s7">
+    <span class="sec-tag">SECTION 06</span>
+    <h2 class="sec-title">Claude Code를 쓰는 3가지 방법</h2>
+    <p class="sec-lead"><b>Claude Code는 ‘어디서 쓰느냐’에 따라 역할이 달라집니다.</b>
+      같은 두뇌라도 무대에 따라 — 가볍게 물어보는 도구가 되기도, 프로젝트 전체를 고치는 손이 되기도 합니다.</p>
+
+    <!-- 탭 버튼 -->
+    <div class="cc3-tabs" id="cc3Tabs">
+      <button class="cc3-tab active" data-cc="web"><span class="ic">🌐</span><b>웹·클라우드에서</b><span class="sub">가장 쉬움</span></button>
+      <button class="cc3-tab" data-cc="ide"><span class="ic">🧰</span><b>IDE 확장으로</b><span class="sub">비개발자 입문 실습</span></button>
+      <button class="cc3-tab" data-cc="cli"><span class="ic">⌨️</span><b>CLI에서 직접</b><span class="sub">자동화·연동</span></button>
+    </div>
+
+    <!-- 패널 1: 웹·클라우드 (Claude Code on the web) -->
+    <div class="cc3-content show" data-cc="web">
+      <div class="cc3-head">
+        <span class="cc3-ic">🌐</span>
+        <div><h3>웹·클라우드에서 쓰기 (claude.ai/code)</h3><p class="muted">설치 없이 <b>브라우저에서</b> Claude Code에게 일을 맡기면, <b>클라우드</b>가 작업하고 결과를 정리해 주는 방식</p></div>
+        <span class="cc3-badge">가장 쉬움</span>
+      </div>
+      <div class="cc3-grid">
+        <div class="cc3-box good"><span class="t">👍 장점</span><p><b>설치가 필요 없음</b>. 브라우저(휴대폰 포함)에서 작업을 맡기면 <b>클라우드가 알아서 처리</b>하고, 여러 작업을 동시에 돌릴 수도 있습니다.</p></div>
+        <div class="cc3-box bad"><span class="t">⚠️ 단점</span><p>GitHub 저장소에 연결해 변경을 <b>PR(검토 요청)로</b> 받는 방식이라 <b>GitHub·PR 개념</b>이 조금 필요합니다. <span class="muted">(현재 Pro/Max/Team 베타)</span></p></div>
+        <div class="cc3-box who"><span class="t">🙋 추천 대상</span><p>설치 없이 <b>가볍게 시작</b>하려는 사람, 입문자, 외부에서·휴대폰으로 맡기고 싶은 사람</p></div>
+      </div>
+      <div class="cc3-cmds">
+        <span class="t">💡 이렇게 말해보세요</span>
+        <div class="cc3-cmd">이 저장소 구조를 분석하고 실행 방법을 알려줘</div>
+        <div class="cc3-cmd">이 버그를 고쳐서 PR로 올려줘</div>
+      </div>
+    </div>
+
+    <!-- 패널 2: IDE 확장 -->
+    <div class="cc3-content" data-cc="ide">
+      <div class="cc3-head">
+        <span class="cc3-ic">🧰</span>
+        <div><h3>Cursor 같은 IDE 확장으로 쓰기</h3><p class="muted">Cursor·VS Code 같은 개발환경 안에서 <b>확장 기능처럼</b> Claude를 쓰는 방식 — <b>사람이 직접 개발할 때 편합니다</b></p></div>
+        <span class="cc3-badge">비개발자 입문 실습</span>
+      </div>
+      <div class="cc3-grid">
+        <div class="cc3-box good"><span class="t">👍 장점</span><p>지금 <b>열려 있는 코드 맥락</b>을 보고 수정을 제안하고, <b>바뀐 내용을 나란히(diff) 보고 승인</b> — 비개발자도 눈으로 따라가기 쉽습니다.</p></div>
+        <div class="cc3-box bad"><span class="t">⚠️ 단점</span><p>IDE 기본 사용법은 알아야 하고, <b>CLI 전용 기능 일부는 확장에서 안 됩니다</b>(자동화·헤드리스·훅 등).</p></div>
+        <div class="cc3-box who"><span class="t">🙋 추천 대상</span><p><b>비개발자·바이브코딩 입문자</b>, 실습형 수강생, 직접 만들어보고 싶은 사람</p></div>
+      </div>
+      <div class="cc3-cmds">
+        <span class="t">💡 이렇게 말해보세요</span>
+        <div class="cc3-cmd">현재 파일 기준으로 오류를 찾아줘</div>
+        <div class="cc3-cmd">이 버튼을 누르면 결과가 화면에 보이도록 수정해줘</div>
+        <div class="cc3-cmd">이 컴포넌트를 더 깔끔하게 리팩토링해줘</div>
+      </div>
+    </div>
+
+    <!-- 패널 3: CLI -->
+    <div class="cc3-content" data-cc="cli">
+      <div class="cc3-head">
+        <span class="cc3-ic">⌨️</span>
+        <div><h3>CLI에서 Claude Code 직접 쓰기</h3><p class="muted">터미널에서 <b>claude</b> 명령으로 실행하는 방식 — <b>명령어 기반</b>이라 다른 시스템·스크립트가 AI를 불러 쓰기 좋습니다</p></div>
+        <span class="cc3-badge">자동화·연동</span>
+      </div>
+      <div class="cc3-grid">
+        <div class="cc3-box good"><span class="t">👍 장점</span><p><b>코딩 능력은 IDE 확장과 똑같습니다.</b> 다만 명령어 기반이라 <b>GitHub Actions·cron·Docker·배포 스크립트</b> 같은 <b>자동화 흐름에 끼워 넣기</b> 쉽습니다. <span class="muted">(헤드리스 모드·파이프·훅·MCP 등 자동화용 기능 풍부)</span></p></div>
+        <div class="cc3-box bad"><span class="t">⚠️ 단점</span><p>터미널·로그인·권한·<b>폴더 위치</b> 개념이 필요해, <b>사람이 손으로 직접 개발하기엔 IDE보다 덜 편할 수</b> 있습니다.</p></div>
+        <div class="cc3-box who"><span class="t">🙋 추천 대상</span><p><b>자동화·CI/CD·서버 연동</b>에 AI를 끼워 넣으려는 사람, 반복 작업을 <b>스크립트로 돌리려는</b> 실무자·개발자</p></div>
+      </div>
+      <div class="cc3-cmds">
+        <span class="t">💡 이렇게 말해보세요</span>
+        <div class="cc3-cmd">이 프로젝트 구조를 분석하고 실행 방법을 알려줘</div>
+        <div class="cc3-cmd">로그인 기능을 추가하고 필요한 파일을 수정해줘</div>
+        <div class="cc3-cmd">오류를 재현하고 원인을 찾아 고쳐줘</div>
+        <div class="cc3-cmd">묻지 말고 가능한 범위에서 끝까지 진행해줘</div>
+      </div>
+    </div>
+
+    <p class="muted" style="font-size:13.5px; margin-top:18px; padding-top:16px; border-top:1px dashed var(--line-2);">
+      👉 <b>웹(설치 없이 시작) · IDE 확장(사람이 개발할 때 편함) · CLI(자동화 시스템에 끼워 넣기 좋음)</b>.
+      <b>코딩 실력은 셋 다 같습니다</b> — 어디서·어떻게 쓰느냐(편의 vs 자동화)만 다릅니다.</p>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="4">← 이전</button>
+      <button class="btn" data-go="0">처음으로 ↺</button>
+    </div>
+  </section>
+
+</main>
+
+<footer style="border-top:1px solid var(--line); background:#fff;">
+  <div style="max-width:1080px; margin:0 auto; padding:20px; font-size:13px; color:var(--muted); text-align:center;">
+    재정경제부 임직원 교육 자료 · Claude Code 입문 · 본 페이지의 통계·시뮬레이션은 학습용 예시입니다.
+  </div>
+</footer>
+
+<!-- ===========================================================
+     [JavaScript 영역]  화면의 '동작(움직임·상호작용)'을 담당합니다.
+     · 버튼을 누르면 무엇을 할지, 애니메이션을 어떻게 줄지 정합니다.
+     · 입문자분들을 위해 각 기능 앞에 한국어 설명을 달았습니다.
+     =========================================================== -->
+<script>
+/* ---------- 0. 탭 전환 ----------
+   탭 버튼이나 '다음/이전' 버튼(data-go 속성)을 누르면 해당 섹션만 보이게 합니다. */
+const slides = document.querySelectorAll('.slide');
+const tabBtns = document.querySelectorAll('#tabBar button');
+function goTo(i){
+  i = Number(i);
+  slides.forEach((s,idx)=> s.classList.toggle('show', idx===i));
+  tabBtns.forEach((b,idx)=> b.classList.toggle('active', idx===i));
+  window.scrollTo({top:0, behavior:'smooth'});
+  // 섹션별로 처음 보일 때 애니메이션을 다시 실행
+  if(i===3) drawCharts();
+}
+// data-go 속성을 가진 모든 버튼에 클릭 동작 연결
+document.querySelectorAll('[data-go]').forEach(btn=>{
+  btn.addEventListener('click', ()=> goTo(btn.dataset.go));
+});
+
+/* ---------- 1. 섹션1: 다음 토큰 확률 시뮬레이션 ----------
+   미리 정해 둔 샘플 데이터로, '다음에 올 단어'를 확률 막대로 보여줍니다.
+   (실제 AI를 호출하지 않습니다) */
+const tokenSamples = {
+  "오늘 날씨가 정말": [["좋네요",38],["덥다",24],["춥네요",16],["흐려요",12],["맑아요",10]],
+  "점심에는 뭘 먹을": [["까",52],["지",21],["래요",14],["거예요",8],["까요",5]],
+  "재정 정책의 핵심은": [["안정",34],["성장",27],["균형",18],["효율",13],["신뢰",8]],
+  "_default": [["좋아요",31],["같아요",26],["네요",19],["군요",14],["겠죠",10]]
+};
+function renderBars(pairs){
+  const box = document.getElementById('tokenBars');
+  box.innerHTML='';
+  pairs.forEach((p,idx)=>{
+    const row = document.createElement('div');
+    row.className='bar-row';
+    row.innerHTML =
+      '<div class="bar-word">'+p[0]+'</div>'+
+      '<div class="bar-track"><div class="bar-fill'+(idx===0?' top':'')+'"></div></div>'+
+      '<div class="bar-pct">'+p[1]+'%</div>';
+    box.appendChild(row);
+    // 살짝 시간차를 두고 막대를 채워 애니메이션 효과
+    setTimeout(()=>{ row.querySelector('.bar-fill').style.width = p[1]+'%'; }, 60+idx*80);
+  });
+}
+function predictToken(){
+  const v = document.getElementById('tokenInput').value.trim();
+  const data = tokenSamples[v] || tokenSamples["_default"];
+  renderBars(data);
+  // '최종 출력' 영역 갱신: 가장 확률 높은 후보(data[0])를 골라 문장 뒤에 붙입니다.
+  const top = data[0][0];
+  document.getElementById('toBase').textContent = v + ' ';
+  const pick = document.getElementById('toPick');
+  pick.textContent = top;
+  // 다시 누를 때마다 '튀어나오는' 애니메이션을 재실행
+  pick.style.animation='none'; void pick.offsetWidth; pick.style.animation='';
+}
+document.getElementById('tokenBtn').addEventListener('click', predictToken);
+document.getElementById('tokenInput').addEventListener('keydown', e=>{ if(e.key==='Enter') predictToken(); });
+predictToken(); // 처음 화면에 기본 예시를 한 번 그려 둠
+
+/* ---------- 1-2. 섹션1: 공개 방식 토글 ---------- */
+const openTexts = {
+  closed: '<b>🔒 폐쇄형(Closed)</b> — 회사가 모델을 직접 운영하고, 사용자는 서비스·API로만 이용합니다. 내부 구조는 비공개. '
+        + '<br>👍 <b>장점</b> — 대체로 <b>최고 수준의 성능</b>, 설치 없이 바로 사용. '
+        + '<br>👎 <b>한계</b> — 자료를 <b>외부(회사 서버)로 보내야</b> 하고, 내부망에서 직접 돌리거나 파인튜닝할 수 없음. '
+        + '<br><span class="muted">대표: GPT(OpenAI) · Claude(Anthropic) · Gemini(Google)</span>',
+  open:   '<b>🔓 개방형(Open)</b> — 모델 가중치를 공개해 누구나 내려받아 직접 돌리고 변형할 수 있습니다. '
+        + '<br>👍 <b>장점</b> — <b>내부망(폐쇄망)에서 직접 운영</b> 가능 → 민감 자료를 밖으로 안 보내도 되고, <b>파인튜닝도 자유</b>. '
+        + '<br>👎 <b>한계</b> — 일반적으로 <b>최상위 폐쇄형보다 성능이 다소 낮고</b>, 서버·운영을 직접 챙겨야 함. '
+        + '<br><span class="muted">대표: Llama(Meta) · DeepSeek · Qwen · Gemma(Google)</span>'
+};
+const openDesc = document.getElementById('openDesc');
+openDesc.innerHTML = openTexts.closed;
+document.querySelectorAll('#openSeg button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('#openSeg button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    openDesc.innerHTML = openTexts[b.dataset.open];
+  });
+});
+
+/* ---------- 1-3. 섹션1: 오픈 모델 파인튜닝 만들기 데모 ----------
+   ① 학습 데이터(재료)를 토글로 고르고  ② 버튼을 누르면 진행 막대가 차오르며
+   ③ 고른 재료에 맞춰 '파인튜닝 후' 답변이 바뀝니다. (모두 시뮬레이션) */
+const ftPicks = document.querySelectorAll('#ftPicks .pick');
+const ftSteps = document.querySelectorAll('#ftSteps .ft-step');
+// 고른 데이터별로 '파인튜닝 후 답변'에 덧붙는 문장 조각
+const ftChunks = {
+  budget: '‘예비비 전용(轉用)’이라는 정확한 용어로 이해하고',
+  rule:  '<b>「예산집행지침」 해당 조항</b>에 따른 ①전용 요건 확인 → ②전용조서 작성 → ③장관 승인 절차를 단계별로 안내하며',
+  style: '공문서 문체로 “~하시기 바랍니다” 형식에 맞춰 정리하고',
+  faq:   '담당 부서·서식 위치까지 덧붙여 민원 응대용으로 바로 쓸 수 있게'
+};
+// 데이터 토글
+ftPicks.forEach(p=>{
+  p.addEventListener('click', ()=>{
+    p.classList.toggle('on');
+    p.querySelector('.box').textContent = p.classList.contains('on') ? '✓' : '';
+  });
+});
+function ftSelected(){ return [...ftPicks].filter(p=>p.classList.contains('on')).map(p=>p.dataset.k); }
+function setFtStep(n){ ftSteps.forEach((s,i)=> s.classList.toggle('on', i<=n)); }
+
+const ftBar = document.getElementById('ftBar');
+const ftLog = document.getElementById('ftLog');
+const ftAfter = document.getElementById('ftAfter');
+const ftProgWrap = document.getElementById('ftProgWrap');
+const ftPickMsg = document.getElementById('ftPickMsg');
+let ftBusy = false;
+
+document.getElementById('ftRun').addEventListener('click', ()=>{
+  if(ftBusy) return;
+  const picks = ftSelected();
+  if(picks.length===0){ ftPickMsg.textContent='⚠️ 가르칠 데이터를 1개 이상 골라 주세요.'; return; }
+  ftPickMsg.textContent='';
+  ftBusy = true;
+  setFtStep(2);                          // 3단계(학습) 활성화
+  ftProgWrap.style.display='block';
+  ftBar.style.width='0';
+  ftAfter.innerHTML='학습 중입니다… ⏳';
+  const logs = ['📥 오픈 모델 불러오는 중...', '📚 우리 데이터로 학습 중...', '🔧 가중치 조정 중...', '✅ 검증 중...'];
+  let pct = 0;
+  const timer = setInterval(()=>{
+    pct += 4;
+    ftBar.style.width = Math.min(pct,100)+'%';
+    ftLog.textContent = logs[Math.min(Math.floor(pct/26),logs.length-1)] + '  ('+Math.min(pct,100)+'%)';
+    if(pct>=100){
+      clearInterval(timer);
+      setFtStep(3);                      // 4단계(완성) 활성화
+      // 고른 재료를 자연스러운 한 문장으로 이어 붙임
+      const parts = picks.map(k=>ftChunks[k]);
+      let joined;
+      if(parts.length===1) joined = parts[0];
+      else joined = parts.slice(0,-1).join(', ') + ', 또한 ' + parts.slice(-1);
+      ftAfter.innerHTML = '“예비비를 다른 용도로 쓰는 것은 <b>예비비 전용</b>에 해당합니다.” — '
+        + joined + ' 답변합니다. <span class="muted">(우리 기관 용어·규정·문체가 반영됨)</span>';
+      ftBusy = false;
+    }
+  }, 60);
+});
+document.getElementById('ftReset').addEventListener('click', ()=>{
+  if(ftBusy) return;
+  setFtStep(0);
+  ftProgWrap.style.display='none';
+  ftBar.style.width='0'; ftLog.textContent=''; ftPickMsg.textContent='';
+  ftAfter.innerHTML='아직 학습 전입니다. <span class="muted">위 ③ 버튼을 눌러 파인튜닝을 실행해 보세요.</span>';
+});
+
+/* ---------- 섹션2: 메모장 ↔ IDE 토글 ----------
+   IDE를 켜면 에디터에 .ide 클래스를 붙여 색칠/자동완성/오류줄/실행버튼을 노출하고,
+   오른쪽 기능 체크리스트(.ide-demo)에 불이 들어오게 합니다. */
+const ideEditor = document.getElementById('editor');
+const ideDemo   = document.querySelector('.ide-demo');
+const edName    = document.getElementById('edName');
+const plainNote = document.getElementById('plainNote');
+document.querySelectorAll('#ideSeg button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('#ideSeg button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const on = b.dataset.ide==='on';
+    ideEditor.classList.toggle('ide', on);
+    ideEditor.classList.toggle('plain', !on);
+    ideDemo.classList.toggle('on', on);
+    edName.textContent = on ? 'hello.py — IDE (VS Code)' : 'hello.py — 메모장';
+    plainNote.style.display = on ? 'none' : 'inline';
+    document.getElementById('runOut').style.display='none';
+  });
+});
+document.getElementById('runBtn').addEventListener('click', ()=>{
+  document.getElementById('runOut').style.display='flex';
+});
+
+/* ---------- 1-4. 섹션1: N2SF 등급별 AI 파이프라인 라우팅 ----------
+   예시 업무 버튼을 누르면 해당 보안등급(C/S/O) 레인을 강조하고,
+   어떤 모델이 처리하는지 결과 문장을 보여 줍니다. */
+const pipeBtns = document.querySelectorAll('#pipeBtns button');
+const pipeLanes = document.querySelectorAll('#pipeLanes .lane');
+const pipeResult = document.getElementById('pipeResult');
+const tierInfo = {
+  c: { name:'C · 기밀',  model:'내부망 파인튜닝 오픈모델 / 독자 파운데이션 모델(on-prem)', why:'국가안보·외부유출 위험이 커서 외부 클라우드로 보낼 수 없음' },
+  s: { name:'S · 민감',  model:'통제 환경의 프라이빗 오픈모델 / 통제형 클라우드',         why:'내부 업무자료라 접근·로그가 통제된 환경에서 처리' },
+  o: { name:'O · 공개',  model:'폐쇄형 상용 API(Claude·GPT) / 오픈소스',                  why:'공개 가능한 정보라 가장 강력한 외부 클라우드 모델을 바로 사용' }
+};
+pipeBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const tier = btn.dataset.tier;
+    const task = btn.dataset.task;
+    const info = tierInfo[tier];
+    // 버튼 선택 표시
+    pipeBtns.forEach(b=> b.classList.toggle('sel', b===btn));
+    // 해당 등급 레인만 강조
+    pipeLanes.forEach(l=> l.classList.toggle('on', l.dataset.tier===tier));
+    // 결과 문장 + 재생 애니메이션
+    pipeResult.innerHTML = '📨 “'+task+'” → N2SF 분류: <b>'+info.name+'</b> → 처리 모델: <b>'+info.model+'</b><br>'
+      + '<span class="muted" style="font-size:13px;">이유: '+info.why+'</span>';
+    pipeResult.classList.remove('show'); void pipeResult.offsetWidth; pipeResult.classList.add('show');
+  });
+});
+
+/* ---------- 2. 섹션2: 엔진(GPT)에 기능 얹기 ----------
+   버튼을 누를 때마다 기능 한 줄씩 켜고, 마지막엔 'ChatGPT 완성!' 으로 제목을 바꿉니다. */
+const ccFeatures = document.querySelectorAll('#ccFeatures .feature');
+const ccTitle = document.getElementById('ccTitle');
+let ccStep = 0;
+const ccTitles = [
+  '⚙️ GPT (엔진) — 그 자체로는 ‘다음 단어 예측기’',
+  '💬 +채팅 화면 — 이제 사람이 대화할 수 있어요',
+  '🧠 +대화 기억 — 맥락을 이어 갑니다',
+  '📎 +파일 업로드 — 문서를 읽고 답해요',
+  '🚗 ChatGPT 완성! — 엔진(GPT)을 얹은 완성차'
+];
+function ccUpdate(){
+  ccFeatures.forEach((f,i)=> f.classList.toggle('on', i<ccStep));
+  ccTitle.textContent = ccTitles[ccStep];
+}
+document.getElementById('ccAdd').addEventListener('click', ()=>{
+  if(ccStep < ccFeatures.length){ ccStep++; ccUpdate(); }
+});
+document.getElementById('ccReset').addEventListener('click', ()=>{ ccStep=0; ccUpdate(); });
+
+/* ---------- 섹션6: 'Claude Code 쓰는 3가지 방법' 탭 전환 ----------
+   탭을 누르면 해당 방식(웹/IDE/CLI)의 설명·장단점·예시 패널만 보이게 합니다. */
+document.querySelectorAll('#cc3Tabs .cc3-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    const k = tab.dataset.cc;
+    document.querySelectorAll('#cc3Tabs .cc3-tab').forEach(t=> t.classList.toggle('active', t===tab));
+    document.querySelectorAll('.cc3-content').forEach(c=> c.classList.toggle('show', c.dataset.cc===k));
+  });
+});
+
+/* ---------- 4. 섹션4: 가짜 터미널 ----------
+   버튼을 누르면 명령어와 결과를 '한 글자씩 타이핑되는 것처럼' 출력합니다. */
+const termBody = document.getElementById('termBody');
+const termOutputs = {
+  claude: ['✦ Claude Code 시작 — 무엇을 도와드릴까요?', '  (예: "보고서 폴더 만들고 초안 작성해줘")'],
+  ls:     ['보고서  예산안.xlsx  회의록.txt  index.html'],
+  mkdir:  ["폴더 '보고서' 를 만들었습니다."],
+  pwd:    ['/home/mofe/projects'],
+  clear:  ['__CLEAR__']
+};
+const promptHTML = '<span class="prompt">mofe@gov</span>:<span class="path">~</span>$ ';
+let typing = false;
+function appendLine(html){
+  const div = document.createElement('div');
+  div.className='ln';
+  div.innerHTML = html;
+  termBody.appendChild(div);
+  termBody.scrollTop = termBody.scrollHeight;
+  return div;
+}
+function typeText(el, text, cb){
+  // text를 한 글자씩 추가해 타이핑 효과를 냅니다.
+  let i=0;
+  const cur = document.createElement('span'); cur.className='term-cursor';
+  el.appendChild(cur);
+  const timer = setInterval(()=>{
+    if(i<text.length){
+      cur.insertAdjacentText('beforebegin', text[i]); i++;
+      termBody.scrollTop = termBody.scrollHeight;
+    } else {
+      clearInterval(timer); cur.remove(); cb && cb();
+    }
+  }, 28);
+}
+function runCmd(cmd){
+  if(typing) return;
+  typing = true;
+  const full = (cmd==='mkdir') ? 'mkdir 보고서' : cmd;
+  const line = appendLine(promptHTML);          // 프롬프트 출력
+  typeText(line, full, ()=>{                     // 명령어를 타이핑
+    const outs = termOutputs[cmd] || ['알 수 없는 명령입니다.'];
+    if(outs[0]==='__CLEAR__'){                    // clear면 화면 비우기
+      termBody.innerHTML=''; typing=false; return;
+    }
+    let k=0;
+    (function next(){
+      if(k<outs.length){
+        appendLine('<span class="out">'+outs[k]+'</span>'); k++;
+        setTimeout(next, 220);
+      } else { typing=false; }
+    })();
+  });
+}
+document.querySelectorAll('#termCmds button').forEach(b=>{
+  b.addEventListener('click', ()=> runCmd(b.dataset.cmd));
+});
+
+/* ---------- 5. 섹션5: 점유율 막대 그래프 ----------
+   각 막대의 data-h(목표 높이 %)만큼 height를 키워 자라나는 효과를 줍니다. */
+function drawCharts(){
+  document.querySelectorAll('#chartB .vbar').forEach(bar=>{
+    bar.style.height='0';
+    const h = Number(bar.dataset.h)||0;
+    setTimeout(()=>{ bar.style.height = h+'%'; }, 80);
+  });
+}
+
+/* 페이지가 처음 열릴 때, 섹션1 막대는 이미 그려져 있고
+   섹션5 그래프는 해당 탭을 열 때 drawCharts()가 실행됩니다. */
+</script>
+</body>
+</html>
