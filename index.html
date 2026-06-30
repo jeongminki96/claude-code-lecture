@@ -1690,9 +1690,8 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
   btn.addEventListener('click', ()=> goTo(btn.dataset.go));
 });
 
-/* ---------- 1. 섹션1: 다음 토큰 확률 ----------
-   server.js 가 떠 있으면(/api/predict) 실제 OpenAI logprobs 로 다음 토큰 확률을 받아오고,
-   그냥 파일로 열었거나 서버가 없으면 아래 샘플 데이터로 시뮬레이션합니다. */
+/* ---------- 1. 섹션1: 다음 토큰 확률 (시뮬레이션) ----------
+   미리 정해 둔 샘플 데이터로 '다음 토큰 확률 분포'를 보여 줍니다. (학습용 예시) */
 const tokenSamples = {
   "오늘 날씨가 정말": [["좋네요",38],["덥다",24],["춥네요",16],["흐려요",12],["맑아요",10]],
   "점심에는 뭘 먹을": [["까",52],["지",21],["래요",14],["거예요",8],["까요",5]],
@@ -1727,46 +1726,14 @@ function showPick(base, word){
   pick.textContent = word;
   pick.style.animation='none'; void pick.offsetWidth; pick.style.animation='';
 }
-// 실제 서버(/api/predict) 호출 시도 → 성공 시 실제 분포, 실패 시 null
-async function fetchReal(text){
-  try{
-    const r = await fetch('/api/predict', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({text})
-    });
-    if(!r.ok) return null;
-    const d = await r.json();
-    if(!d.candidates || !d.candidates.length) return null;
-    return d;
-  }catch{ return null; }
-}
-let tokenBusy = false, tokenPending = false, lastQuery = '';
-async function predictToken(){
-  const btn = document.getElementById('tokenBtn');
-  // 이미 호출 중이면, 끝난 뒤 한 번 더 돌도록 예약(마지막 입력을 반영)
-  if(tokenBusy){ tokenPending = true; return; }
+// 미리 정해 둔 샘플로 '다음 토큰 분포'를 그려 줍니다. (시뮬레이션 · 네트워크 호출 없음)
+function predictToken(){
   const v = document.getElementById('tokenInput').value.trim();
   if(!v) return;
-  tokenBusy = true; lastQuery = v;
-  setBadge('loading','실제 호출 중…'); btn.disabled = true;
-
-  const real = await fetchReal(v);
-  if(real){
-    renderBars(real.candidates.map(c=>[c.word, c.pct]));         // 막대 = 토큰 단위 분포
-    showPick(v, real.completion || real.picked);                  // 최종 출력 = 완성된 단어/구
-    setBadge('live','실제 ' + (real.model||'OpenAI') + ' 응답');
-  }else{
-    // 폴백: 서버 미연결(file:// 등) → 미리 정해 둔 샘플로 시뮬레이션
-    const data = tokenSamples[v] || tokenSamples["_default"];
-    renderBars(data);
-    showPick(v, data[0][0]);
-    setBadge('sim','시뮬레이션 (서버 미연결)');
-  }
-  btn.disabled = false; tokenBusy = false;
-  // 호출 중에 입력이 또 바뀌었다면 최신값으로 한 번 더
-  if(tokenPending || document.getElementById('tokenInput').value.trim() !== lastQuery){
-    tokenPending = false; predictToken();
-  }
+  const data = tokenSamples[v] || tokenSamples["_default"];
+  renderBars(data);                 // 막대 = 토큰 단위 확률 분포
+  showPick(v, data[0][0]);          // 최종 출력 = 가장 확률 높은 단어
+  setBadge('sim','시뮬레이션');
 }
 // 타이핑이 멈추면(450ms) 자동으로 실시간 예측
 let tokenTimer = null;
