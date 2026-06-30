@@ -90,13 +90,14 @@
   }
   .tabs-inner{
     max-width:1080px; margin:0 auto; padding:0 12px;
-    display:flex; gap:4px; overflow-x:auto;
+    display:flex; flex-wrap:wrap; gap:2px 4px; justify-content:center;
   }
+  .tab-break{ flex-basis:100%; height:0; }
   .tabs-inner button{
     appearance:none; border:none; background:transparent;
     font:inherit; cursor:pointer; color:var(--muted);
-    padding:15px 12px; white-space:nowrap; letter-spacing:-.01em;
-    border-bottom:2px solid transparent; font-weight:500; font-size:14.5px;
+    padding:12px 11px; white-space:nowrap; letter-spacing:-.01em;
+    border-bottom:2px solid transparent; font-weight:500; font-size:14px;
     transition:color .15s, border-color .15s;
   }
   .tabs-inner button:hover{ color:var(--ink); }
@@ -107,6 +108,90 @@
     background:var(--bg-soft); color:var(--muted);
   }
   .tabs-inner button.active .num{ background:var(--navy); color:#fff; }
+  /* 워크플로우 플로우 다이어그램 */
+  .flow{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .flow-step{ padding:9px 15px; border-radius:10px; font-weight:600; font-size:14px;
+    border:1px solid var(--line); background:var(--bg-soft); color:var(--ink-2); }
+  .flow-arrow{ color:var(--muted); font-weight:700; }
+  .flow-new .flow-step{ border-color:rgba(232,114,60,.45); background:rgba(232,114,60,.08); color:#b4541f; }
+  .flow-new .flow-step:last-of-type{ background:#E8723C; border-color:#E8723C; color:#fff; }
+  /* 하네스 데모 — 에이전트 루프 따라가기 */
+  .harn-task{ display:flex; align-items:center; gap:10px; padding:13px 16px; border-radius:12px;
+    background:var(--bg-soft); border:1px solid var(--line); font-size:14.5px; }
+  .harn-task .who{ flex:0 0 auto; font-size:12px; font-weight:700; color:#fff; background:var(--navy);
+    padding:3px 9px; border-radius:999px; }
+  .harn-loop{ display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:16px 0 4px; }
+  .harn-node{ padding:8px 13px; border-radius:10px; font-weight:600; font-size:13.5px;
+    border:1px solid var(--line); background:#fff; color:var(--muted); transition:all .25s; }
+  .harn-node.done{ border-color:rgba(27,58,99,.3); background:rgba(27,58,99,.06); color:var(--navy); }
+  .harn-node.active{ border-color:#E8723C; background:#E8723C; color:#fff; transform:scale(1.06);
+    box-shadow:0 4px 14px rgba(232,114,60,.32); }
+  .harn-arrow{ color:var(--muted); font-weight:700; font-size:13px; }
+  .harn-stage{ margin-top:14px; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  .harn-stage-head{ display:flex; align-items:center; gap:10px; padding:13px 16px;
+    background:#fff; border-bottom:1px solid var(--line); }
+  .harn-stage-head .hi{ font-size:22px; }
+  .harn-stage-head .ht{ font-weight:700; color:var(--ink); font-size:15.5px; }
+  .harn-badge{ margin-left:auto; flex:0 0 auto; font-size:12px; font-weight:700; padding:3px 10px;
+    border-radius:999px; background:rgba(232,114,60,.12); color:#c2531f; white-space:nowrap; }
+  .harn-stage-body{ padding:14px 16px; font-size:14px; color:var(--ink-2); line-height:1.65; background:var(--bg-soft); }
+  .harn-stage-body code{ font-family:"D2Coding","Consolas",ui-monospace,monospace; font-size:13px;
+    background:#15233a; color:#d7e0ee; padding:2px 7px; border-radius:6px; }
+  .harn-log{ margin-top:14px; display:flex; flex-direction:column; gap:7px; }
+  .harn-entry{ display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--muted);
+    padding:8px 12px; border-radius:9px; background:#fff; border:1px solid var(--line); }
+  .harn-entry .en{ flex:0 0 auto; width:20px; height:20px; border-radius:6px; background:rgba(27,58,99,.08);
+    color:var(--navy); font-weight:700; font-size:11px; display:grid; place-items:center; }
+  .harn-ctrl{ margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .harn-prog{ font-size:13px; color:var(--muted); font-weight:600; }
+  /* 야생마 비유 — 모델에 하네스(장비) 얹기 */
+  .wh-stage{ margin-top:14px; padding:22px 18px; border:1px solid var(--line);
+    border-radius:16px; background:var(--bg-soft); text-align:center; transition:background .4s, border-color .4s; }
+  .wh-stage.tamed{ border-color:rgba(47,158,68,.45); background:rgba(47,158,68,.06); }
+  .wh-arena{ position:relative; width:272px; height:200px; margin:0 auto; display:grid; place-items:center; }
+  /* 말 자체가 단계별로 업그레이드: 야생 🐎 → 차분 🐴 → 풀세팅 🏇 */
+  .wh-horse{ font-size:86px; line-height:1; z-index:2; transition:filter .4s, transform .4s; }
+  .wh-horse.wild{ animation:wh-buck .55s ease-in-out infinite;
+    filter:drop-shadow(0 6px 16px rgba(192,57,43,.45)); }
+  .wh-horse.calm{ filter:drop-shadow(0 6px 16px rgba(27,58,99,.3)); }
+  .wh-horse.tamed{ transform:scale(1.2); filter:drop-shadow(0 12px 24px rgba(212,160,23,.55)); }
+  /* 완성 단계에서만 반짝이는 효과 */
+  .wh-spark{ position:absolute; opacity:0; z-index:3; transition:opacity .4s; pointer-events:none; }
+  .wh-spark.s1{ font-size:26px; top:22px; right:38px; }
+  .wh-spark.s2{ font-size:22px; bottom:30px; left:40px; }
+  .wh-spark.s3{ font-size:30px; top:8px; left:50%; transform:translateX(-50%); }
+  .wh-stage.tamed .wh-spark{ opacity:1; animation:wh-twinkle 1.3s ease-in-out infinite; }
+  .wh-stage.tamed .wh-spark.s2{ animation-delay:.45s; }
+  .wh-stage.tamed .wh-spark.s3{ animation:none; opacity:1; }
+  @keyframes wh-twinkle{ 0%,100%{ transform:scale(.85); opacity:.55; } 50%{ transform:scale(1.25); opacity:1; } }
+  @keyframes wh-buck{
+    0%,100%{ transform:rotate(-5deg) translateY(0); }
+    25%{ transform:rotate(4deg) translateY(-5px); }
+    50%{ transform:rotate(-3deg) translateY(1px); }
+    75%{ transform:rotate(5deg) translateY(-3px); }
+  }
+  .wh-state{ margin-top:12px; font-size:14.5px; font-weight:700; color:var(--point); transition:color .4s; }
+  .wh-state.tamed{ color:var(--navy); }
+  .wh-gauge{ margin:14px auto 0; max-width:420px; height:12px; border-radius:999px;
+    background:#eceef2; overflow:hidden; border:1px solid var(--line); }
+  .wh-gauge-fill{ height:100%; width:0; border-radius:999px;
+    background:linear-gradient(90deg,#c0392b,#E8723C 55%,#2f9e44); transition:width .45s ease; }
+  .wh-gauge-cap{ margin-top:7px; font-size:12.5px; color:var(--muted); font-weight:600; }
+  .wh-gear{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:18px; }
+  .wh-chip{ display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:999px;
+    font-size:13px; font-weight:600; border:1px solid var(--line-2); background:#fff; color:var(--muted);
+    opacity:.5; transition:all .25s; }
+  .wh-chip.on{ opacity:1; border-color:#E8723C; background:rgba(232,114,60,.10); color:#b4541f;
+    animation:pickin .3s ease; }
+  .wh-chip .ge{ font-size:15px; }
+  /* Vibe Coding 대화 목업 */
+  .vibe-chat{ display:flex; flex-direction:column; gap:12px; max-width:560px; margin:8px auto 0; }
+  .vibe-row{ display:flex; align-items:flex-end; gap:9px; }
+  .vibe-row.me{ justify-content:flex-end; }
+  .vibe-row .agent-bubble{ max-width:80%; font-size:14.5px; line-height:1.6; }
+  .vibe-ava{ flex:0 0 auto; width:34px; height:34px; border-radius:9px;
+    background:var(--bg-soft); display:grid; place-items:center; }
+  .vibe-ava svg{ width:26px; height:26px; }
 
   /* --- 4. 본문 레이아웃 --- */
   main{ max-width:1080px; margin:0 auto; padding:0 20px 80px; }
@@ -166,6 +251,11 @@
   .btn.sm{ padding:8px 14px; font-size:13px; border-radius:10px; }
 
   /* --- 7. 섹션1: 토큰 확률 막대그래프 --- */
+  .token-badge{ display:inline-block; margin-left:6px; padding:2px 9px; border-radius:999px;
+    font-size:12px; font-weight:600; letter-spacing:-.01em; vertical-align:middle; }
+  .token-badge.sim{ background:#eef1f6; color:#5b6b86; }
+  .token-badge.live{ background:rgba(232,114,60,.12); color:#c2531f; }
+  .token-badge.loading{ background:#eef1f6; color:#5b6b86; }
   .token-input{ display:flex; gap:8px; flex-wrap:wrap; }
   .token-input input{
     flex:1; min-width:220px; font:inherit; padding:11px 14px;
@@ -529,19 +619,214 @@
 <!-- 상단 탭: 6개 섹션 이동 버튼 -->
 <nav class="tabs">
   <div class="tabs-inner" id="tabBar">
-    <button data-go="0" class="active"><span class="num">1</span>LLM이란?</button>
-    <button data-go="1"><span class="num">2</span>IDE란?</button>
-    <button data-go="2"><span class="num">3</span>CLI란?</button>
-    <button data-go="3"><span class="num">4</span>왜 클로드가 핫한가</button>
-    <button data-go="4"><span class="num">5</span>Claude vs Claude Code</button>
-    <button data-go="5"><span class="num">6</span>Claude Code 쓰는 법</button>
+    <button data-go="0" class="active"><span class="num">1</span>인트로</button>
+    <button data-go="1"><span class="num">2</span>들어가며</button>
+    <button data-go="2"><span class="num">3</span>강사 소개</button>
+    <button data-go="3"><span class="num">4</span>LLM 이해</button>
+    <button data-go="4"><span class="num">5</span>IDE 이해</button>
+    <div class="tab-break"></div>
+    <button data-go="5"><span class="num">6</span>CLI 이해</button>
+    <button data-go="6"><span class="num">7</span>Claude의 강점</button>
+    <button data-go="7"><span class="num">8</span>Claude vs Claude Code</button>
+    <button data-go="8"><span class="num">9</span>Claude Code 활용</button>
+    <button data-go="9"><span class="num">10</span>하네스 엔지니어링</button>
   </div>
 </nav>
 
 <main>
 
+  <!-- ====================== 섹션 Cover : 표지 ====================== -->
+  <section class="slide show" id="s_cover">
+    <div style="min-height:72vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:1.8rem; padding:3rem 1rem;">
+
+      <!-- CLI 스타일 말풍선 -->
+      <div style="position:relative; display:inline-block;">
+        <div style="font-family:'D2Coding','Consolas',ui-monospace,monospace; background:#15233a; color:#e6edf3; padding:0.8rem 1.2rem; border-radius:10px; font-size:1.05rem; line-height:1.6; box-shadow:0 8px 22px rgba(0,0,0,0.18); white-space:nowrap; text-align:left;">
+          <span style="color:#7ee787;">$</span> claude<br>
+          Hi 재정경제부<span style="display:inline-block; width:0.6em; height:1.05em; background:#e6edf3; margin-left:2px; vertical-align:-0.18em;"></span>
+        </div>
+        <!-- 말풍선 꼬리 -->
+        <div style="position:absolute; left:50%; bottom:-9px; transform:translateX(-50%); width:0; height:0; border-left:9px solid transparent; border-right:9px solid transparent; border-top:10px solid #15233a;"></div>
+      </div>
+
+      <!-- Clawd 픽셀 캐릭터 SVG (참고 이미지 도트 그대로 재현) -->
+      <svg width="190" height="100" viewBox="24 42 228 120" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-hidden="true">
+        <!-- 좌우 집게발 포함 가로 몸통 밴드 -->
+        <rect x="30" y="84" width="216" height="24" fill="#F2A06E"/>
+        <!-- 세로 몸통 메인 -->
+        <rect x="60" y="48" width="156" height="84" fill="#F2A06E"/>
+        <!-- 다리 4개 -->
+        <rect x="78"  y="132" width="12" height="24" fill="#F2A06E"/>
+        <rect x="102" y="132" width="18" height="24" fill="#F2A06E"/>
+        <rect x="162" y="132" width="12" height="24" fill="#F2A06E"/>
+        <rect x="186" y="132" width="18" height="24" fill="#F2A06E"/>
+        <!-- 눈 (검정 세로 막대) -->
+        <rect x="84"  y="66" width="12" height="24" fill="#14110F"/>
+        <rect x="168" y="66" width="12" height="24" fill="#14110F"/>
+      </svg>
+
+      <!-- 타이틀 -->
+      <div style="display:flex; flex-direction:column; align-items:center; gap:0.6rem;">
+        <h1 style="font-size:2.8rem; font-weight:900; color:var(--navy); line-height:1.15; margin:0;">Claude Code<br><span style="color:#E8723C;">입문 강의</span></h1>
+        <p style="font-size:0.9rem; color:var(--ink-2); margin:0.2rem 0 0; letter-spacing:0.04em;">AI와 함께 코딩하는 새로운 패러다임</p>
+      </div>
+
+      <!-- 하단 정보 -->
+      <div style="padding-top:1.4rem; border-top:1px solid var(--line); width:100%; max-width:320px;">
+        <p style="font-size:0.85rem; color:var(--muted); margin:0;">InnocurveAI &nbsp;·&nbsp; 정민기 (Jeong Min Ki)</p>
+      </div>
+
+    </div>
+
+    <div class="nav-foot">
+      <span></span>
+      <button class="btn" data-go="1">들어가며 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 섹션 Opening : 들어가며 ====================== -->
+  <section class="slide" id="s_opening">
+    <span class="sec-tag">OPENING</span>
+    <h2 class="sec-title">읽는 자료가 아니라,<br>만지는 자료입니다</h2>
+
+    <div class="block">
+      <h3>이 페이지는 '대화'로 만들어졌습니다</h3>
+      <p class="hint">코드를 한 줄씩 친 게 아니라, AI와 말로 주고받으며 만든 결과입니다. — 이것이 바이브코딩(Vibe Coding)</p>
+
+      <!-- 미니 Clawd 아바타 (symbol 1회 정의 후 use 재사용) -->
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="clawdMini" viewBox="24 42 228 120">
+          <rect x="30" y="84" width="216" height="24" fill="#F2A06E"/>
+          <rect x="60" y="48" width="156" height="84" fill="#F2A06E"/>
+          <rect x="78" y="132" width="12" height="24" fill="#F2A06E"/>
+          <rect x="102" y="132" width="18" height="24" fill="#F2A06E"/>
+          <rect x="162" y="132" width="12" height="24" fill="#F2A06E"/>
+          <rect x="186" y="132" width="18" height="24" fill="#F2A06E"/>
+          <rect x="84" y="66" width="12" height="24" fill="#14110F"/>
+          <rect x="168" y="66" width="12" height="24" fill="#14110F"/>
+        </symbol>
+      </svg>
+
+      <div class="vibe-chat">
+        <div class="vibe-row me"><div class="agent-bubble me">재정경제부 강의용으로, 슬라이드 말고 직접 눌러보는 PoC 페이지 만들어줘.</div></div>
+        <div class="vibe-row">
+          <span class="vibe-ava"><svg><use href="#clawdMini"/></svg></span>
+          <div class="agent-bubble">네 👍 탭으로 넘기고, 버튼을 누르면 LLM·IDE·CLI가 직접 동작하는 페이지로 만들게요.</div>
+        </div>
+        <div class="vibe-row me"><div class="agent-bubble me">표지에 캐릭터랑 강사 소개도 넣어줘.</div></div>
+        <div class="vibe-row">
+          <span class="vibe-ava"><svg><use href="#clawdMini"/></svg></span>
+          <div class="agent-bubble">완성했어요. 지금 보고 계신 이 화면이 그 결과입니다 ✨</div>
+        </div>
+      </div>
+
+      <p style="margin:1.3rem 0 0; color:var(--ink-2);">읽기만 하는 자료보다 <b>직접 만져 보며 이해하는 자료</b>가 더 빠르게 와닿습니다. 위쪽 탭과 각 페이지의 버튼을 눌러 따라와 주세요.</p>
+    </div>
+
+    <div class="block">
+      <h3>AI 도입 = 일하는 방식의 변화</h3>
+      <p class="hint">도구를 하나 더 쓰는 수준의 이야기가 아닙니다. 일하는 순서와 방식 자체가 달라집니다.</p>
+
+      <p style="font-size:0.78rem; font-weight:700; color:var(--muted); letter-spacing:0.06em; margin:1.3rem 0 0.6rem;">예전 방식</p>
+      <div class="flow flow-old">
+        <span class="flow-step">기획</span><span class="flow-arrow">→</span>
+        <span class="flow-step">PPT 작성</span><span class="flow-arrow">→</span>
+        <span class="flow-step">회의</span><span class="flow-arrow">→</span>
+        <span class="flow-step">(한참 뒤) 개발</span>
+      </div>
+
+      <p style="font-size:0.78rem; font-weight:700; color:#E8723C; letter-spacing:0.06em; margin:1.5rem 0 0.6rem;">앞으로의 방식</p>
+      <div class="flow flow-new">
+        <span class="flow-step">아이디어</span><span class="flow-arrow">→</span>
+        <span class="flow-step">AI와 대화하며 바로 만들기</span><span class="flow-arrow">→</span>
+        <span class="flow-step">PoC로 보여주기</span><span class="flow-arrow">→</span>
+        <span class="flow-step">빠른 판단</span>
+      </div>
+
+      <p style="margin:1.4rem 0 0; color:var(--ink-2);">설명으로 끝내는 대신 <b>돌아가는 것을 먼저 보여 주고</b>, 그다음에 검토·의사결정을 하는 흐름이 점점 표준에 가까워질 겁니다.</p>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="0">← 인트로</button>
+      <button class="btn" data-go="2">다음: 강사 소개 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 섹션 0 : 강사 소개 ====================== -->
+  <section class="slide" id="s_profile">
+    <span class="sec-tag">SECTION 00</span>
+    <h2 class="sec-title">강사 소개</h2>
+    <p class="sec-lead" style="text-align:left; font-size:1.6rem; font-weight:700; letter-spacing:0.01em; background:none; border:none; padding:1.2rem 0 0.4rem;">정민기&nbsp;&nbsp;<span style="font-size:1rem; font-weight:400; color:var(--muted); letter-spacing:0.08em;">Jeong Min Ki</span></p>
+
+    <div class="block">
+      <dl style="margin:0; display:flex; flex-direction:column;">
+
+        <div style="display:flex; gap:2.5rem; padding:1.4rem 0; border-bottom:1px solid var(--line); align-items:flex-start;">
+          <dt style="min-width:130px; font-size:0.78rem; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.07em; padding-top:0.15rem; white-space:nowrap;">학위 및 교육</dt>
+          <dd style="margin:0; display:flex; flex-direction:column; gap:0.5rem; color:var(--ink); font-size:0.95rem; line-height:1.65;">
+            <span>서울과학종합대학원 AI공학 박사 과정</span>
+            <span>KAIST CAIO(Chief AI Officer) 수료</span>
+            <span>국가정보원·KAIST 사이버안보 최고위 정책과정(K-CSPP) 수료</span>
+            <span>연세대학교 AI리더십 최고위 과정 수료</span>
+          </dd>
+        </div>
+
+        <div style="display:flex; gap:2.5rem; padding:1.4rem 0; border-bottom:1px solid var(--line); align-items:flex-start;">
+          <dt style="min-width:130px; font-size:0.78rem; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.07em; padding-top:0.15rem; white-space:nowrap;">주요 직책</dt>
+          <dd style="margin:0; display:flex; flex-direction:column; gap:0.5rem; color:var(--ink); font-size:0.95rem; line-height:1.65;">
+            <span>재정경제부 부총리실 인공지능(AI)자문관</span>
+            <span>세종특별자치시 AI정책특별보좌관</span>
+            <span>대전광역시 AI(인공지능)특별보좌관</span>
+            <span>InnocurveAI CEO</span>
+            <span>재정경제부 교육훈련심의위원회 위원(AI윤리)</span>
+            <span>세종특별자치시 AI 혁신 TF 부단장</span>
+            <span>세종특별자치시 가장 먼저, 가장 빠른 세종 구현 TF AI 자문</span>
+            <span>(재)세종창조경제혁신센터 AX위원회 위원</span>
+            <span>(재)대전창조경제혁신센터 AX위원회 위원 / 기술·학계 분과장</span>
+          </dd>
+        </div>
+
+        <div style="display:flex; gap:2.5rem; padding:1.4rem 0; border-bottom:1px solid var(--line); align-items:flex-start;">
+          <dt style="min-width:130px; font-size:0.78rem; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.07em; padding-top:0.15rem; white-space:nowrap;">주요 활동</dt>
+          <dd style="margin:0; display:flex; flex-direction:column; gap:0.5rem; color:var(--ink); font-size:0.95rem; line-height:1.65;">
+            <span>기획재정부 KAIST 「AI 역량 강화 프로젝트」</span>
+            <span>재정경제부 「AI 전사 육성 프로젝트」</span>
+            <span>기획예산처 「AI 교육 프로젝트」</span>
+            <span>ㅇㅇ원 「AI-Ready Data Pipeline Raw to RAG &amp; Ontology」</span>
+            <span>삼성전자 DX 신임부사장 「AI Agent 실습」</span>
+            <span>과학기술정보통신부 「AI 역량 강화」</span>
+            <span>SK 하이닉스 「AI 역량 강화」</span>
+          </dd>
+        </div>
+
+        <div style="display:flex; gap:2.5rem; padding:1.4rem 0; border-bottom:1px solid var(--line); align-items:flex-start;">
+          <dt style="min-width:130px; font-size:0.78rem; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.07em; padding-top:0.15rem; white-space:nowrap;">특허</dt>
+          <dd style="margin:0; display:flex; flex-direction:column; gap:0.5rem; color:var(--ink); font-size:0.95rem; line-height:1.65;">
+            <span>AI 기반 전자명함 제작 방법 및 AI 명함 기술 특허</span>
+            <span>디지털 월렛 기능이 통합된 AI 명함 기술 특허 출원</span>
+          </dd>
+        </div>
+
+        <div style="display:flex; gap:2.5rem; padding:1.4rem 0; align-items:flex-start;">
+          <dt style="min-width:130px; font-size:0.78rem; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.07em; padding-top:0.15rem; white-space:nowrap;">Global</dt>
+          <dd style="margin:0; display:flex; flex-direction:column; gap:0.5rem; color:var(--ink); font-size:0.95rem; line-height:1.65;">
+            <span>NVIDIA GTC (2025, 2026) with KAIST — 미국 산호세</span>
+            <span>Singapore Fintech Festival 2025 with Visa — 싱가포르</span>
+            <span>Manufacturing World Fukuoka with Yonsei — 일본</span>
+          </dd>
+        </div>
+
+      </dl>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="1">← 들어가며</button>
+      <button class="btn" data-go="3">다음: LLM이란? →</button>
+    </div>
+  </section>
+
   <!-- ====================== 섹션 1 : LLM ====================== -->
-  <section class="slide show" id="s0">
+  <section class="slide" id="s0">
     <span class="sec-tag">SECTION 01</span>
     <h2 class="sec-title">LLM이란 무엇인가</h2>
     <p class="sec-lead">
@@ -565,7 +850,8 @@
     <!-- 인터랙티브: 다음 토큰 확률 시뮬레이션 -->
     <div class="block">
       <h3>🔮 직접 해보기 — “다음 단어 맞히기”</h3>
-      <p class="hint">문장을 입력하고 버튼을 누르면, LLM이 <b>다음에 올 단어 후보를 확률(%)</b>로 매기는 모습을 보여줍니다. (실제 AI 호출이 아닌 시뮬레이션)</p>
+      <p class="hint">문장을 <b>입력하는 대로</b>(또는 버튼을 누르면) LLM이 <b>다음에 올 단어(토큰) 후보를 확률(%)</b>로 매기는 모습을 실시간으로 보여줍니다.
+        <span id="tokenMode" class="token-badge sim">시뮬레이션</span></p>
       <div class="token-input">
         <input id="tokenInput" type="text" value="오늘 날씨가 정말" placeholder="예: 오늘 날씨가 정말" />
         <button class="btn" id="tokenBtn">다음 단어 예측 ▶</button>
@@ -765,8 +1051,8 @@
     </div>
 
     <div class="nav-foot">
-      <span></span>
-      <button class="btn" data-go="1">다음: IDE란? →</button>
+      <button class="btn ghost" data-go="2">← 강사 소개</button>
+      <button class="btn" data-go="4">다음: IDE란? →</button>
     </div>
   </section>
 
@@ -883,8 +1169,8 @@
     </div>
 
     <div class="nav-foot">
-      <button class="btn ghost" data-go="0">← 이전</button>
-      <button class="btn" data-go="2">다음: CLI란? →</button>
+      <button class="btn ghost" data-go="3">← 이전</button>
+      <button class="btn" data-go="5">다음: CLI란? →</button>
     </div>
   </section>
 
@@ -941,8 +1227,8 @@
     </div>
 
     <div class="nav-foot">
-      <button class="btn ghost" data-go="1">← 이전</button>
-      <button class="btn" data-go="3">다음: 왜 클로드가 핫한가 →</button>
+      <button class="btn ghost" data-go="4">← 이전</button>
+      <button class="btn" data-go="6">다음: 왜 클로드가 핫한가 →</button>
     </div>
   </section>
 
@@ -1040,8 +1326,8 @@
     </div>
 
     <div class="nav-foot">
-      <button class="btn ghost" data-go="2">← 이전</button>
-      <button class="btn" data-go="4">다음: Claude vs Claude Code →</button>
+      <button class="btn ghost" data-go="5">← 이전</button>
+      <button class="btn" data-go="7">다음: Claude vs Claude Code →</button>
     </div>
   </section>
 
@@ -1080,8 +1366,8 @@
     </div>
 
     <div class="nav-foot">
-      <button class="btn ghost" data-go="3">← 이전</button>
-      <button class="btn" data-go="5">다음: Claude Code 쓰는 3가지 방법 →</button>
+      <button class="btn ghost" data-go="6">← 이전</button>
+      <button class="btn" data-go="8">다음: Claude Code 쓰는 3가지 방법 →</button>
     </div>
   </section>
 
@@ -1164,7 +1450,175 @@
       <b>코딩 실력은 셋 다 같습니다</b> — 어디서·어떻게 쓰느냐(편의 vs 자동화)만 다릅니다.</p>
 
     <div class="nav-foot">
-      <button class="btn ghost" data-go="4">← 이전</button>
+      <button class="btn ghost" data-go="7">← 이전</button>
+      <button class="btn" data-go="9">다음: 하네스 엔지니어링 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 섹션 10 : 하네스 엔지니어링 ====================== -->
+  <section class="slide" id="s_harness">
+    <span class="sec-tag">SECTION 10</span>
+    <h2 class="sec-title">하네스 엔지니어링</h2>
+    <p class="sec-lead">
+      좋은 결과는 <b>좋은 질문 하나</b>만으로 나오지 않습니다. 모델을 감싼 <b>‘환경(하네스)’</b>을 잘 설계해야 합니다.
+      — 프롬프트 엔지니어링을 넘어, <b>하네스 엔지니어링</b>으로.
+    </p>
+
+    <!-- 1. 하네스란? -->
+    <div class="block">
+      <h3>🦺 하네스(harness)란?</h3>
+      <p class="hint">하네스는 <b>LLM을 ‘에이전트’로 만들어 주는 골격</b>입니다. 모델은 혼자선 ‘다음 단어 예측’만 할 뿐 —
+        <b>도구를 쓰고 · 파일을 읽고 · 명령을 실행하고 · 맥락을 기억하는</b> 일은 모두 모델을 <b>감싼 하네스</b>가 해 줍니다.</p>
+      <div class="grid g2" style="margin-top:6px;">
+        <div class="card"><span class="ico">🧠</span><h3>모델 = 두뇌(엔진)</h3><p>똑똑하지만, 그 자체로는 생각만 합니다. 손도 발도 기억도 없습니다.</p></div>
+        <div class="card"><span class="ico">🦾</span><h3>하네스 = 몸체</h3><p>두뇌에 손·발·기억·작업대를 붙여 ‘일하는 에이전트’로 만듭니다. <b>Claude Code 자체가 Claude를 위한 하네스</b>입니다.</p></div>
+      </div>
+      <p class="muted" style="font-size:13.5px; margin-top:16px;">이 ‘일하는 과정’을 <b>에이전트 루프</b>라고 합니다 — 한 번에 끝내지 않고, 보고 → 하고 → 다시 보며 반복합니다.</p>
+      <div class="flow flow-new" style="margin-top:10px;">
+        <span class="flow-step">요청</span><span class="flow-arrow">→</span>
+        <span class="flow-step">맥락 구성</span><span class="flow-arrow">→</span>
+        <span class="flow-step">모델 추론</span><span class="flow-arrow">→</span>
+        <span class="flow-step">도구 실행</span><span class="flow-arrow">→</span>
+        <span class="flow-step">결과 관찰</span><span class="flow-arrow">↺</span>
+        <span class="flow-step">완료</span>
+      </div>
+    </div>
+
+    <!-- 1-1. 비유로 이해하기: 야생마에 하네스(장비) 얹기 -->
+    <div class="block">
+      <h3>🐎 비유로 이해하기 — 야생마에 고삐 얹기</h3>
+      <p class="hint">좋은 모델은 <b>야생마</b>와 같습니다 — 힘세고 영리하지만 <b>통제되지 않아 어디로 튈지 모릅니다.</b>
+        여기에 <b>고삐·안장·편자·마구</b> 같은 장비(=하네스)를 하나씩 얹으면, 점점 <b>‘일하는 말’</b>로 길들여집니다.
+        아래 <b>‘장비 얹기 ▶’</b>를 눌러, 각 장비가 어떤 <b>AI 하네스 요소</b>에 해당하는지 따라가 보세요.</p>
+
+      <div class="wh-stage" id="whStage">
+        <div class="wh-arena">
+          <span class="wh-spark s1">✨</span>
+          <span class="wh-spark s2">✨</span>
+          <span class="wh-spark s3">🏅</span>
+          <div class="wh-horse wild" id="whHorse">🐎</div>
+        </div>
+        <div class="wh-state" id="whState">통제 불가 — 어디로 튈지 모름</div>
+        <div class="wh-gauge"><div class="wh-gauge-fill" id="whGauge"></div></div>
+        <div class="wh-gauge-cap" id="whGaugeCap">길들임(통제력) 0%</div>
+        <div class="wh-gear" id="whGear">
+          <span class="wh-chip" data-gear="1"><span class="ge">🎯</span>고삐</span>
+          <span class="wh-chip" data-gear="2"><span class="ge">🪑</span>안장</span>
+          <span class="wh-chip" data-gear="3"><span class="ge">🧩</span>편자</span>
+          <span class="wh-chip" data-gear="4"><span class="ge">🔌</span>마구</span>
+          <span class="wh-chip" data-gear="5"><span class="ge">🤠</span>기수</span>
+        </div>
+      </div>
+
+      <!-- 현재 단계 상세 (장비 = AI 요소 매핑) -->
+      <div class="harn-stage">
+        <div class="harn-stage-head">
+          <span class="hi" id="whIcon">🐎</span>
+          <span class="ht" id="whTitle">야생마 — 길들이기 전</span>
+          <span class="harn-badge" id="whBadge">모델(LLM)</span>
+        </div>
+        <div class="harn-stage-body" id="whBody">힘세고 영리하지만, 그 자체로는 <b>제멋대로</b>입니다. 잠재력은 100점 —
+          하지만 방향도, 집중도, 멈출 줄도 모릅니다. <b>‘장비 얹기 ▶’</b>를 눌러 길들여 보세요.</div>
+      </div>
+
+      <div class="harn-ctrl">
+        <button class="btn" id="whNext">장비 얹기 ▶</button>
+        <button class="btn ghost" id="whReset">처음으로 ↺</button>
+        <span class="harn-prog" id="whProg"></span>
+      </div>
+    </div>
+
+    <!-- 2. 하네스 엔지니어링: 무엇을 설계하나 -->
+    <div class="block">
+      <h3>🛠️ 하네스 엔지니어링 — 무엇을 설계하나</h3>
+      <p class="hint">프롬프트가 <b>‘한 번의 질문’</b>을 다듬는 일이라면, 하네스 엔지니어링은 <b>‘일하는 환경 전체’</b>를 설계하는 일입니다.</p>
+      <div class="grid g3">
+        <div class="card"><span class="ico">⚙️</span><h3>컨텍스트 관리</h3><p>한정된 컨텍스트 윈도우에 <b>무엇을 보여줄지</b> 고릅니다. 불필요한 건 덜고, 핵심만 남깁니다.</p></div>
+        <div class="card"><span class="ico">🧰</span><h3>도구 설계</h3><p>어떤 도구를(검색·파일·실행), <b>어떻게 안전하게</b> 쥐여 줄지 정합니다.</p></div>
+        <div class="card"><span class="ico">🤝</span><h3>서브에이전트</h3><p>큰 일을 쪼개 <b>전문 에이전트 여럿</b>이 나눠·병렬로 처리하게 합니다.</p></div>
+        <div class="card"><span class="ico">🪝</span><h3>훅(Hooks)</h3><p>특정 시점에 <b>자동으로</b> 동작 — 검증·차단·알림·로깅을 끼워 넣습니다.</p></div>
+        <div class="card"><span class="ico">🧠</span><h3>메모리</h3><p>세션을 넘어 <b>기억</b>을 이어 가, 매번 처음부터 설명하지 않게 합니다.</p></div>
+        <div class="card"><span class="ico">🛡️</span><h3>권한·안전장치</h3><p>위험하거나 되돌리기 어려운 작업은 <b>확인을 받거나 막습니다.</b></p></div>
+      </div>
+    </div>
+
+    <!-- 3. MCP -->
+    <div class="block">
+      <h3>🔌 MCP — 외부 세계와 잇는 ‘표준 콘센트’</h3>
+      <p class="hint">MCP(Model Context Protocol)는 모델을 <b>외부 도구·시스템에 연결</b>하는 <b>표준 규격</b>입니다.
+        모델 혼자선 닿지 못하는 <b>메일·드라이브·캘린더·사내 DB·브라우저</b> 같은 바깥 세계를, MCP를 통해 <b>도구처럼</b> 쥐여 줍니다.
+        앞의 비유에서 <b>‘마구(연결 장치)’</b>에 해당하는 부분이죠.</p>
+      <div class="flow flow-new" style="margin:8px 0 4px;">
+        <span class="flow-step">모델</span><span class="flow-arrow">↔</span>
+        <span class="flow-step">MCP (표준 규격)</span><span class="flow-arrow">↔</span>
+        <span class="flow-step">외부 도구·데이터</span>
+      </div>
+      <div class="grid g3" style="margin-top:18px;">
+        <div class="card"><span class="ico">🔌</span><h3>표준 규격(콘센트)</h3><p>누가 만들든 <b>같은 규격</b>이면 그대로 꽂힙니다 — <b>USB</b>처럼. 도구마다 따로 붙일 필요가 없습니다.</p></div>
+        <div class="card"><span class="ico">🌐</span><h3>바깥 세계 연결</h3><p>메일·드라이브·캘린더·사내 시스템 등 <b>실제 업무 도구</b>를 모델이 직접 읽고 쓰게 합니다.</p></div>
+        <div class="card"><span class="ico">🧰</span><h3>도구를 ‘확장’</h3><p>하네스의 <b>도구 계층</b>을 바깥으로 넓히는 부분 — 필요할 때 꽂고, 필요 없으면 뺍니다.</p></div>
+      </div>
+      <p class="muted" style="font-size:13px; margin-top:14px;">👉 예: <b>‘사내 회계 시스템’ MCP 서버</b>를 연결하면 — 모델이 직접 집행 내역을 조회해 보고서에 반영합니다.</p>
+    </div>
+
+    <!-- 4. 스킬 -->
+    <div class="block">
+      <h3>🧩 스킬(Skills) — 필요할 때 꺼내 쓰는 전문 능력</h3>
+      <p class="hint">스킬은 <b>‘하나의 능력’</b>을 폴더에 담아 둔 것입니다. 사용법(<b>SKILL.md</b>)과 스크립트·참고자료를 모아 두면,
+        모델이 <b>관련 상황에서 알아서 꺼내</b> 씁니다.</p>
+      <div style="font-family:'D2Coding','Consolas',ui-monospace,monospace; background:#15233a; color:#d7e0ee;
+                  border-radius:12px; padding:16px 18px; font-size:13.5px; line-height:1.9; white-space:pre; overflow-x:auto; margin-top:4px;">my-skill/
+  <span style="color:#56d364;">SKILL.md</span>      <span style="color:#7f8da3;"># 무엇을 · 언제 · 어떻게 (설명서)</span>
+  <span style="color:#58a6ff;">scripts/</span>      <span style="color:#7f8da3;"># 실행할 스크립트</span>
+  <span style="color:#58a6ff;">references/</span>   <span style="color:#7f8da3;"># 참고 문서 · 양식 · 템플릿</span></div>
+      <div class="grid g3" style="margin-top:18px;">
+        <div class="card"><span class="ico">📂</span><h3>필요할 때만 로드</h3><p>평소엔 <b>한 줄 설명</b>만 떠 있다가, 관련 작업이 오면 전체를 펼칩니다. → 컨텍스트 절약.</p></div>
+        <div class="card"><span class="ico">🤖</span><h3>모델이 스스로 호출</h3><p>사람이 일일이 부르지 않아도, <b>상황에 맞는 스킬</b>을 모델이 알아서 씁니다.</p></div>
+        <div class="card"><span class="ico">♻️</span><h3>재사용·조합</h3><p>한 번 잘 만들면 <b>팀이 공유</b>하고, 여러 스킬을 엮어 쓸 수 있습니다.</p></div>
+      </div>
+      <p class="muted" style="font-size:13px; margin-top:14px;">👉 예: <b>‘재정 보고서 양식’ 스킬</b> — 보고서를 쓸 때만 자동으로 우리 기관 양식·문체를 불러옵니다.</p>
+    </div>
+
+    <!-- 4. 플러그인 -->
+    <div class="block">
+      <h3>📦 플러그인(Plugins) — 능력들을 묶은 ‘설치 꾸러미’</h3>
+      <p class="hint">플러그인은 <b>스킬 · 슬래시 명령어 · 서브에이전트 · 훅 · MCP 서버</b>를
+        <b>하나의 설치 가능한 꾸러미</b>로 묶은 것입니다. 스킬이 ‘앱 하나’라면, 플러그인은 ‘여러 앱을 담은 패키지’예요.</p>
+      <div class="flow flow-new" style="margin:8px 0 4px;">
+        <span class="flow-step">스킬</span><span class="flow-arrow">+</span>
+        <span class="flow-step">명령어</span><span class="flow-arrow">+</span>
+        <span class="flow-step">서브에이전트</span><span class="flow-arrow">+</span>
+        <span class="flow-step">훅</span><span class="flow-arrow">+</span>
+        <span class="flow-step">MCP</span><span class="flow-arrow">=</span>
+        <span class="flow-step">플러그인</span>
+      </div>
+      <p class="muted" style="font-size:13.5px; margin-top:14px;">앱스토어처럼 <b>마켓플레이스</b>에서 받아 한 줄로 설치합니다 — 팀 전체가 <b>같은 명령어·같은 규칙·같은 도구</b>를 한 번에 갖춰 ‘표준화’됩니다.</p>
+      <div style="font-family:'D2Coding','Consolas',ui-monospace,monospace; background:#15233a; color:#d7e0ee;
+                  border-radius:12px; padding:16px 18px; font-size:13.5px; line-height:1.9; white-space:pre; overflow-x:auto; margin-top:8px;"><span style="color:#56d364;">/plugin</span> marketplace add <span style="color:#58a6ff;">our-org/claude-plugins</span>   <span style="color:#7f8da3;"># 마켓플레이스 등록</span>
+<span style="color:#56d364;">/plugin</span> install <span style="color:#58a6ff;">finance-toolkit</span>                 <span style="color:#7f8da3;"># 꾸러미 설치 → 끝</span></div>
+    </div>
+
+    <!-- 5. 스킬 vs 플러그인 -->
+    <div class="block">
+      <h3>⚖️ 스킬 vs 플러그인 — 한눈에</h3>
+      <div class="grid g2" style="margin-top:6px;">
+        <div class="card">
+          <span class="ico">🧩</span><h3>스킬</h3>
+          <p><b>단위 능력 하나</b><br>· 모델이 <b>자동</b>으로 꺼내 씀<br>· 폴더 + SKILL.md<br>· 가볍게 ‘기능’을 추가</p>
+        </div>
+        <div class="card">
+          <span class="ico">📦</span><h3>플러그인</h3>
+          <p><b>여러 능력의 꾸러미</b><br>· 사람이 <b>설치</b>해 사용<br>· 스킬·명령어·훅·MCP 묶음<br>· 마켓플레이스로 <b>배포·공유</b></p>
+        </div>
+      </div>
+      <p class="muted" style="font-size:13.5px; margin-top:16px; padding-top:16px; border-top:1px dashed var(--line-2);">
+        💡 정리 — <b>하네스</b>는 ‘일하는 환경’, <b>스킬</b>은 그 환경에 더하는 ‘능력 하나’, <b>플러그인</b>은 그 능력들을 묶어 ‘팀에 배포하는 패키지’.
+        세 가지를 잘 다루면, AI는 <b>‘대화 상대’를 넘어 ‘우리 기관에 맞춰 일하는 동료’</b>가 됩니다.
+      </p>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="8">← Claude Code 활용</button>
       <button class="btn" data-go="0">처음으로 ↺</button>
     </div>
   </section>
@@ -1193,16 +1647,16 @@ function goTo(i){
   tabBtns.forEach((b,idx)=> b.classList.toggle('active', idx===i));
   window.scrollTo({top:0, behavior:'smooth'});
   // 섹션별로 처음 보일 때 애니메이션을 다시 실행
-  if(i===3) drawCharts();
+  if(i===6) drawCharts();
 }
 // data-go 속성을 가진 모든 버튼에 클릭 동작 연결
 document.querySelectorAll('[data-go]').forEach(btn=>{
   btn.addEventListener('click', ()=> goTo(btn.dataset.go));
 });
 
-/* ---------- 1. 섹션1: 다음 토큰 확률 시뮬레이션 ----------
-   미리 정해 둔 샘플 데이터로, '다음에 올 단어'를 확률 막대로 보여줍니다.
-   (실제 AI를 호출하지 않습니다) */
+/* ---------- 1. 섹션1: 다음 토큰 확률 ----------
+   server.js 가 떠 있으면(/api/predict) 실제 OpenAI logprobs 로 다음 토큰 확률을 받아오고,
+   그냥 파일로 열었거나 서버가 없으면 아래 샘플 데이터로 시뮬레이션합니다. */
 const tokenSamples = {
   "오늘 날씨가 정말": [["좋네요",38],["덥다",24],["춥네요",16],["흐려요",12],["맑아요",10]],
   "점심에는 뭘 먹을": [["까",52],["지",21],["래요",14],["거예요",8],["까요",5]],
@@ -1224,20 +1678,66 @@ function renderBars(pairs){
     setTimeout(()=>{ row.querySelector('.bar-fill').style.width = p[1]+'%'; }, 60+idx*80);
   });
 }
-function predictToken(){
-  const v = document.getElementById('tokenInput').value.trim();
-  const data = tokenSamples[v] || tokenSamples["_default"];
-  renderBars(data);
-  // '최종 출력' 영역 갱신: 가장 확률 높은 후보(data[0])를 골라 문장 뒤에 붙입니다.
-  const top = data[0][0];
-  document.getElementById('toBase').textContent = v + ' ';
+function setBadge(kind, text){
+  const b = document.getElementById('tokenMode');
+  if(!b) return;
+  b.className = 'token-badge ' + kind;
+  b.textContent = text;
+}
+// 출력(output) 영역 갱신
+function showPick(base, word){
+  document.getElementById('toBase').textContent = base + ' ';
   const pick = document.getElementById('toPick');
-  pick.textContent = top;
-  // 다시 누를 때마다 '튀어나오는' 애니메이션을 재실행
+  pick.textContent = word;
   pick.style.animation='none'; void pick.offsetWidth; pick.style.animation='';
 }
+// 실제 서버(/api/predict) 호출 시도 → 성공 시 실제 분포, 실패 시 null
+async function fetchReal(text){
+  try{
+    const r = await fetch('/api/predict', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({text})
+    });
+    if(!r.ok) return null;
+    const d = await r.json();
+    if(!d.candidates || !d.candidates.length) return null;
+    return d;
+  }catch{ return null; }
+}
+let tokenBusy = false, tokenPending = false, lastQuery = '';
+async function predictToken(){
+  const btn = document.getElementById('tokenBtn');
+  // 이미 호출 중이면, 끝난 뒤 한 번 더 돌도록 예약(마지막 입력을 반영)
+  if(tokenBusy){ tokenPending = true; return; }
+  const v = document.getElementById('tokenInput').value.trim();
+  if(!v) return;
+  tokenBusy = true; lastQuery = v;
+  setBadge('loading','실제 호출 중…'); btn.disabled = true;
+
+  const real = await fetchReal(v);
+  if(real){
+    renderBars(real.candidates.map(c=>[c.word, c.pct]));         // 막대 = 토큰 단위 분포
+    showPick(v, real.completion || real.picked);                  // 최종 출력 = 완성된 단어/구
+    setBadge('live','실제 ' + (real.model||'OpenAI') + ' 응답');
+  }else{
+    // 폴백: 서버 미연결(file:// 등) → 미리 정해 둔 샘플로 시뮬레이션
+    const data = tokenSamples[v] || tokenSamples["_default"];
+    renderBars(data);
+    showPick(v, data[0][0]);
+    setBadge('sim','시뮬레이션 (서버 미연결)');
+  }
+  btn.disabled = false; tokenBusy = false;
+  // 호출 중에 입력이 또 바뀌었다면 최신값으로 한 번 더
+  if(tokenPending || document.getElementById('tokenInput').value.trim() !== lastQuery){
+    tokenPending = false; predictToken();
+  }
+}
+// 타이핑이 멈추면(450ms) 자동으로 실시간 예측
+let tokenTimer = null;
+function scheduledPredict(){ clearTimeout(tokenTimer); tokenTimer = setTimeout(predictToken, 450); }
 document.getElementById('tokenBtn').addEventListener('click', predictToken);
-document.getElementById('tokenInput').addEventListener('keydown', e=>{ if(e.key==='Enter') predictToken(); });
+document.getElementById('tokenInput').addEventListener('input', scheduledPredict);
+document.getElementById('tokenInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ clearTimeout(tokenTimer); predictToken(); } });
 predictToken(); // 처음 화면에 기본 예시를 한 번 그려 둠
 
 /* ---------- 1-2. 섹션1: 공개 방식 토글 ---------- */
@@ -1479,6 +1979,72 @@ function drawCharts(){
 
 /* 페이지가 처음 열릴 때, 섹션1 막대는 이미 그려져 있고
    섹션5 그래프는 해당 탭을 열 때 drawCharts()가 실행됩니다. */
+
+/* ---------- 10. 섹션10: 야생마 비유 ----------
+   '장비 얹기'를 누를 때마다 장비 칩 하나가 켜지고, 통제력 게이지가 차오르고,
+   말이 야생(🐎)→길들임(🐴)으로 바뀝니다. 각 장비 = AI 하네스 요소(배지). */
+const whSteps = [
+  { gear:0, horse:'🐎', icon:'🐎', title:'야생마 — 길들이기 전', badge:'모델(LLM)', gauge:0,
+    state:'통제 불가 — 어디로 튈지 모름',
+    body:'힘세고 영리하지만, 그 자체로는 <b>제멋대로</b>입니다. 잠재력은 100점 — 하지만 방향도, 집중도, 멈출 줄도 모릅니다.' },
+  { gear:1, horse:'🐎', icon:'🎯', title:'고삐·굴레를 채우다', badge:'= 프롬프트', gauge:20,
+    state:'방향이 생겼다',
+    body:'<b>고삐</b>는 말이 <b>어디로 갈지</b> 잡아 줍니다. AI에선 <b>프롬프트</b> — “무엇을, 어떻게” 하라고 정확히 지시하는 일이죠.' },
+  { gear:2, horse:'🐴', icon:'🪑', title:'안장을 얹다', badge:'= 컨텍스트', gauge:45,
+    state:'기수가 올라탈 준비',
+    body:'<b>안장</b> 위에 올라타 필요한 정보를 싣고 <b>핵심만</b> 전달합니다. AI에선 <b>컨텍스트(관리)</b> — 작업에 필요한 자료만 골라 모델에 실어 주는 일.' },
+  { gear:3, horse:'🐴', icon:'🧩', title:'편자를 박다', badge:'= 스킬', gauge:65,
+    state:'어떤 지형도 달린다',
+    body:'<b>편자</b>는 지형에 맞춰 발굽을 보호합니다. AI에선 <b>스킬</b> — 상황(작업)에 맞는 <b>전문 능력</b>을 그때그때 장착하는 일.' },
+  { gear:4, horse:'🐴', icon:'🔌', title:'마구로 연결하다', badge:'= MCP', gauge:85,
+    state:'바깥 세계와 이어졌다',
+    body:'<b>마구</b>는 말을 마차·외부 장비에 연결합니다. AI에선 <b>MCP</b> — 모델을 외부 도구·시스템과 <b>표준 규격으로 잇는</b> 일.' },
+  { gear:5, horse:'🏇', icon:'🤠', title:'기수가 올라타 — 완성!', badge:'= 안전·권한(전체 통제)', gauge:100,
+    state:'길들여진 말 = 일하는 에이전트', tamed:true,
+    body:'마지막으로 <b>기수</b>가 올라타 전체를 통제하고 <b>위험할 땐 멈춥니다</b>. 고삐·안장·편자·마구를 모두 갖춘 <b>완성된 말</b> —<br>' +
+         '<b>모델 하나</b>가 아니라, <b>모델 + 장비 전체(=하네스)</b>가 함께 해낸 결과입니다.' },
+];
+(function(){
+  const horse = document.getElementById('whHorse');
+  if(!horse) return;
+  const stage = document.getElementById('whStage');
+  const chips = [...document.querySelectorAll('#whGear .wh-chip')];
+  const elState = document.getElementById('whState');
+  const elGauge = document.getElementById('whGauge');
+  const elGaugeCap = document.getElementById('whGaugeCap');
+  const elIcon = document.getElementById('whIcon');
+  const elTitle = document.getElementById('whTitle');
+  const elBadge = document.getElementById('whBadge');
+  const elBody = document.getElementById('whBody');
+  const elProg = document.getElementById('whProg');
+  const btnNext = document.getElementById('whNext');
+  const btnReset = document.getElementById('whReset');
+  let i = 0; // 0 = 야생마(시작 상태)
+
+  function render(){
+    const s = whSteps[i];
+    // 말 자체가 업그레이드: 야생(buck) → 차분 → 풀세팅(majestic)
+    horse.textContent = s.horse;
+    horse.className = 'wh-horse ' + (s.tamed ? 'tamed' : (s.gear === 0 ? 'wild' : 'calm'));
+    elState.textContent = s.state;
+    elState.className = 'wh-state' + (s.tamed ? ' tamed' : '');
+    stage.classList.toggle('tamed', !!s.tamed);
+    // 통제력 게이지
+    elGauge.style.width = s.gauge + '%';
+    elGaugeCap.textContent = '길들임(통제력) ' + s.gauge + '%';
+    // 아래 칩: 현재 단계까지 켜기 (gear=0은 아무것도 없음)
+    chips.forEach(c=> c.classList.toggle('on', Number(c.dataset.gear) <= s.gear));
+    // 상세 패널
+    elIcon.textContent = s.icon; elTitle.textContent = s.title;
+    elBadge.textContent = s.badge; elBody.innerHTML = s.body;
+    elProg.textContent = '장비 '+i+' / '+(whSteps.length-1);
+    btnNext.textContent = (i >= whSteps.length-1) ? '완료됨 ✓' : '장비 얹기 ▶';
+    btnNext.disabled = (i >= whSteps.length-1);
+  }
+  btnNext.addEventListener('click', ()=>{ if(i < whSteps.length-1){ i++; render(); } });
+  btnReset.addEventListener('click', ()=>{ i=0; render(); });
+  render();
+})();
 </script>
 </body>
 </html>
