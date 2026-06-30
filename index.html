@@ -595,6 +595,20 @@
     .ide-pane{ border-right:none; border-top:1px solid var(--line); }
     .ide-pane.tree{ border-top:none; }
   }
+  /* 모바일: 상단 탭을 '한 줄 가로 스크롤 스트립'으로 (줄바꿈 제거) */
+  @media (max-width:760px){
+    .tabs-inner{ flex-wrap:nowrap; overflow-x:auto; justify-content:flex-start;
+      padding:0 14px; gap:0 2px; scroll-snap-type:x proximity;
+      -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+    .tabs-inner::-webkit-scrollbar{ display:none; }
+    .tab-break{ display:none; }
+    .tabs-inner button{ flex:0 0 auto; scroll-snap-align:center; padding:12px 12px; font-size:13px; }
+    .tabs-inner button .num{ margin-right:6px; }
+    /* 오른쪽에 '옆으로 더 있어요' 그라데이션 힌트 */
+    nav.tabs::after{ content:""; position:absolute; top:0; right:0; bottom:0;
+      width:30px; pointer-events:none;
+      background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95)); }
+  }
   @media (max-width:520px){
     .g4,.g3,.g2{ grid-template-columns:1fr; }
     .stat-cards{ grid-template-columns:1fr; }
@@ -604,9 +618,6 @@
     .ft-compare{ grid-template-columns:1fr; }
     /* 갤럭시/아이폰 폭(360~375px) 보강 */
     main{ padding:0 14px 70px; }
-    /* 10개 탭이 더 촘촘히 들어가도록 */
-    .tabs-inner button{ padding:9px 7px; font-size:12.5px; }
-    .tabs-inner button .num{ width:17px; height:17px; margin-right:5px; }
     /* 비교표: 좁은 화면에서 가로 넘침 방지 */
     table.cmp{ table-layout:fixed; }
     table.cmp th, table.cmp td{ padding:11px 9px; font-size:12.5px; overflow-wrap:anywhere; }
@@ -1678,6 +1689,12 @@ function goTo(i){
   slides.forEach((s,idx)=> s.classList.toggle('show', idx===i));
   tabBtns.forEach((b,idx)=> b.classList.toggle('active', idx===i));
   window.scrollTo({top:0, behavior:'smooth'});
+  // 모바일 가로 스크롤 탭바: 활성 탭을 가운데로 자동 스크롤
+  const bar = document.getElementById('tabBar');
+  const cur = tabBtns[i];
+  if(bar && cur){
+    bar.scrollTo({ left: cur.offsetLeft - bar.clientWidth/2 + cur.clientWidth/2, behavior:'smooth' });
+  }
   // 섹션별로 처음 보일 때 애니메이션을 다시 실행
   if(i===6) drawCharts();
 }
