@@ -164,6 +164,16 @@
   .wh-stage.tamed .wh-spark.s2{ animation-delay:.45s; }
   .wh-stage.tamed .wh-spark.s3{ animation:none; opacity:1; }
   @keyframes wh-twinkle{ 0%,100%{ transform:scale(.85); opacity:.55; } 50%{ transform:scale(1.25); opacity:1; } }
+  /* 말 위에 하나씩 얹히는 장비 — 단계가 진행되면 그대로 쌓임 */
+  .wh-equip{ position:absolute; font-size:30px; opacity:0; transform:scale(.2);
+    transition:opacity .3s ease, transform .3s ease; z-index:4;
+    filter:drop-shadow(0 2px 4px rgba(20,26,34,.3)); }
+  .wh-equip.on{ opacity:1; transform:scale(1); animation:pickin .35s ease; }
+  .wh-equip[data-eq="5"]{ top:24px;    left:121px; }   /* 🤠 기수 — 안장 위(맨 위) */
+  .wh-equip[data-eq="2"]{ top:52px;    left:122px; }   /* 🪑 안장 — 등 위 */
+  .wh-equip[data-eq="1"]{ top:80px;    left:62px;  }   /* 🎯 고삐 — 머리쪽(앞) */
+  .wh-equip[data-eq="4"]{ top:98px;    right:60px; }   /* 🔌 마구 — 몸통 옆 */
+  .wh-equip[data-eq="3"]{ bottom:22px; left:122px; }   /* 🧩 편자 — 발밑 */
   @keyframes wh-buck{
     0%,100%{ transform:rotate(-5deg) translateY(0); }
     25%{ transform:rotate(4deg) translateY(-5px); }
@@ -592,6 +602,22 @@
     .head-badge{ display:none; }
     .pick-grid{ grid-template-columns:1fr; }
     .ft-compare{ grid-template-columns:1fr; }
+    /* 갤럭시/아이폰 폭(360~375px) 보강 */
+    main{ padding:0 14px 70px; }
+    /* 10개 탭이 더 촘촘히 들어가도록 */
+    .tabs-inner button{ padding:9px 7px; font-size:12.5px; }
+    .tabs-inner button .num{ width:17px; height:17px; margin-right:5px; }
+    /* 비교표: 좁은 화면에서 가로 넘침 방지 */
+    table.cmp{ table-layout:fixed; }
+    table.cmp th, table.cmp td{ padding:11px 9px; font-size:12.5px; overflow-wrap:anywhere; }
+    table.cmp thead th{ font-size:11.5px; }
+    table.cmp tbody th{ width:54px; }
+    /* 공식 카드: 한 줄에 2개씩 */
+    .formula{ padding:22px 14px; }
+    .formula .piece{ min-width:0; flex:1 1 42%; padding:14px 12px; }
+    .formula .piece .emoji{ font-size:24px; }
+    .formula .op{ font-size:18px; }
+    .formula .result{ font-size:16px; }
   }
 </style>
 </head>
@@ -1497,6 +1523,12 @@
           <span class="wh-spark s2">✨</span>
           <span class="wh-spark s3">🏅</span>
           <div class="wh-horse wild" id="whHorse">🐎</div>
+          <!-- 단계마다 말 위에 하나씩 얹히는 장비 (data-eq = 단계 순서) -->
+          <span class="wh-equip" data-eq="1">🎯</span>
+          <span class="wh-equip" data-eq="2">🪑</span>
+          <span class="wh-equip" data-eq="3">🧩</span>
+          <span class="wh-equip" data-eq="4">🔌</span>
+          <span class="wh-equip" data-eq="5">🤠</span>
         </div>
         <div class="wh-state" id="whState">통제 불가 — 어디로 튈지 모름</div>
         <div class="wh-gauge"><div class="wh-gauge-fill" id="whGauge"></div></div>
@@ -2009,6 +2041,7 @@ const whSteps = [
   if(!horse) return;
   const stage = document.getElementById('whStage');
   const chips = [...document.querySelectorAll('#whGear .wh-chip')];
+  const equips = [...document.querySelectorAll('.wh-equip')];
   const elState = document.getElementById('whState');
   const elGauge = document.getElementById('whGauge');
   const elGaugeCap = document.getElementById('whGaugeCap');
@@ -2023,8 +2056,8 @@ const whSteps = [
 
   function render(){
     const s = whSteps[i];
-    // 말 자체가 업그레이드: 야생(buck) → 차분 → 풀세팅(majestic)
-    horse.textContent = s.horse;
+    // 말은 그대로 두고, 장비가 말 위에 하나씩 쌓임. 상태는 야생(buck)→차분→완성(majestic)
+    horse.textContent = '🐎';
     horse.className = 'wh-horse ' + (s.tamed ? 'tamed' : (s.gear === 0 ? 'wild' : 'calm'));
     elState.textContent = s.state;
     elState.className = 'wh-state' + (s.tamed ? ' tamed' : '');
@@ -2032,7 +2065,8 @@ const whSteps = [
     // 통제력 게이지
     elGauge.style.width = s.gauge + '%';
     elGaugeCap.textContent = '길들임(통제력) ' + s.gauge + '%';
-    // 아래 칩: 현재 단계까지 켜기 (gear=0은 아무것도 없음)
+    // 말 위 장비 + 아래 칩: 현재 단계까지 켜기 (gear=0은 아무것도 없음)
+    equips.forEach(e=> e.classList.toggle('on', Number(e.dataset.eq) <= s.gear));
     chips.forEach(c=> c.classList.toggle('on', Number(c.dataset.gear) <= s.gear));
     // 상세 패널
     elIcon.textContent = s.icon; elTitle.textContent = s.title;
