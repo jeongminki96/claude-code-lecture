@@ -704,36 +704,6 @@
       <div class="note good"><b>더 깊게 알고 싶은 분들은:</b> 원하시면 <b>TA(Teaching Assistant)가 직접 찾아가</b> CLI·IDE 활용을 도와드립니다.</div>
     </div>
 
-    <div class="block">
-      <h3>같은 Claude Code 안에서는 — 엔진(모델) 교체 가능</h3>
-      <p class="hint">데스크탑이든 CLI든, Claude Code 안에서는 <span style="font-family:var(--mono); background:var(--bg-soft); padding:2px 7px; border-radius:6px; font-size:0.92em;">/model</span> 명령 하나로 Claude 계열 엔진을 즉시 갈아끼웁니다. 직접 눌러보세요. 👇</p>
-
-      <div class="harness-box">
-        <div class="harness-label">CLAUDE CODE (하네스 — 바뀌지 않는 부분)</div>
-        <div class="tools-row">
-          <span class="tool-chip">📂 파일 읽기·쓰기</span>
-          <span class="tool-chip">⌨️ 터미널 실행</span>
-          <span class="tool-chip">🔎 웹 검색</span>
-          <span class="tool-chip">🛡️ 권한 관리</span>
-        </div>
-        <div class="engine-box">
-          <div class="lab">현재 장착된 엔진 (모델)</div>
-          <div class="val" id="engineName">claude-opus-4-8</div>
-        </div>
-        <div class="model-chips" id="modelChips">
-          <button data-m="claude-opus-4-8" class="on">Opus 4.8</button>
-          <button data-m="claude-sonnet-5">Sonnet 5</button>
-          <button data-m="claude-fable-5">Fable 5</button>
-          <button data-m="claude-haiku-4-5">Haiku 4.5</button>
-        </div>
-      </div>
-      <div class="term" id="modelTerm">
-        <span class="g">$</span> /model claude-opus-4-8<br>
-        <span class="dim">Set model to</span> <span class="y">claude-opus-4-8</span> <span class="dim">— 도구·설정·대화는 그대로, 엔진만 교체됩니다.</span>
-      </div>
-      <div class="note good"><b>실화:</b> 오늘 이 강의를 준비하면서 실제로 <span style="font-family:var(--mono);">/model claude-fable-5</span> 명령으로 대화 도중 모델을 교체했습니다. 대화 내용, 열려 있던 파일, 진행하던 작업이 전부 유지된 채 엔진만 바뀌었습니다.</div>
-    </div>
-
     <div class="nav-foot">
       <button class="btn ghost" data-go="5">← GPT-5.6 분석</button>
       <button class="btn" data-go="7">하네스 엔지니어링 →</button>
@@ -1062,20 +1032,6 @@
     render();
   })();
 
-  /* ---------- 엔진(모델) 교체 데모 ---------- */
-  var chips = document.querySelectorAll('#modelChips button');
-  chips.forEach(function(c){
-    c.addEventListener('click', function(){
-      chips.forEach(function(x){ x.classList.remove('on'); });
-      c.classList.add('on');
-      var m = c.dataset.m;
-      document.getElementById('engineName').textContent = m;
-      document.getElementById('modelTerm').innerHTML =
-        '<span class="g">$</span> /model ' + m + '<br>' +
-        '<span class="dim">Set model to</span> <span class="y">' + m + '</span> ' +
-        '<span class="dim">— 도구·설정·대화는 그대로, 엔진만 교체됩니다.</span>';
-    });
-  });
 </script>
 
 </body>
