@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  재정경제부 · LLM 이해와 최신 트렌드 (인터랙티브 학습 자료 2편)
+  ------------------------------------------------------------
+  · 이 파일 하나(llm-trends.html)만 더블클릭하면 브라우저에서 바로 열립니다.
+  · 설치/인터넷 연결 없이 동작합니다. (외부 라이브러리 0개)
+  · 1편(index.html)과 같은 디자인 시스템을 사용합니다.
+  · 기준 시점: 2026년 7월 (GPT-5.6 · Claude 5 출시 직후)
+  ============================================================
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>재정경제부 · LLM 이해와 최신 트렌드</title>
+
+<style>
+  /* --- 0. 색상/공통 변수 (1편과 동일한 팔레트) --- */
+  :root{
+    --navy:#1b3a63;
+    --navy-2:#2a4f80;
+    --accent:#2f5fd0;
+    --point:#c0392b;
+    --orange:#E8723C;
+    --ink:#14181f;
+    --ink-2:#414b59;
+    --muted:#6b7480;
+    --line:#edeef1;
+    --line-2:#e0e3e8;
+    --bg:#ffffff;
+    --bg-soft:#f7f8fa;
+    --card:#ffffff;
+    --radius:16px;
+    --radius-sm:10px;
+    --shadow:0 1px 1px rgba(20,26,34,.03), 0 4px 14px rgba(20,26,34,.05);
+    --shadow-lg:0 2px 6px rgba(20,26,34,.05), 0 16px 36px rgba(20,26,34,.08);
+    --mono:"D2Coding","Consolas",ui-monospace,monospace;
+  }
+
+  /* --- 1. 기본 초기화 --- */
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    font-family:"Pretendard Variable","Pretendard","Apple SD Gothic Neo",
+                "Malgun Gothic","맑은 고딕",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.7;
+    letter-spacing:-0.005em;
+    word-break:keep-all;
+    overflow-wrap:break-word;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  h1,h2,h3,h4,p{ margin:0; }
+  a{ color:inherit; }
+
+  /* --- 2. 헤더 --- */
+  header.site{
+    background:var(--bg);
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:50;
+  }
+  .head-inner{
+    max-width:1080px; margin:0 auto; padding:14px 20px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  }
+  .logo{ height:34px; width:auto; display:block; }
+  .head-titles{ display:flex; flex-direction:column; line-height:1.3;
+    padding-left:16px; margin-left:2px; border-left:1px solid var(--line-2); }
+  .head-titles .t{ font-size:15px; font-weight:600; color:var(--ink); letter-spacing:-.01em; }
+  .head-spacer{ flex:1; }
+  .head-badge{
+    font-size:12.5px; color:var(--muted); background:var(--bg-soft);
+    padding:7px 14px; border-radius:999px; white-space:nowrap; font-weight:500;
+  }
+
+  /* --- 3. 탭 네비게이션 --- */
+  nav.tabs{
+    background:rgba(255,255,255,.85); backdrop-filter:saturate(180%) blur(8px);
+    border-bottom:1px solid var(--line);
+    position:sticky; top:63px; z-index:40;
+  }
+  .tabs-inner{
+    max-width:1080px; margin:0 auto; padding:0 12px;
+    display:flex; flex-wrap:wrap; gap:2px 4px; justify-content:center;
+  }
+  .tabs-inner button{
+    appearance:none; border:none; background:transparent;
+    font:inherit; cursor:pointer; color:var(--muted);
+    padding:12px 11px; white-space:nowrap; letter-spacing:-.01em;
+    border-bottom:2px solid transparent; font-weight:500; font-size:14px;
+    transition:color .15s, border-color .15s;
+  }
+  .tabs-inner button:hover{ color:var(--ink); }
+  .tabs-inner button.active{ color:var(--navy); border-bottom-color:var(--navy); font-weight:600; }
+  .tabs-inner button .num{
+    display:inline-grid; place-items:center; width:19px; height:19px;
+    font-size:11px; border-radius:6px; margin-right:8px; font-weight:600;
+    background:var(--bg-soft); color:var(--muted);
+  }
+  .tabs-inner button.active .num{ background:var(--navy); color:#fff; }
+
+  /* --- 4. 슬라이드(섹션) 공통 --- */
+  main{ max-width:1080px; margin:0 auto; padding:36px 20px 80px; }
+  section.slide{ display:none; animation:fadeIn .25s ease; }
+  section.slide.show{ display:block; }
+  @keyframes fadeIn{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+
+  .sec-tag{
+    display:inline-block; font-size:12px; font-weight:700; letter-spacing:.12em;
+    color:var(--accent); background:rgba(47,95,208,.07);
+    padding:5px 12px; border-radius:999px; margin-bottom:14px;
+  }
+  .sec-title{
+    font-size:clamp(24px,3.6vw,34px); font-weight:800; color:var(--ink);
+    line-height:1.35; margin-bottom:26px; letter-spacing:-.02em;
+  }
+  .block{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px 28px; margin-bottom:22px; box-shadow:var(--shadow);
+  }
+  .block h3{ font-size:18px; font-weight:700; color:var(--navy); margin-bottom:10px; }
+  .hint{ font-size:14px; color:var(--muted); margin-bottom:14px; }
+  .note{
+    font-size:13.5px; color:var(--ink-2); background:var(--bg-soft);
+    border-left:3px solid var(--navy); padding:12px 16px; border-radius:8px; margin-top:14px;
+  }
+  .note.warn{ border-left-color:var(--point); }
+  .note.good{ border-left-color:#2e7d32; }
+
+  /* 카드 그리드 */
+  .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin-top:14px; }
+  .card{
+    background:var(--bg-soft); border:1px solid var(--line); border-radius:var(--radius-sm);
+    padding:18px 18px;
+  }
+  .card .ic{ font-size:22px; margin-bottom:8px; }
+  .card h4{ font-size:15px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+  .card p{ font-size:13.5px; color:var(--ink-2); }
+  .card.bad{ background:rgba(192,57,43,.05); border-color:rgba(192,57,43,.18); }
+  .card.good{ background:rgba(46,125,50,.05); border-color:rgba(46,125,50,.18); }
+
+  /* 표 */
+  table.tbl{ width:100%; border-collapse:collapse; font-size:14px; margin-top:12px; }
+  table.tbl th{
+    text-align:left; font-weight:700; color:var(--navy); background:var(--bg-soft);
+    padding:10px 14px; border-bottom:2px solid var(--line-2); white-space:nowrap;
+  }
+  table.tbl td{ padding:11px 14px; border-bottom:1px solid var(--line); color:var(--ink-2); vertical-align:top; }
+  table.tbl tr:last-child td{ border-bottom:none; }
+  .tbl-wrap{ overflow-x:auto; }
+  .pill{
+    display:inline-block; font-size:12px; font-weight:700; padding:3px 10px;
+    border-radius:999px; background:var(--bg-soft); color:var(--ink-2); white-space:nowrap;
+  }
+  .pill.navy{ background:var(--navy); color:#fff; }
+  .pill.orange{ background:var(--orange); color:#fff; }
+  .pill.green{ background:#2e7d32; color:#fff; }
+  .pill.red{ background:var(--point); color:#fff; }
+
+  /* 타임라인 */
+  .timeline{ position:relative; padding-left:26px; margin-top:10px; }
+  .timeline::before{
+    content:""; position:absolute; left:8px; top:6px; bottom:6px;
+    width:2px; background:var(--line-2);
+  }
+  .tl-item{ position:relative; padding:0 0 22px 14px; }
+  .tl-item:last-child{ padding-bottom:0; }
+  .tl-item::before{
+    content:""; position:absolute; left:-24px; top:7px; width:12px; height:12px;
+    border-radius:50%; background:#fff; border:3px solid var(--navy);
+  }
+  .tl-item.hot::before{ border-color:var(--orange); }
+  .tl-date{ font-size:12.5px; font-weight:700; color:var(--accent); letter-spacing:.02em; }
+  .tl-item.hot .tl-date{ color:var(--orange); }
+  .tl-item h4{ font-size:15.5px; font-weight:700; color:var(--ink); margin:2px 0 4px; }
+  .tl-item p{ font-size:13.5px; color:var(--ink-2); }
+
+  /* CLI 말풍선 (표지) */
+  .cli-bubble{
+    font-family:var(--mono); background:#15233a; color:#e6edf3;
+    padding:0.8rem 1.2rem; border-radius:10px; font-size:1.05rem; line-height:1.6;
+    box-shadow:0 8px 22px rgba(0,0,0,0.18); white-space:nowrap; text-align:left;
+  }
+  .cli-bubble .g{ color:#7ee787; }
+  .cursor{
+    display:inline-block; width:0.6em; height:1.05em; background:#e6edf3;
+    margin-left:2px; vertical-align:-0.18em; animation:blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* 터미널 데모 박스 */
+  .term{
+    font-family:var(--mono); background:#15233a; color:#e6edf3;
+    border-radius:12px; padding:16px 18px; font-size:13.5px; line-height:1.75;
+    overflow-x:auto; margin-top:12px;
+  }
+  .term .g{ color:#7ee787; } .term .b{ color:#79c0ff; } .term .y{ color:#f7d774; }
+  .term .dim{ color:#8b98a5; }
+
+  /* 다음 단어 확률 데모 */
+  .prob-row{
+    display:flex; align-items:center; gap:12px; margin:8px 0; cursor:default;
+  }
+  .prob-word{
+    flex:0 0 96px; font-weight:700; font-size:14.5px; color:var(--ink); text-align:right;
+  }
+  .prob-bar-wrap{ flex:1; background:var(--bg-soft); border-radius:8px; height:26px; overflow:hidden; border:1px solid var(--line); }
+  .prob-bar{
+    height:100%; background:var(--navy-2); border-radius:8px 0 0 8px;
+    width:0; transition:width .8s cubic-bezier(.2,.7,.3,1);
+    display:flex; align-items:center; justify-content:flex-end; padding-right:8px;
+    color:#fff; font-size:12px; font-weight:700; min-width:0;
+  }
+  .prob-row.top .prob-bar{ background:var(--orange); }
+  .btn{
+    appearance:none; border:none; cursor:pointer; font:inherit;
+    background:var(--navy); color:#fff; font-weight:600; font-size:14.5px;
+    padding:11px 22px; border-radius:10px; transition:background .15s;
+  }
+  .btn:hover{ background:var(--navy-2); }
+  .btn.ghost{ background:var(--bg-soft); color:var(--ink-2); border:1px solid var(--line-2); }
+  .btn.ghost:hover{ background:var(--line); }
+
+  /* 모델 3형제 카드 */
+  .trio{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:14px; }
+  .trio .m{
+    border:1px solid var(--line); border-radius:var(--radius-sm); padding:20px 18px;
+    background:var(--card); box-shadow:var(--shadow); position:relative;
+  }
+  .trio .m.flag{ border-color:rgba(232,114,60,.5); background:rgba(232,114,60,.04); }
+  .trio .m .rank{ position:absolute; top:14px; right:14px; font-size:11.5px; font-weight:700; color:var(--muted); }
+  .trio .m h4{ font-size:17px; font-weight:800; color:var(--navy); margin-bottom:2px; }
+  .trio .m .sub{ font-size:12.5px; color:var(--muted); margin-bottom:10px; }
+  .trio .m ul{ margin:0; padding-left:18px; font-size:13.5px; color:var(--ink-2); }
+  .trio .m li{ margin:3px 0; }
+
+  /* 하네스 다이어그램 */
+  .harness-box{
+    border:2px dashed var(--navy-2); border-radius:var(--radius);
+    padding:22px; background:rgba(42,79,128,.03); margin-top:14px;
+  }
+  .harness-label{ font-size:13px; font-weight:800; color:var(--navy); letter-spacing:.06em; margin-bottom:14px; }
+  .engine-box{
+    border:2px solid var(--orange); border-radius:var(--radius-sm);
+    background:rgba(232,114,60,.07); padding:16px 18px; text-align:center; margin:14px auto;
+    max-width:420px;
+  }
+  .engine-box .lab{ font-size:12px; font-weight:800; color:#b4541f; letter-spacing:.08em; }
+  .engine-box .val{ font-size:19px; font-weight:800; color:var(--ink); margin-top:4px; font-family:var(--mono); }
+  .tools-row{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+  .tool-chip{
+    font-size:13px; font-weight:600; color:var(--ink-2); background:#fff;
+    border:1px solid var(--line-2); border-radius:999px; padding:7px 14px;
+  }
+  .model-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; justify-content:center; }
+  .model-chips button{
+    appearance:none; cursor:pointer; font:inherit; font-size:13.5px; font-weight:600;
+    background:#fff; color:var(--ink-2); border:1px solid var(--line-2);
+    border-radius:999px; padding:8px 16px; transition:all .15s;
+  }
+  .model-chips button:hover{ border-color:var(--navy-2); color:var(--navy); }
+  .model-chips button.on{ background:var(--navy); border-color:var(--navy); color:#fff; }
+
+  /* 야생마 비유 — 모델에 하네스(장비) 얹기 (1편과 동일한 데모) */
+  .wh-stage{ margin-top:14px; padding:22px 18px; border:1px solid var(--line);
+    border-radius:16px; background:var(--bg-soft); text-align:center; transition:background .4s, border-color .4s; }
+  .wh-stage.tamed{ border-color:rgba(47,158,68,.45); background:rgba(47,158,68,.06); }
+  .wh-arena{ position:relative; width:272px; height:200px; margin:0 auto; display:grid; place-items:center; }
+  .wh-horse{ width:252px; z-index:2; transition:filter .4s, transform .4s; }
+  .wh-horse svg{ width:100%; height:auto; display:block; }
+  .wh-horse.wild{ animation:wh-buck .55s ease-in-out infinite;
+    filter:drop-shadow(0 6px 16px rgba(192,57,43,.45)); }
+  .wh-horse.calm{ filter:drop-shadow(0 6px 16px rgba(27,58,99,.3)); }
+  .wh-horse.tamed{ transform:scale(1.08); filter:drop-shadow(0 12px 24px rgba(212,160,23,.55)); }
+  .wh-spark{ position:absolute; opacity:0; z-index:3; transition:opacity .4s; pointer-events:none; }
+  .wh-spark.s1{ font-size:26px; top:22px; right:38px; }
+  .wh-spark.s2{ font-size:22px; bottom:30px; left:40px; }
+  .wh-spark.s3{ font-size:30px; top:8px; left:50%; transform:translateX(-50%); }
+  .wh-stage.tamed .wh-spark{ opacity:1; animation:wh-twinkle 1.3s ease-in-out infinite; }
+  .wh-stage.tamed .wh-spark.s2{ animation-delay:.45s; }
+  .wh-stage.tamed .wh-spark.s3{ animation:none; opacity:1; }
+  @keyframes wh-twinkle{ 0%,100%{ transform:scale(.85); opacity:.55; } 50%{ transform:scale(1.25); opacity:1; } }
+  /* SVG 말 위에 하나씩 나타나는 장비 그룹 */
+  .wh-equip{ opacity:0; transition:opacity .45s ease; }
+  .wh-equip.on{ opacity:1; }
+  @keyframes wh-buck{
+    0%,100%{ transform:rotate(-5deg) translateY(0); }
+    25%{ transform:rotate(4deg) translateY(-5px); }
+    50%{ transform:rotate(-3deg) translateY(1px); }
+    75%{ transform:rotate(5deg) translateY(-3px); }
+  }
+  @keyframes pickin{ 0%{ transform:scale(.4); } 70%{ transform:scale(1.15); } 100%{ transform:scale(1); } }
+  .wh-state{ margin-top:12px; font-size:14.5px; font-weight:700; color:var(--point); transition:color .4s; }
+  .wh-state.tamed{ color:var(--navy); }
+  .wh-gauge{ margin:14px auto 0; max-width:420px; height:12px; border-radius:999px;
+    background:#eceef2; overflow:hidden; border:1px solid var(--line); }
+  .wh-gauge-fill{ height:100%; width:0; border-radius:999px;
+    background:linear-gradient(90deg,#c0392b,#E8723C 55%,#2f9e44); transition:width .45s ease; }
+  .wh-gauge-cap{ margin-top:7px; font-size:12.5px; color:var(--muted); font-weight:600; }
+  .wh-gear{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:18px; }
+  .wh-chip{ display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:999px;
+    font-size:13px; font-weight:600; border:1px solid var(--line-2); background:#fff; color:var(--muted);
+    opacity:.5; transition:all .25s; }
+  .wh-chip.on{ opacity:1; border-color:#E8723C; background:rgba(232,114,60,.10); color:#b4541f;
+    animation:pickin .3s ease; }
+  .wh-chip .ge{ font-size:15px; }
+  /* 단계 상세 패널 */
+  .harn-stage{ margin-top:14px; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  .harn-stage-head{ display:flex; align-items:center; gap:10px; padding:13px 16px;
+    background:#fff; border-bottom:1px solid var(--line); }
+  .harn-stage-head .hi{ font-size:22px; }
+  .harn-stage-head .ht{ font-weight:700; color:var(--ink); font-size:15.5px; }
+  .harn-badge{ margin-left:auto; flex:0 0 auto; font-size:12px; font-weight:700; padding:3px 10px;
+    border-radius:999px; background:rgba(232,114,60,.12); color:#c2531f; white-space:nowrap; }
+  .harn-stage-body{ padding:14px 16px; font-size:14px; color:var(--ink-2); line-height:1.65; background:var(--bg-soft); }
+  .harn-ctrl{ margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .harn-prog{ font-size:13px; color:var(--muted); font-weight:600; }
+
+  /* 에이전트 루프 */
+  .flow{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:12px; }
+  .flow-step{ padding:9px 15px; border-radius:10px; font-weight:600; font-size:14px;
+    border:1px solid var(--line); background:var(--bg-soft); color:var(--ink-2); }
+  .flow-step.hl{ border-color:rgba(232,114,60,.45); background:rgba(232,114,60,.08); color:#b4541f; }
+  .flow-arrow{ color:var(--muted); font-weight:700; }
+
+  /* 하단 이전/다음 네비 */
+  .nav-foot{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:34px; padding-top:20px; border-top:1px solid var(--line);
+  }
+
+  /* --- 모바일 --- */
+  @media (max-width:640px){
+    .head-inner{ padding:12px 14px; gap:10px; }
+    .head-badge{ display:none; }
+    .head-titles .t{ font-size:13.5px; }
+    nav.tabs{ top:57px; }
+    .tabs-inner{ flex-wrap:nowrap; overflow-x:auto; justify-content:flex-start;
+      -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; scrollbar-width:none; }
+    .tabs-inner::-webkit-scrollbar{ display:none; }
+    .tabs-inner button{ flex:0 0 auto; scroll-snap-align:center; padding:12px 12px; font-size:13px; }
+    .tabs-inner button .num{ margin-right:6px; }
+    .block{ padding:20px 18px; }
+    .prob-word{ flex-basis:76px; font-size:13.5px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====================== 헤더 ====================== -->
+<header class="site">
+  <div class="head-inner">
+    <img class="logo" alt="재정경제부 로고" src="data:image/png;base64,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" />
+    <div class="head-titles">
+      <span class="t">LLM 이해와 최신 트렌드 — GPT-5.6 · Claude 5 시대</span>
+    </div>
+    <div class="head-spacer"></div>
+    <span class="head-badge">2026년 7월 기준 · 인터랙티브 강의 2편</span>
+  </div>
+</header>
+
+<!-- ====================== 탭 네비 ====================== -->
+<nav class="tabs">
+  <div class="tabs-inner" id="tabBar">
+    <button data-go="0" class="active"><span class="num">1</span>인트로</button>
+    <button data-go="1"><span class="num">2</span>LLM의 원리</button>
+    <button data-go="2"><span class="num">3</span>역량과 한계</button>
+    <button data-go="3"><span class="num">4</span>2026 산업 동향</button>
+    <button data-go="4"><span class="num">5</span>Mythos와 Fable</button>
+    <button data-go="5"><span class="num">6</span>GPT-5.6 분석</button>
+    <button data-go="6"><span class="num">7</span>Claude Code 활용 전략</button>
+    <button data-go="7"><span class="num">8</span>하네스 엔지니어링</button>
+    <button data-go="8"><span class="num">9</span>실무 적용 · 제언</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ====================== 1. 인트로 ====================== -->
+  <section class="slide show" id="s_cover">
+    <div style="min-height:72vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:1.8rem; padding:3rem 1rem;">
+
+      <div style="position:relative; display:inline-block;">
+        <div class="cli-bubble">
+          <span class="g">$</span> claude<br>
+          Hi 재정경제부<span class="cursor"></span>
+        </div>
+        <div style="position:absolute; left:50%; bottom:-9px; transform:translateX(-50%); width:0; height:0; border-left:9px solid transparent; border-right:9px solid transparent; border-top:10px solid #15233a;"></div>
+      </div>
+
+      <!-- Clawd 픽셀 캐릭터 (1편과 동일) -->
+      <svg width="190" height="100" viewBox="24 42 228 120" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="30" y="84" width="216" height="24" fill="#F2A06E"/>
+        <rect x="60" y="48" width="156" height="84" fill="#F2A06E"/>
+        <rect x="78"  y="132" width="12" height="24" fill="#F2A06E"/>
+        <rect x="102" y="132" width="18" height="24" fill="#F2A06E"/>
+        <rect x="162" y="132" width="12" height="24" fill="#F2A06E"/>
+        <rect x="186" y="132" width="18" height="24" fill="#F2A06E"/>
+        <rect x="84"  y="66" width="12" height="24" fill="#14110F"/>
+        <rect x="168" y="66" width="12" height="24" fill="#14110F"/>
+      </svg>
+
+      <div style="display:flex; flex-direction:column; align-items:center; gap:0.6rem;">
+        <h1 style="font-size:2.8rem; font-weight:900; color:var(--navy); line-height:1.15; margin:0;">LLM 이해와<br><span style="color:#E8723C;">최신 트렌드</span></h1>
+        <p style="font-size:0.9rem; color:var(--ink-2); margin:0.2rem 0 0; letter-spacing:0.04em;">클로드와 GPT — 에이전트 시대의 AI</p>
+      </div>
+
+      <div style="padding-top:1.4rem; border-top:1px solid var(--line); width:100%; max-width:320px;">
+        <p style="font-size:0.85rem; color:var(--muted); margin:0;">재정경제부 인공지능자문관 &nbsp;정민기</p>
+      </div>
+
+    </div>
+
+    <div class="nav-foot">
+      <span></span>
+      <button class="btn" data-go="1">LLM의 원리 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 2. LLM이란? ====================== -->
+  <section class="slide" id="s_llm">
+    <span class="sec-tag">BASICS</span>
+    <h2 class="sec-title">LLM은 결국,<br>'다음 단어 맞히기' 기계입니다</h2>
+
+    <div class="block">
+      <h3>Large Language Model — 거대 언어 모델</h3>
+      <p class="hint">인터넷의 방대한 글을 학습해서, "이 문장 다음에 올 가장 자연스러운 단어"를 확률로 계산하는 프로그램입니다. 이 단순한 원리를 수천억 번 반복하면 대화, 번역, 코딩까지 가능해집니다.</p>
+
+      <div style="font-size:16px; font-weight:700; color:var(--ink); background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; padding:14px 18px; margin-bottom:6px;">
+        "재정경제부는 오늘 내년도 예산안을 <span style="color:var(--orange);">______</span>"
+      </div>
+      <p class="hint" style="margin:10px 0 12px;">빈칸에 뭐가 올까요? 버튼을 눌러 모델이 계산한 확률을 확인해 보세요.</p>
+
+      <button class="btn" id="probBtn">확률 계산해 보기</button>
+
+      <div id="probArea" style="margin-top:16px; display:none;">
+        <div class="prob-row top"><span class="prob-word">발표했다</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="62">62%</div></div></div>
+        <div class="prob-row"><span class="prob-word">편성했다</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="21">21%</div></div></div>
+        <div class="prob-row"><span class="prob-word">확정했다</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="9">9%</div></div></div>
+        <div class="prob-row"><span class="prob-word">삭감했다</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="5">5%</div></div></div>
+        <div class="prob-row"><span class="prob-word">바나나</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="1" style="background:var(--line-2); color:var(--muted);">0.1%</div></div></div>
+        <div class="note">모델은 이렇게 <b>모든 후보 단어에 확률</b>을 매기고, 높은 쪽을 고릅니다. 이걸 한 단어씩 반복하면 긴 글이 됩니다. — 1편에서 본 "다음 토큰 데모"와 같은 원리예요.</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>토큰(Token) — LLM의 글자 단위</h3>
+      <p class="hint">LLM은 글을 '단어'가 아니라 '토큰'이라는 조각으로 자릅니다. 한글은 대략 1~2글자가 1토큰. API 요금도 토큰 수로 계산됩니다.</p>
+      <div class="term">
+        <span class="dim"># "재정경제부는 예산안을 발표했다" 를 토큰으로 자르면</span><br>
+        [<span class="y">재정</span>][<span class="b">경제부</span>][<span class="y">는</span>] [<span class="b">예산</span>][<span class="y">안을</span>] [<span class="b">발표</span>][<span class="y">했다</span>]  <span class="dim">→ 약 7개 토큰</span>
+      </div>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="0">← 인트로</button>
+      <button class="btn" data-go="2">역량과 한계 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 3. 잘함 · 못함 ====================== -->
+  <section class="slide" id="s_pros">
+    <span class="sec-tag">STRENGTHS &amp; LIMITS</span>
+    <h2 class="sec-title">LLM이 잘하는 것,<br>그리고 조심해야 하는 것</h2>
+
+    <div class="block">
+      <h3>✅ 이런 건 정말 잘합니다</h3>
+      <div class="cards">
+        <div class="card good"><div class="ic">📝</div><h4>초안 작성</h4><p>보도자료, 보고서, 이메일 초안을 몇 초 만에. "처음 한 장"의 부담을 없애줍니다.</p></div>
+        <div class="card good"><div class="ic">📚</div><h4>요약 · 정리</h4><p>긴 문서를 핵심만 추려서 정리. 회의록, 자료 검토에 강합니다.</p></div>
+        <div class="card good"><div class="ic">🌐</div><h4>번역 · 문체 변환</h4><p>외국어 번역은 물론, "딱딱한 공문체 → 쉬운 안내문" 변환도 가능.</p></div>
+        <div class="card good"><div class="ic">💻</div><h4>코딩 · 자동화</h4><p>이 강의 자료 자체가 AI와의 대화로 만들어졌습니다. 반복 작업 자동화에 특히 강합니다.</p></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>⚠️ 이런 건 조심해야 합니다</h3>
+      <div class="cards">
+        <div class="card bad"><div class="ic">🎭</div><h4>환각 (Hallucination)</h4><p>모르는 것도 <b>아주 그럴듯하게 지어냅니다.</b> 확률로 다음 단어를 고르는 원리의 부작용. 사실 확인은 반드시 사람이.</p></div>
+        <div class="card bad"><div class="ic">📅</div><h4>지식 컷오프</h4><p>학습이 끝난 시점 이후의 일은 모릅니다. 최신 정보는 검색 도구를 붙여줘야 합니다. (→ 이게 '하네스'가 필요한 이유 중 하나)</p></div>
+        <div class="card bad"><div class="ic">🔢</div><h4>정밀 계산</h4><p>계산을 <b>실행</b>하는 게 아니라 답을 <b>'다음 토큰'으로 예측</b>하기 때문입니다. 숫자도 글자처럼 취급해서, 자주 본 계산(2+2)은 맞히지만 처음 보는 큰 수 계산은 그럴듯한 오답을 냅니다. 계산기·엑셀 도구를 쥐여주면 해결됩니다.</p></div>
+        <div class="card bad"><div class="ic">🔒</div><h4>보안 · 민감정보</h4><p>개인정보, 내부 문서를 함부로 입력하면 안 됩니다. 기관 보안 지침을 항상 우선하세요.</p></div>
+      </div>
+      <div class="note warn"><b>공직자 원칙:</b> AI의 답은 "잘 쓴 초안"으로 취급하세요. 최종 판단과 책임은 언제나 사람의 몫입니다.</div>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="1">← LLM의 원리</button>
+      <button class="btn" data-go="3">2026 산업 동향 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 4. 2026 타임라인 ====================== -->
+  <section class="slide" id="s_timeline">
+    <span class="sec-tag">NOW · 2026</span>
+    <h2 class="sec-title">바로 지난 한 달,<br>AI 업계에 무슨 일이 있었나</h2>
+
+    <div class="block">
+      <h3>2026년 봄~여름 — Mythos의 탄생에서 GPT-5.6까지</h3>
+      <p class="hint">이 강의를 준비하는 사이에도 판이 바뀌었습니다. 지난 넉 달의 타임라인입니다.</p>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-date">3월 26일</div>
+          <h4>유출로 세상에 알려진 'Mythos'</h4>
+          <p>내부 문서가 실수로 노출되면서, Anthropic이 비밀리에 개발하던 최상위 모델의 존재가 드러납니다.</p>
+        </div>
+        <div class="tl-item hot">
+          <div class="tl-date">4월 7일</div>
+          <h4>Claude Mythos Preview + Project Glasswing 공식 발표</h4>
+          <p>"너무 강력해서 아무나 못 쓰는 모델"을 <b>검증된 방어 조직에게만</b> 제공하는 프로그램과 함께 공개. (자세한 내용은 다음 탭에서)</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">5월 22일</div>
+          <h4>Glasswing 첫 달 성과 공개</h4>
+          <p>참여 기관들이 한 달간 <b>취약점 23,019개</b>를 발견했다고 발표. AI 보안 역량이 숫자로 증명됩니다.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">6월 9일</div>
+          <h4>Mythos 5 출시(제한 공개) + 공개판 Fable 5 출시</h4>
+          <p>Glasswing 참여자용 Mythos 5와, 같은 모델에 안전장치를 얹은 일반 공개판 Fable 5가 나란히 출시.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">6월 12일</div>
+          <h4>미국 정부, 최상위 모델 수출통제</h4>
+          <p>출시 3일 만에 안전장치 우회 사례가 보고되며 Fable 5 · Mythos 5가 일시 중단. AI가 <b>정부 규제의 대상</b>이 될 만큼 강력해졌다는 신호.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">6월 26일</div>
+          <h4>OpenAI, GPT-5.6 시리즈 제한 프리뷰 시작</h4>
+          <p>Sol · Terra · Luna 3개 모델을 일부 사용자에게 먼저 공개.</p>
+        </div>
+        <div class="tl-item hot">
+          <div class="tl-date">6월 30일 ~ 7월 1일</div>
+          <h4>Anthropic, Fable 5 · Mythos 5 복원 + Sonnet 5 출시</h4>
+          <p>안전 패치를 마친 최상위 모델군이 18일 만에 복귀. 같은 날 일상용 주력 Sonnet 5도 출시.</p>
+        </div>
+        <div class="tl-item hot">
+          <div class="tl-date">7월 9일</div>
+          <h4>OpenAI, GPT-5.6 정식 출시</h4>
+          <p>Sol(최상위) · Terra(균형) · Luna(경량) 3형제 정식 공개. 열흘 간격으로 양대 회사가 신형 모델을 맞불 출시.</p>
+        </div>
+      </div>
+
+      <div class="note"><b>핵심 포인트:</b> 이제 모델 세대교체 주기가 <b>월 단위</b>입니다. "어떤 모델이 최고냐"보다 <b>"새 모델이 나왔을 때 바로 갈아탈 수 있는 구조냐"</b>가 중요해졌습니다. — 뒤에서 다룰 '하네스' 개념과 이어집니다.</div>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="2">← 역량과 한계</button>
+      <button class="btn" data-go="4">Mythos와 Fable →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 5. Claude 5 ====================== -->
+  <section class="slide" id="s_claude5">
+    <span class="sec-tag">ANTHROPIC</span>
+    <h2 class="sec-title">지금 Claude가 왜 화제인가 —<br>Mythos 5와 Fable 5</h2>
+
+    <div class="block">
+      <h3>Mythos 5 — 너무 강력해서 '아무나 못 쓰는' 모델 <span class="pill red">제한 공개</span></h3>
+      <p class="hint">Anthropic의 최상위 모델 Mythos 5는 거의 모든 성능 지표에서 세계 최고 수준 — 특히 사이버보안은 "세계에서 가장 강한 모델"로 평가됩니다.</p>
+      <div class="cards">
+        <div class="card"><div class="ic">🏆</div><h4>거의 전 분야 최고 기록</h4><p>소프트웨어 공학, 과학 연구, 지식 노동 등 대부분의 벤치마크에서 최고 성능(SOTA).</p></div>
+        <div class="card"><div class="ic">🛡️</div><h4>세계 최강 사이버보안</h4><p>취약점 발견, 신약 설계, 바이오 방어 스크리닝까지 — 전문 연구자 수준.</p></div>
+        <div class="card bad"><div class="ic">🚫</div><h4>그래서 제한 공개</h4><p>악용 시 사이버 공격·위험물 설계에 쓰일 수 있어, <b>검증된 소수 고객에게만</b> 제공합니다.</p></div>
+        <div class="card"><div class="ic">💎</div><h4>가격은 Fable 5와 동일</h4><p>입력 $10 / 출력 $50 (백만 토큰당). 진입 장벽은 돈이 아니라 <b>자격</b>입니다.</p></div>
+      </div>
+      <div class="note warn"><b>핵심 포인트:</b> "성능이 좋아서 화제"가 아닙니다. AI가 <b>"너무 강력해서 공개 자체를 제한해야 하는 단계"</b>에 진입했다는 것 — 이게 지금 Claude가 화제인 진짜 이유입니다.</div>
+    </div>
+
+    <div class="block">
+      <h3>Fable 5 — Mythos급 성능에 안전장치를 얹은 '공개판'</h3>
+      <p class="hint">일반 사용자가 쓸 수 있는 가장 강력한 Claude. 사실 Mythos 5와 <b>같은 기반 모델</b>이고, 차이는 안전장치뿐입니다 — Fable 5는 사이버보안·생물학 등 위험 요청이 오면 <b>자동으로 이전 세대(Opus 4.8)로 전환</b>되는 안전장치가 내장돼 있습니다. 오늘 강의 도중 <span style="font-family:var(--mono); background:var(--bg-soft); padding:2px 7px; border-radius:6px; font-size:0.92em;">/model</span>로 갈아끼웠던 바로 그 모델입니다.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tr><th>코딩 벤치마크 (SWE-bench Pro)</th><th>점수</th></tr>
+          <tr><td><b>Mythos 5</b> — 제한 공개</td><td><b>80.3%</b></td></tr>
+          <tr><td><b>Fable 5</b> — 공개 플래그십</td><td>Mythos급 (안전장치 내장)</td></tr>
+          <tr><td>Opus 4.8 — 이전 세대</td><td>69.2%</td></tr>
+        </table>
+      </div>
+      <div class="note warn"><b>수출통제 사건:</b> 6월 12일 미국 정부가 안전장치 우회 사례를 이유로 Fable 5를 수출통제 → 18일 중단 → 안전 분류기 보강 후 7월 1일 복원. <b>AI 모델이 반도체처럼 국가 전략자산으로 통제된 첫 사례</b>입니다. 정부 부처가 AI 동향을 알아야 하는 이유이기도 합니다.</div>
+    </div>
+
+    <div class="block">
+      <h3>Project Glasswing — Mythos 5를 나눠주는 방식</h3>
+      <p class="hint">"그럼 그 강력한 모델은 누가 쓰나?" — Anthropic의 답이 Project Glasswing입니다. 전 세계 핵심 인프라(통신·금융·에너지 등)를 지키는 조직의 <b>방어자들에게 Mythos를 먼저</b> 쥐여주는 프로그램입니다.</p>
+      <div class="cards">
+        <div class="card"><div class="ic">🎟️</div><h4>초대장 전용</h4><p>공개 신청 없음. 초대 + NDA(비밀유지계약) + <b>미국 정부 협의</b>를 거쳐 승인됩니다.</p></div>
+        <div class="card"><div class="ic">🌐</div><h4>15개국 150여 개 기관</h4><p>Tenable, Trend Micro, BT, 히타치 등 보안·인프라 기업 중심으로 확대 중.</p></div>
+        <div class="card"><div class="ic">🛡️</div><h4>목적: 방어자 선점</h4><p>공격자가 AI를 쓰기 전에, 지키는 쪽에 최강 모델을 먼저 — "Secure AI" 전략.</p></div>
+        <div class="card"><div class="ic">🧬</div><h4>다음은 생명과학</h4><p>바이오 연구용 신뢰 접근 프로그램도 준비 중. 접근 대상은 단계적으로 확대됩니다.</p></div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tr><th colspan="2">Glasswing 첫 달 실전 성과 (2026.5 발표)</th></tr>
+          <tr><td style="white-space:nowrap;"><b>취약점 발견</b></td><td>한 달간 <b>23,019개</b> — 이 중 고위험·치명 등급 약 6,202개</td></tr>
+          <tr><td><b>Firefox</b></td><td>단일 릴리스에서 <b>271개</b> 패치. 일부는 20년 넘은 코드베이스에서 정적분석·퍼징·전문가 리뷰가 전부 놓친 채 <b>수년간 숨어 있던</b> 결함</td></tr>
+          <tr><td><b>wolfSSL</b></td><td>전 세계 약 <b>50억 대</b> IoT 기기에 영향을 주는 인증서 위조 취약점(CVE-2026-5194) 발견</td></tr>
+        </table>
+      </div>
+      <div class="note warn"><b>결론 — AI는 이제 국가전략 자산:</b> 수출통제(6월), 정부 협의를 거치는 접근 승인(Glasswing), 자격 심사. AI는 더 이상 '업무를 도와주는 툴'이 아니라, 반도체·원자력처럼 <b>국가 차원에서 관리·통제되는 전략 자산</b>의 단계에 들어섰습니다. 정부 부처가 AI를 정책의 '대상'으로 다뤄야 하는 이유입니다.</div>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="3">← 2026 산업 동향</button>
+      <button class="btn" data-go="5">GPT-5.6 분석 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 6. GPT-5.6 ====================== -->
+  <section class="slide" id="s_gpt56">
+    <span class="sec-tag">OPENAI</span>
+    <h2 class="sec-title">GPT-5.6 —<br>Sol · Terra · Luna 3형제</h2>
+
+    <div class="block">
+      <h3>2026년 7월 9일, OpenAI의 응수 <span class="pill navy">최신</span></h3>
+      <p class="hint">이름부터 태양(Sol) · 대지(Terra) · 달(Luna). 용도별로 3개 모델을 한 번에 냈습니다. "하나의 만능 모델"에서 <b>"용도별 모델 패밀리"</b>로 — 업계 공통 흐름입니다.</p>
+
+      <div class="trio">
+        <div class="m flag">
+          <span class="rank">최상위</span>
+          <h4>☀️ Sol</h4>
+          <div class="sub">플래그십 — 가장 똑똑한 모델</div>
+          <ul>
+            <li>코딩 토큰 효율 <b>54% 향상</b></li>
+            <li><b>ultra 모드</b>: 서브에이전트(부하 AI)를 부려서 복잡한 일을 병렬 처리</li>
+            <li>사이버보안 · 과학 연구 특화</li>
+          </ul>
+        </div>
+        <div class="m">
+          <span class="rank">중간</span>
+          <h4>🌍 Terra</h4>
+          <div class="sub">균형형 — 성능과 가격의 절충</div>
+          <ul>
+            <li>이전 세대(GPT-5.5)급 성능</li>
+            <li>가격은 <b>절반(2배 저렴)</b></li>
+            <li>일상 업무의 주력</li>
+          </ul>
+        </div>
+        <div class="m">
+          <span class="rank">경량</span>
+          <h4>🌙 Luna</h4>
+          <div class="sub">고속 · 최저가</div>
+          <ul>
+            <li>빠른 응답, 낮은 비용</li>
+            <li>대량 · 단순 작업용</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note"><b>눈여겨볼 것 — 'ultra 모드':</b> AI 한 명이 일하는 게 아니라, <b>AI가 여러 부하 AI(서브에이전트)에게 일을 나눠 시키는</b> 방식입니다. Claude Code에도 같은 개념(서브에이전트)이 있습니다. 2026년의 키워드는 단연 <b>"에이전트"</b>입니다.</div>
+    </div>
+
+    <div class="block">
+      <h3>결국 양쪽 다 같은 방향을 보고 있다</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tr><th></th><th>Anthropic (Claude 5)</th><th>OpenAI (GPT-5.6)</th></tr>
+          <tr><td><b>구성</b></td><td>Fable / Sonnet / Haiku</td><td>Sol / Terra / Luna</td></tr>
+          <tr><td><b>강조점</b></td><td>에이전트 업무 수행</td><td>에이전트 + ultra(서브에이전트)</td></tr>
+          <tr><td><b>공통 전략</b></td><td colspan="2" style="text-align:center;">용도별 3단 라인업 · 도구 사용 · <b>"챗봇 → 일하는 AI"</b></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="4">← Mythos와 Fable</button>
+      <button class="btn" data-go="6">Claude Code 활용 전략 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 7. Claude Code 활용 ====================== -->
+  <section class="slide" id="s_ccuse">
+    <span class="sec-tag">CLAUDE CODE</span>
+    <h2 class="sec-title">Claude Code, 어디서든 쓸 수 있습니다<br><span style="font-size:0.72em; color:var(--ink-2); font-weight:600;">— 그리고 '엔진'은 갈아끼울 수 있습니다</span></h2>
+
+    <div class="block">
+      <h3>같은 Claude Code, 4가지 입구</h3>
+      <p class="hint">1편에서 배운 Claude Code는 이제 터미널(CLI)만의 도구가 아닙니다. 편한 곳에서 시작하면 됩니다.</p>
+      <div class="cards">
+        <div class="card"><div class="ic">🖥️</div><h4>데스크탑 앱 <span class="pill green">쉬움</span></h4><p>Mac/Windows 앱. 설치하고 클릭하면 끝. 입문자에게 추천.</p></div>
+        <div class="card"><div class="ic">🧩</div><h4>IDE 확장 <span class="pill">중간</span></h4><p>VS Code · JetBrains 안에서 사용. 코드를 보면서 바로 대화.</p></div>
+        <div class="card"><div class="ic">⌨️</div><h4>CLI (터미널) <span class="pill navy">자유도 최고</span></h4><p>1편에서 배운 원조. 자동화 · 스크립트 연동까지 전부 가능.</p></div>
+        <div class="card"><div class="ic">🌐</div><h4>웹 (claude.ai/code)</h4><p>브라우저에서 바로. 설치조차 필요 없음.</p></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3>핵심: 어디서 쓰든 '모델(엔진)'은 교체 가능</h3>
+      <p class="hint">일반 챗봇 앱은 회사가 정해준 모델을 기다려야 하지만, Claude Code는 <span style="font-family:var(--mono); background:var(--bg-soft); padding:2px 7px; border-radius:6px; font-size:0.92em;">/model</span> 명령 하나로 즉시 갈아끼웁니다. 직접 눌러보세요. 👇</p>
+
+      <div class="harness-box">
+        <div class="harness-label">CLAUDE CODE (하네스 — 바뀌지 않는 부분)</div>
+        <div class="tools-row">
+          <span class="tool-chip">📂 파일 읽기·쓰기</span>
+          <span class="tool-chip">⌨️ 터미널 실행</span>
+          <span class="tool-chip">🔎 웹 검색</span>
+          <span class="tool-chip">🛡️ 권한 관리</span>
+        </div>
+        <div class="engine-box">
+          <div class="lab">현재 장착된 엔진 (모델)</div>
+          <div class="val" id="engineName">claude-opus-4-8</div>
+        </div>
+        <div class="model-chips" id="modelChips">
+          <button data-m="claude-opus-4-8" class="on">Opus 4.8</button>
+          <button data-m="claude-sonnet-5">Sonnet 5</button>
+          <button data-m="claude-fable-5">Fable 5</button>
+          <button data-m="claude-haiku-4-5">Haiku 4.5</button>
+        </div>
+      </div>
+      <div class="term" id="modelTerm">
+        <span class="g">$</span> /model claude-opus-4-8<br>
+        <span class="dim">Set model to</span> <span class="y">claude-opus-4-8</span> <span class="dim">— 도구·설정·대화는 그대로, 엔진만 교체됩니다.</span>
+      </div>
+      <div class="note good"><b>실화:</b> 오늘 이 강의를 준비하면서 실제로 <span style="font-family:var(--mono);">/model claude-fable-5</span> 명령으로 대화 도중 모델을 교체했습니다. 대화 내용, 열려 있던 파일, 진행하던 작업이 전부 유지된 채 엔진만 바뀌었습니다.</div>
+      <div class="note"><b>더 큰 그림 — CLI와 IDE는 회사에 묶이지 않는 '작업대':</b> 터미널과 IDE에는 Claude Code와 OpenAI의 Codex를 <b>나란히 설치해 둘 수 있습니다.</b> 어느 회사 엔진이 앞서가든, 판이 바뀌면 <b>언제든 갈아탈 수 있다</b>는 뜻입니다. 반면 데스크탑 앱은 쉽고 비개발자 친화적이지만, 그 회사 모델 전용입니다.</div>
+      <div class="note good"><b>우리의 학습 순서:</b> CLI·IDE는 진입 장벽이 있으니, 오늘은 쉬운 것부터 확실히 익힙니다. 더 깊이 관심 있는 분들께는 <b>TA가 직접 찾아가 CLI·IDE 활용법을 알려드립니다.</b></div>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="5">← GPT-5.6 분석</button>
+      <button class="btn" data-go="7">하네스 엔지니어링 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 8. 하네스란? ====================== -->
+  <section class="slide" id="s_harness">
+    <span class="sec-tag">HARNESS ENGINEERING</span>
+    <h2 class="sec-title">그래서 '하네스 엔지니어링'이<br>도대체 뭐냐</h2>
+
+    <div class="block">
+      <h3>🐎 비유로 이해하기 — 야생마에 고삐 얹기</h3>
+      <p class="hint">1편에서 만난 야생마, 다시 등장합니다. 좋은 모델은 <b>야생마</b>와 같습니다 — 힘세고 영리하지만 <b>통제되지 않아 어디로 튈지 모릅니다.</b>
+        여기에 <b>고삐·안장·편자·마구</b> 같은 장비(=하네스)를 하나씩 얹으면, 점점 <b>'일하는 말'</b>로 길들여집니다.
+        아래 <b>'장비 얹기 ▶'</b>를 눌러, 각 장비가 어떤 <b>AI 하네스 요소</b>에 해당하는지 따라가 보세요.</p>
+
+      <div class="wh-stage" id="whStage">
+        <div class="wh-arena">
+          <span class="wh-spark s1">✨</span>
+          <span class="wh-spark s2">✨</span>
+          <span class="wh-spark s3">🏅</span>
+          <div class="wh-horse wild" id="whHorse">
+            <!-- 직접 그린 SVG 말 — 단계마다 장비 그룹(data-eq)이 제 위치에 나타납니다 -->
+            <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" aria-label="말과 장비">
+              <!-- 먼 쪽 다리 (어두운 톤, 몸통 뒤) -->
+              <path d="M104,126 C102,140 101,154 102,166 L100,196 L112,196 L114,168 C115,152 116,140 118,132 Z" fill="#6E4520"/>
+              <path d="M220,132 C226,140 228,150 226,158 L224,196 L236,196 L238,160 C240,148 238,138 234,132 Z" fill="#6E4520"/>
+              <path d="M99,196 L113,196 L114,204 L98,204 Z" fill="#26180e"/>
+              <path d="M223,196 L237,196 L238,204 L222,204 Z" fill="#26180e"/>
+              <!-- 꼬리 (흘러내리는 곡선) -->
+              <path d="M226,100 C244,106 252,126 250,148 C248,166 240,180 232,186 C236,170 237,152 232,136 C228,122 224,110 220,104 Z" fill="#2E1D10"/>
+              <!-- 몸통 (등 곡선·배 곡선·엉덩이) -->
+              <path d="M116,102 C122,88 144,80 170,81 C198,82 220,92 227,106 C233,120 229,136 216,144 C198,153 168,155 146,149 C127,144 114,134 112,120 C111,113 113,107 116,102 Z" fill="#8B5A2B"/>
+              <!-- 가까운 앞다리 (무릎·발목 관절 굴곡) -->
+              <path d="M120,128 C118,142 117,156 118,168 C118,176 117,184 116,192 L115,200 L128,200 L129,190 C130,180 131,170 132,162 C134,148 136,138 138,130 Z" fill="#8B5A2B"/>
+              <path d="M114,200 L129,200 L130,209 L112,209 Z" fill="#26180e"/>
+              <!-- 가까운 뒷다리 (넓적다리·비절) -->
+              <path d="M196,138 C204,142 210,150 210,158 C210,166 206,170 204,176 C203,184 203,192 203,198 L216,198 L217,176 C220,164 223,152 222,142 C216,136 206,132 198,132 Z" fill="#8B5A2B"/>
+              <path d="M202,198 L217,198 L218,207 L200,207 Z" fill="#26180e"/>
+              <!-- 목 (활처럼 휜 곡선) -->
+              <path d="M110,110 C100,92 95,68 94,46 C94,40 96,34 100,30 L120,36 C124,56 132,78 142,94 C134,102 122,108 110,110 Z" fill="#8B5A2B"/>
+              <!-- 머리 (이마-콧등-주둥이-턱선) -->
+              <path d="M100,30 C90,32 80,40 72,49 C66,55 58,56 55,61 C53,65 56,69 61,70 C68,72 76,70 82,66 C89,62 96,54 101,46 C104,40 104,34 100,30 Z" fill="#8B5A2B"/>
+              <circle cx="84" cy="46" r="2.4" fill="#1c1209"/>
+              <circle cx="61" cy="63" r="1.8" fill="#1c1209"/>
+              <!-- 귀 -->
+              <path d="M97,30 L92,14 L104,26 Z" fill="#8B5A2B"/>
+              <path d="M108,28 L114,12 L120,26 Z" fill="#8B5A2B"/>
+              <!-- 갈기 (목선 따라 흘러내림) + 앞머리 -->
+              <path d="M120,32 C130,50 138,72 146,92 L136,98 C127,80 119,58 112,38 Z" fill="#2E1D10"/>
+              <path d="M100,30 C94,36 90,44 88,52 C94,48 100,42 104,36 Z" fill="#2E1D10"/>
+
+              <!-- [장비 1] 고삐·굴레 = 프롬프트 -->
+              <g class="wh-equip" data-eq="1">
+                <path d="M96,36 C90,44 84,52 78,60" stroke="#C0392B" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M58,58 C64,64 72,67 80,66" stroke="#C0392B" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M58,66 C90,92 122,98 146,92" stroke="#C0392B" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+              </g>
+              <!-- [장비 2] 안장 = 컨텍스트 -->
+              <g class="wh-equip" data-eq="2">
+                <path d="M144,88 L184,86 L188,106 L142,108 Z" fill="#1b3a63"/>
+                <path d="M148,82 C158,72 172,71 180,79 C184,86 180,93 166,95 C152,95 146,89 148,82 Z" fill="#6b4423"/>
+                <circle cx="151" cy="80" r="2.8" fill="#4a3320"/>
+                <path d="M156,98 C154,116 154,134 156,150" stroke="#6b4423" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+              </g>
+              <!-- [장비 3] 편자 = 스킬 -->
+              <g class="wh-equip" data-eq="3">
+                <path d="M113,209 L129,209" stroke="#b9c3cf" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M99,204 L113,204" stroke="#b9c3cf" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M201,207 L217,207" stroke="#b9c3cf" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M223,204 L237,204" stroke="#b9c3cf" stroke-width="3.5" stroke-linecap="round"/>
+              </g>
+              <!-- [장비 4] 마구(연결 줄) = MCP -->
+              <g class="wh-equip" data-eq="4">
+                <path d="M120,104 C112,116 110,128 116,140" stroke="#4a3320" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+                <path d="M116,136 C150,148 190,148 224,138" stroke="#4a3320" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                <circle cx="115" cy="122" r="3.2" fill="#d4a017"/>
+              </g>
+              <!-- [장비 5] 기수 = 안전·권한 -->
+              <g class="wh-equip" data-eq="5">
+                <path d="M162,92 C162,104 159,114 154,122 L164,126 C170,116 172,102 170,92 Z" fill="#2b3a4a"/>
+                <path d="M154,56 C154,48 174,48 174,56 L175,88 L153,88 Z" fill="#1b3a63"/>
+                <path d="M158,62 C146,70 132,78 120,86" stroke="#1b3a63" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+                <circle cx="119" cy="86" r="2.8" fill="#e8b88a"/>
+                <circle cx="164" cy="40" r="8.5" fill="#e8b88a"/>
+                <path d="M154,40 A10,8 0 0 1 174,40 Z" fill="#c0392b"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="wh-state" id="whState">통제 불가 — 어디로 튈지 모름</div>
+        <div class="wh-gauge"><div class="wh-gauge-fill" id="whGauge"></div></div>
+        <div class="wh-gauge-cap" id="whGaugeCap">길들임(통제력) 0%</div>
+        <div class="wh-gear" id="whGear">
+          <span class="wh-chip" data-gear="1"><span class="ge">🎯</span>고삐</span>
+          <span class="wh-chip" data-gear="2"><span class="ge">🪑</span>안장</span>
+          <span class="wh-chip" data-gear="3"><span class="ge">🧩</span>편자</span>
+          <span class="wh-chip" data-gear="4"><span class="ge">🔌</span>마구</span>
+          <span class="wh-chip" data-gear="5"><span class="ge">🤠</span>기수</span>
+        </div>
+      </div>
+
+      <!-- 현재 단계 상세 (장비 = AI 요소 매핑) -->
+      <div class="harn-stage">
+        <div class="harn-stage-head">
+          <span class="hi" id="whIcon">🐎</span>
+          <span class="ht" id="whTitle">야생마 — 길들이기 전</span>
+          <span class="harn-badge" id="whBadge">모델(LLM)</span>
+        </div>
+        <div class="harn-stage-body" id="whBody">힘세고 영리하지만, 그 자체로는 <b>제멋대로</b>입니다. 잠재력은 100점 —
+          하지만 방향도, 집중도, 멈출 줄도 모릅니다. <b>'장비 얹기 ▶'</b>를 눌러 길들여 보세요.</div>
+      </div>
+
+      <div class="harn-ctrl">
+        <button class="btn" id="whNext">장비 얹기 ▶</button>
+        <button class="btn ghost" id="whReset">처음으로 ↺</button>
+        <span class="harn-prog" id="whProg"></span>
+      </div>
+      <div class="note">LLM 자체는 <b>글만 만들 수 있습니다.</b> 파일을 열고, 명령을 실행하고, 결과를 확인하는 능력은 전부 하네스가 붙여준 것입니다.</div>
+    </div>
+
+    <div class="block">
+      <h3>하네스가 돌리는 '에이전트 루프'</h3>
+      <p class="hint">하네스는 모델을 이 순환 고리 안에 넣고 계속 돌립니다. 일이 끝날 때까지.</p>
+      <div class="flow">
+        <span class="flow-step">1️⃣ 지시 받기</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">2️⃣ 계획 세우기</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">3️⃣ 도구 실행</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">4️⃣ 결과 확인</span>
+        <span class="flow-arrow">↩︎ 반복</span>
+        <span class="flow-step hl">✅ 완료 보고</span>
+      </div>
+      <div class="note">아까 GPT-5.6 Sol의 'ultra 모드'도 결국 <b>이 루프를 여러 개 겹쳐 돌리는 것</b>(서브에이전트)입니다. 원리는 같습니다.</div>
+    </div>
+
+    <div class="block">
+      <h3>왜 '엔지니어링'이라고 부르나</h3>
+      <p class="hint">같은 모델이라도 하네스를 어떻게 설계하느냐에 따라 결과물이 완전히 달라지기 때문입니다. 이것이 하나의 전문 분야가 됐습니다.</p>
+      <div class="cards">
+        <div class="card"><div class="ic">🧰</div><h4>어떤 도구를 줄까</h4><p>파일 접근? 인터넷 검색? 계산기? 도구 목록 설계가 성능을 좌우합니다.</p></div>
+        <div class="card"><div class="ic">🚧</div><h4>뭘 못 하게 막을까</h4><p>파일 삭제 전 확인받기, 위험 명령 차단 — 안전장치 설계.</p></div>
+        <div class="card"><div class="ic">📋</div><h4>어떤 정보를 언제 줄까</h4><p>규정, 지침, 프로젝트 맥락을 적시에 공급하는 설계.</p></div>
+        <div class="card"><div class="ic">🔄</div><h4>엔진 교체 가능하게</h4><p>모델이 월 단위로 바뀌는 시대 — 하네스만 잘 만들면 신형 엔진을 바로 장착.</p></div>
+      </div>
+      <div class="note good"><b>오늘의 결론:</b> 모델(엔진)은 계속 바뀝니다. GPT-5.6 다음엔 5.7이, Claude 5 다음엔 6이 옵니다. 하지만 <b>하네스를 이해한 사람은 어떤 신형 엔진이 나와도 바로 쓸 수 있습니다.</b> 우리가 도구의 '원리'를 배우는 이유입니다.</div>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="6">← Claude Code 활용 전략</button>
+      <button class="btn" data-go="8">실무 적용 · 제언 →</button>
+    </div>
+  </section>
+
+  <!-- ====================== 9. 업무 적용 · 마무리 ====================== -->
+  <section class="slide" id="s_wrap">
+    <span class="sec-tag">IN PRACTICE</span>
+    <h2 class="sec-title">그래서 우리는,<br>실제로 만듭니다</h2>
+
+    <div class="block">
+      <h3>이 강의는 출발점입니다 — 우리의 로드맵</h3>
+      <p class="hint">오늘 내용은 듣고 끝나는 교양이 아닙니다. 우리는 이 순서로 갑니다:</p>
+      <div class="flow">
+        <span class="flow-step">1️⃣ AI 배우기 — Claude Code · 바이브코딩</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">2️⃣ 현업의 문제점 파악</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step hl">3️⃣ 바이브코딩 × 하네스 엔지니어링으로 실질적인 앱 제작</span>
+      </div>
+      <div class="note good"><b>목표:</b> 코딩을 배워서 개발자가 되자는 게 아닙니다. <b>내 업무의 문제를 내가 직접 해결하는 도구</b>를, 말로 만들어내는 것 — 이 페이지 자체가 그렇게 만들어진 증거입니다.</div>
+    </div>
+
+    <div class="block">
+      <h3>2단계에서 찾아낼 '현업 문제' 예시</h3>
+      <p class="hint">이런 반복 업무가 전부 <b>앱으로 만들 후보</b>입니다. 각자 자기 업무에서 하나씩 찾아오는 것이 숙제입니다.</p>
+      <div class="cards">
+        <div class="card"><div class="ic">📰</div><h4>보도자료 · 보고서 초안</h4><p>개요만 주면 초안 완성 → 사람이 다듬기. 작성 시간 단축.</p></div>
+        <div class="card"><div class="ic">📊</div><h4>데이터 정리 · 엑셀 자동화</h4><p>반복적인 표 정리, 형식 변환을 말로 지시.</p></div>
+        <div class="card"><div class="ic">⚖️</div><h4>규정 · 법령 검토 보조</h4><p>긴 규정에서 관련 조항 찾기, 개정 전후 비교 정리.</p></div>
+        <div class="card"><div class="ic">🗂️</div><h4>회의록 · 자료 요약</h4><p>긴 회의록을 결정사항 중심으로 요약.</p></div>
+      </div>
+      <div class="note warn"><b>단, 반드시:</b> ① 민감정보 · 개인정보는 입력하지 않기 ② AI 결과물은 초안으로 취급하고 사실 검증하기 ③ 기관 보안 지침 우선. — 도구는 강력할수록 규칙이 중요합니다.</div>
+    </div>
+
+    <div class="block">
+      <h3>오늘의 4줄 요약</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <tr><td style="width:42px; font-size:20px;">1️⃣</td><td><b>LLM은 '다음 단어 맞히기' 기계</b>다. 그래서 강력하고, 그래서 환각도 있다.</td></tr>
+          <tr><td style="font-size:20px;">2️⃣</td><td><b>2026년의 키워드는 에이전트.</b> GPT-5.6도 Claude 5도 "말하는 AI"가 아니라 "일하는 AI"로 진화했다.</td></tr>
+          <tr><td style="font-size:20px;">3️⃣</td><td><b>모델은 엔진, 하네스는 차체.</b> 엔진은 매달 바뀌니, 갈아끼우는 법(하네스)을 아는 사람이 이긴다.</td></tr>
+          <tr><td style="font-size:20px;">4️⃣</td><td><b>우리는 듣고 끝내지 않는다.</b> 현업의 문제를 찾아, 바이브코딩 × 하네스 엔지니어링으로 <b>실질적인 앱을 만든다.</b></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div style="text-align:center; padding:34px 0 6px;">
+      <svg width="120" height="63" viewBox="24 42 228 120" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="30" y="84" width="216" height="24" fill="#F2A06E"/>
+        <rect x="60" y="48" width="156" height="84" fill="#F2A06E"/>
+        <rect x="78"  y="132" width="12" height="24" fill="#F2A06E"/>
+        <rect x="102" y="132" width="18" height="24" fill="#F2A06E"/>
+        <rect x="162" y="132" width="12" height="24" fill="#F2A06E"/>
+        <rect x="186" y="132" width="18" height="24" fill="#F2A06E"/>
+        <rect x="84"  y="66" width="12" height="24" fill="#14110F"/>
+        <rect x="168" y="66" width="12" height="24" fill="#14110F"/>
+      </svg>
+      <p style="font-size:1.15rem; font-weight:800; color:var(--navy); margin-top:14px;">감사합니다</p>
+      <p style="font-size:0.85rem; color:var(--muted); margin-top:6px;">재정경제부 인공지능자문관 정민기 — 질문 환영합니다</p>
+    </div>
+
+    <div class="nav-foot">
+      <button class="btn ghost" data-go="7">← 하네스 엔지니어링</button>
+      <button class="btn ghost" data-go="0">처음으로 ↺</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  /* ---------- 탭/슬라이드 전환 ---------- */
+  var slides = document.querySelectorAll('section.slide');
+  var tabs = document.querySelectorAll('#tabBar button');
+  var cur = 0;
+
+  function go(n){
+    if(n < 0 || n >= slides.length) return;
+    cur = n;
+    slides.forEach(function(s,i){ s.classList.toggle('show', i===n); });
+    tabs.forEach(function(t,i){ t.classList.toggle('active', i===n); });
+    /* 모바일: 활성 탭이 보이도록 스크롤 */
+    if(tabs[n] && tabs[n].scrollIntoView){
+      tabs[n].scrollIntoView({ block:'nearest', inline:'center', behavior:'smooth' });
+    }
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  /* data-go 속성이 있는 모든 요소(탭 + 이전/다음 버튼)에 연결 */
+  document.querySelectorAll('[data-go]').forEach(function(el){
+    el.addEventListener('click', function(){ go(parseInt(el.dataset.go,10)); });
+  });
+
+  /* 키보드 ← → 로도 이동 */
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight') go(cur+1);
+    if(e.key === 'ArrowLeft') go(cur-1);
+  });
+
+  /* ---------- 다음 단어 확률 데모 ---------- */
+  document.getElementById('probBtn').addEventListener('click', function(){
+    var area = document.getElementById('probArea');
+    area.style.display = 'block';
+    /* 막대가 0 → 목표폭으로 차오르는 애니메이션 */
+    setTimeout(function(){
+      area.querySelectorAll('.prob-bar').forEach(function(b){
+        b.style.width = b.dataset.w + '%';
+      });
+    }, 60);
+    this.textContent = '다시 보기';
+  });
+
+  /* ---------- 야생마 비유 데모 (1편과 동일) ----------
+     '장비 얹기'를 누를 때마다 장비 칩 하나가 켜지고, 통제력 게이지가 차오르고,
+     말이 야생(🐎)→길들임으로 바뀝니다. 각 장비 = AI 하네스 요소(배지). */
+  var whSteps = [
+    { gear:0, icon:'🐎', title:'야생마 — 길들이기 전', badge:'모델(LLM)', gauge:0,
+      state:'통제 불가 — 어디로 튈지 모름',
+      body:'힘세고 영리하지만, 그 자체로는 <b>제멋대로</b>입니다. 잠재력은 100점 — 하지만 방향도, 집중도, 멈출 줄도 모릅니다.' },
+    { gear:1, icon:'🎯', title:'고삐·굴레를 채우다', badge:'= 프롬프트', gauge:20,
+      state:'방향이 생겼다',
+      body:'<b>고삐</b>는 말이 <b>어디로 갈지</b> 잡아 줍니다. AI에선 <b>프롬프트</b> — "무엇을, 어떻게" 하라고 정확히 지시하는 일이죠.' },
+    { gear:2, icon:'🪑', title:'안장을 얹다', badge:'= 컨텍스트', gauge:45,
+      state:'기수가 올라탈 준비',
+      body:'<b>안장</b> 위에 올라타 필요한 정보를 싣고 <b>핵심만</b> 전달합니다. AI에선 <b>컨텍스트(관리)</b> — 작업에 필요한 자료만 골라 모델에 실어 주는 일.' },
+    { gear:3, icon:'🧩', title:'편자를 박다', badge:'= 스킬', gauge:65,
+      state:'어떤 지형도 달린다',
+      body:'<b>편자</b>는 지형에 맞춰 발굽을 보호합니다. AI에선 <b>스킬</b> — 상황(작업)에 맞는 <b>전문 능력</b>을 그때그때 장착하는 일.' },
+    { gear:4, icon:'🔌', title:'마구로 연결하다', badge:'= MCP', gauge:85,
+      state:'바깥 세계와 이어졌다',
+      body:'<b>마구</b>는 말을 마차·외부 장비에 연결합니다. AI에선 <b>MCP</b> — 모델을 외부 도구·시스템과 <b>표준 규격으로 잇는</b> 일.' },
+    { gear:5, icon:'🤠', title:'기수가 올라타 — 완성!', badge:'= 안전·권한(전체 통제)', gauge:100,
+      state:'길들여진 말 = 일하는 에이전트', tamed:true,
+      body:'마지막으로 <b>기수</b>가 올라타 전체를 통제하고 <b>위험할 땐 멈춥니다</b>. 고삐·안장·편자·마구를 모두 갖춘 <b>완성된 말</b> —<br>' +
+           '<b>모델 하나</b>가 아니라, <b>모델 + 장비 전체(=하네스)</b>가 함께 해낸 결과입니다.' }
+  ];
+  (function(){
+    var horse = document.getElementById('whHorse');
+    if(!horse) return;
+    var stage = document.getElementById('whStage');
+    var chips2 = Array.prototype.slice.call(document.querySelectorAll('#whGear .wh-chip'));
+    var equips = Array.prototype.slice.call(document.querySelectorAll('.wh-equip'));
+    var elState = document.getElementById('whState');
+    var elGauge = document.getElementById('whGauge');
+    var elGaugeCap = document.getElementById('whGaugeCap');
+    var elIcon = document.getElementById('whIcon');
+    var elTitle = document.getElementById('whTitle');
+    var elBadge = document.getElementById('whBadge');
+    var elBody = document.getElementById('whBody');
+    var elProg = document.getElementById('whProg');
+    var btnNext = document.getElementById('whNext');
+    var btnReset = document.getElementById('whReset');
+    var i = 0; /* 0 = 야생마(시작 상태) */
+
+    function render(){
+      var s = whSteps[i];
+      horse.className = 'wh-horse ' + (s.tamed ? 'tamed' : (s.gear === 0 ? 'wild' : 'calm'));
+      elState.textContent = s.state;
+      elState.className = 'wh-state' + (s.tamed ? ' tamed' : '');
+      stage.classList.toggle('tamed', !!s.tamed);
+      elGauge.style.width = s.gauge + '%';
+      elGaugeCap.textContent = '길들임(통제력) ' + s.gauge + '%';
+      equips.forEach(function(e){ e.classList.toggle('on', Number(e.dataset.eq) <= s.gear); });
+      chips2.forEach(function(c){ c.classList.toggle('on', Number(c.dataset.gear) <= s.gear); });
+      elIcon.textContent = s.icon; elTitle.textContent = s.title;
+      elBadge.textContent = s.badge; elBody.innerHTML = s.body;
+      elProg.textContent = '장비 '+i+' / '+(whSteps.length-1);
+      btnNext.textContent = (i >= whSteps.length-1) ? '완료됨 ✓' : '장비 얹기 ▶';
+      btnNext.disabled = (i >= whSteps.length-1);
+    }
+    btnNext.addEventListener('click', function(){ if(i < whSteps.length-1){ i++; render(); } });
+    btnReset.addEventListener('click', function(){ i=0; render(); });
+    render();
+  })();
+
+  /* ---------- 엔진(모델) 교체 데모 ---------- */
+  var chips = document.querySelectorAll('#modelChips button');
+  chips.forEach(function(c){
+    c.addEventListener('click', function(){
+      chips.forEach(function(x){ x.classList.remove('on'); });
+      c.classList.add('on');
+      var m = c.dataset.m;
+      document.getElementById('engineName').textContent = m;
+      document.getElementById('modelTerm').innerHTML =
+        '<span class="g">$</span> /model ' + m + '<br>' +
+        '<span class="dim">Set model to</span> <span class="y">' + m + '</span> ' +
+        '<span class="dim">— 도구·설정·대화는 그대로, 엔진만 교체됩니다.</span>';
+    });
+  });
+</script>
+
+</body>
+</html>

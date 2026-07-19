@@ -6,3 +6,6 @@
 .claude/
 발표대본.md
 *.hwp
+
+# bkit 플러그인 로컬 상태 — 커밋 금지
+.bkit/
