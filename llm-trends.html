@@ -334,6 +334,51 @@
     margin-top:34px; padding-top:20px; border-top:1px solid var(--line);
   }
 
+  /* --- 시각화 공통 (개념도 · 다이어그램) --- */
+  .viz{
+    margin-top:16px; border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--bg-soft); padding:18px 18px 14px;
+  }
+  .viz-head{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .viz-title{ font-size:14.5px; font-weight:700; color:var(--navy); }
+  .viz-sub{ font-size:12.5px; color:var(--muted); }
+  .viz svg{ width:100%; height:auto; display:block; }
+  .viz-cap{ font-size:12.5px; color:var(--muted); margin-top:10px; line-height:1.65; }
+
+  /* 지능 추월 곡선 — 재생 버튼/슬라이더로 직접 제어 */
+  .iq-line{ fill:none; stroke:var(--orange); stroke-width:3.4; stroke-linecap:round; stroke-linejoin:round; }
+  .iq-in{ opacity:0; transition:opacity .5s ease; }
+  .iq-in.on{ opacity:1; }
+  .iq-cross circle.ring{ animation:iq-pulse 1.8s ease-in-out infinite; }
+  @keyframes iq-pulse{ 0%,100%{ r:11; opacity:.9; } 50%{ r:15; opacity:.35; } }
+  .iq-ctrl{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:14px; }
+  .iq-ctrl input[type=range]{ flex:1; min-width:150px; accent-color:var(--orange); cursor:pointer; }
+  .iq-live{ font-size:13.5px; font-weight:600; color:var(--ink-2); margin-top:8px; min-height:1.6em; }
+  .iq-live b{ color:#b4541f; }
+
+  /* 지도 vs 영토 */
+  .mt-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; }
+  .mt-panel{ background:#fff; border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px 14px 10px; }
+  .mt-panel.terr{ border-color:rgba(232,114,60,.42); background:rgba(232,114,60,.045); }
+  #mtWrap.good .mt-panel.terr{ border-color:rgba(46,125,50,.42); background:rgba(46,125,50,.05); }
+  .mt-lab{ font-size:12.5px; font-weight:800; letter-spacing:.04em; color:var(--navy); }
+  .mt-panel.terr .mt-lab{ color:#b4541f; }
+  #mtWrap.good .mt-panel.terr .mt-lab{ color:#2e7d32; }
+  .mt-desc{ font-size:12.5px; color:var(--muted); margin:2px 0 8px; }
+  .mt-ctrl{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:14px; }
+  .mt-state{ font-size:13px; font-weight:600; color:#b4541f; }
+  #mtWrap.good .mt-state{ color:#2e7d32; }
+  .mt-guess{ transition:opacity .4s ease; }
+  .mt-good{ opacity:0; transition:opacity .4s ease; }
+  #mtWrap.good .mt-guess{ opacity:0; }
+  #mtWrap.good .mt-good{ opacity:1; }
+  /* 지도에 하나씩 적어 넣는 항목(경유지) */
+  .mt-wp{ opacity:0; transition:opacity .35s ease; }
+  .mt-wp.on{ opacity:1; }
+  /* AI가 장애물에 부딪힐 때 번쩍임 */
+  @keyframes mt-hit{ 0%,100%{ fill:rgba(192,57,43,.09); } 35%{ fill:rgba(192,57,43,.45); } }
+  .mt-ob.hit{ animation:mt-hit .55s ease; }
+
   /* --- 모바일 --- */
   @media (max-width:640px){
     .head-inner{ padding:12px 14px; gap:10px; }
@@ -697,7 +742,83 @@
 
     <div class="block">
       <h3>2026년 7월 9일, OpenAI의 응수 <span class="pill navy">최신</span></h3>
-      <p class="hint">Anthropic만 달리는 게 아닙니다. OpenAI도 플래그십 <b>GPT-5.6 Sol(☀️)</b>을 내놓으며 최전선에서 맞붙었습니다. 양쪽 모두 <b>인간 최고 수준의 지능</b>을 장착하고, 열흘 간격으로 신형을 주고받는 상황입니다.</p>
+      <p class="hint">Anthropic만 달리는 게 아닙니다. OpenAI도 플래그십 <b>GPT-5.6 Sol(☀️)</b>을 내놓으며 최전선에서 맞붙었습니다. 두 모델 모두 코딩 · 수학 · 추론에서 <b>인간 최고 전문가의 지능을 넘어서기 시작</b>했고, 열흘 간격으로 신형을 주고받는 상황입니다.</p>
+
+      <div class="viz">
+        <div class="viz-head">
+          <span class="viz-title">개념도 — AI, '인간 최고 지능'을 넘어서기 시작했다</span>
+          <span class="viz-sub">코딩 · 수학 · 추론 벤치마크 기준 · 슬라이더를 직접 끌어보세요</span>
+        </div>
+
+        <svg id="iqSvg" viewBox="0 0 720 300" role="img"
+             aria-label="시간이 지날수록 AI 능력 곡선이 가팔라져 인간 최고 전문가 수준선을 2026년에 넘어서는 개념도">
+          <!-- AI가 앞서는 구간(음영) -->
+          <path class="iq-in" data-at="585"
+                d="M556,132 C592,114 610,102 630,88 C648,76 658,68 668,58 L668,132 Z"
+                fill="rgba(232,114,60,.14)"/>
+
+          <!-- 기준선 -->
+          <line x1="66" y1="132" x2="700" y2="132" stroke="var(--point)" stroke-width="1.6" stroke-dasharray="7 6"/>
+          <line x1="66" y1="196" x2="700" y2="196" stroke="var(--line-2)" stroke-width="1.6" stroke-dasharray="7 6"/>
+          <text x="72" y="124" font-size="12.5" font-weight="700" fill="var(--point)">인간 최고 전문가 수준</text>
+          <text x="72" y="188" font-size="12.5" font-weight="600" fill="var(--muted)">숙련 실무자 평균</text>
+
+          <!-- 축 -->
+          <line x1="66" y1="24" x2="66" y2="252" stroke="var(--line-2)" stroke-width="1.5"/>
+          <line x1="66" y1="252" x2="700" y2="252" stroke="var(--line-2)" stroke-width="1.5"/>
+          <text transform="rotate(-90 24 140)" x="24" y="140" text-anchor="middle"
+                font-size="12" font-weight="700" fill="var(--muted)">능력 수준 →</text>
+          <g font-size="12" fill="var(--muted)" text-anchor="middle">
+            <text x="96"  y="272">2023</text>
+            <text x="240" y="272">2024</text>
+            <text x="384" y="272">2025</text>
+            <text x="528" y="272">2026</text>
+            <text x="668" y="272" font-weight="700" fill="var(--orange)">지금</text>
+          </g>
+
+          <!-- 추월 지점 안내선 -->
+          <line class="iq-in" data-at="556"
+                x1="556" y1="132" x2="556" y2="252" stroke="var(--orange)" stroke-width="1.4" stroke-dasharray="4 5"/>
+
+          <!-- AI 능력 곡선 -->
+          <path id="iqPath" class="iq-line"
+                d="M96,250 C152,246 194,242 236,236 C296,228 330,222 366,210
+                   C414,194 442,184 472,170 C512,150 534,142 556,132
+                   C592,114 610,102 630,88 C648,76 658,68 668,58"/>
+
+          <!-- 지점 표시 -->
+          <g class="iq-in" data-at="100">
+            <circle cx="96" cy="250" r="5" fill="#fff" stroke="var(--navy-2)" stroke-width="2.5"/>
+            <text x="108" y="243" font-size="12.5" fill="var(--ink-2)">GPT-4 세대 — "말은 잘하는데 일은 못 맡긴다"</text>
+          </g>
+          <g class="iq-in" data-at="384">
+            <circle cx="384" cy="207" r="5" fill="#fff" stroke="var(--navy-2)" stroke-width="2.5"/>
+            <text x="396" y="200" font-size="12.5" fill="var(--ink-2)">2025 세대 — 실무자 평균에 근접</text>
+          </g>
+          <g class="iq-cross iq-in" data-at="556">
+            <circle class="ring" cx="556" cy="132" r="11" fill="rgba(232,114,60,.28)"/>
+            <circle cx="556" cy="132" r="5.5" fill="var(--orange)"/>
+            <text x="548" y="112" font-size="12.5" font-weight="800" fill="#b4541f" text-anchor="end">추월 지점</text>
+          </g>
+          <text class="iq-in" data-at="605"
+                x="614" y="124" font-size="12" font-weight="800" fill="#b4541f" text-anchor="middle">AI가 앞서는 구간</text>
+          <g class="iq-in" data-at="660">
+            <circle cx="668" cy="58" r="7" fill="var(--orange)"/>
+            <text x="656" y="42" font-size="13" font-weight="800" fill="var(--ink)" text-anchor="end">Mythos 5 · GPT-5.6 Sol</text>
+          </g>
+
+          <!-- 현재 위치(재생 점) -->
+          <circle id="iqDot" r="7" cx="96" cy="250" fill="var(--orange)" stroke="#fff" stroke-width="2.5" opacity="0"/>
+        </svg>
+
+        <div class="iq-ctrl">
+          <button class="btn" id="iqPlay">▶ 2023 → 지금 재생</button>
+          <input type="range" id="iqRange" min="0" max="1000" value="0" aria-label="타임라인 이동">
+        </div>
+        <div class="iq-live" id="iqLive">▶ 재생을 누르거나, 슬라이더를 직접 끌어 2023 → 지금을 따라가 보세요.</div>
+
+        <p class="viz-cap">※ <b>특정 영역(코딩 · 수학 · 추론) 벤치마크 기준의 개념도</b>입니다. "모든 면에서 인간을 넘었다"는 뜻이 아니라, <b>우리가 업무에 쓰는 영역에서 이미 최상위 전문가와 겨루는 구간에 진입했다</b>는 의미입니다. 곡선이 <b>가팔라지고 있다</b>는 점 — 그것이 이 그림의 핵심입니다.</p>
+      </div>
 
       <div class="cards">
         <div class="card"><div class="ic">⚡</div><h4>코딩 토큰 효율 54% 향상</h4><p>같은 일을 절반 가까운 비용으로 — 성능과 경제성을 동시에 끌어올렸습니다.</p></div>
@@ -711,6 +832,109 @@
     <div class="block">
       <h3>이제 병목은 인간이다 — '지도는 영토가 아니다'</h3>
       <p class="hint">우리가 내리는 지시는 머릿속에 있는 깔끔한 <b>지도(Map)</b>입니다. 하지만 AI가 그 일을 실제로 해내려면 진짜 코드베이스 · 현실 · 제약조건이라는 <b>영토(Territory)</b>를 직접 통과해야 합니다. 영토에는 지도에 없던 장애물 — 레거시 코드, 엣지 케이스, 팀 컨벤션, 보안 정책 — 이 가득합니다. <b>지도는 영토가 아닙니다.</b> 그 틈을 AI가 혼자 추측으로 메우면 결과가 어긋나죠. 그래서 병목은 AI의 능력이 아니라, <b>영토를 얼마나 정확히 담은 지도를 그려주느냐</b>입니다.</p>
+
+      <div class="viz" id="mtWrap">
+        <div class="viz-head">
+          <span class="viz-title">지도(Map) vs 영토(Territory)</span>
+          <span class="viz-sub">버튼을 눌러 두 경우를 비교해 보세요</span>
+        </div>
+
+        <div class="mt-grid">
+          <!-- 왼쪽: 머릿속 지도 -->
+          <div class="mt-panel">
+            <div class="mt-lab">🗺️ 내 머릿속 지도</div>
+            <p class="mt-desc">"이거 해줘." — 세 단계면 끝날 것처럼 보입니다.</p>
+            <svg viewBox="0 0 360 210" role="img" aria-label="요청에서 결과까지 장애물 없이 직선으로 이어진 깔끔한 지도">
+              <line x1="34" y1="105" x2="326" y2="105" stroke="var(--navy-2)" stroke-width="3" stroke-linecap="round"/>
+              <g fill="var(--navy)">
+                <circle cx="34" cy="105" r="7"/><circle cx="132" cy="105" r="5.5"/>
+                <circle cx="230" cy="105" r="5.5"/><circle cx="326" cy="105" r="7"/>
+              </g>
+              <g font-size="12" fill="var(--ink-2)" text-anchor="middle">
+                <text x="34" y="88" font-weight="700">요청</text>
+                <text x="132" y="88">1단계</text>
+                <text x="230" y="88">2단계</text>
+                <text x="326" y="88" font-weight="700">결과</text>
+              </g>
+              <text x="180" y="150" font-size="12.5" fill="var(--muted)" text-anchor="middle">깨끗한 직선 — 머릿속에서는 다 풀려 있습니다.</text>
+              <text x="180" y="176" font-size="12.5" fill="var(--muted)" text-anchor="middle">여기엔 장애물이 하나도 그려져 있지 않죠.</text>
+            </svg>
+          </div>
+
+          <!-- 오른쪽: 실제 영토 -->
+          <div class="mt-panel terr">
+            <div class="mt-lab">⛰️ AI가 실제로 통과해야 할 영토</div>
+            <p class="mt-desc" id="mtDesc">지도에 없던 것들이 가득합니다 — AI는 그 틈을 혼자 추측합니다.</p>
+            <svg id="mtSvg" viewBox="0 0 360 210" role="img" aria-label="레거시 코드, 보안 정책, 엣지 케이스, 팀 컨벤션이라는 장애물이 놓인 영토를 AI가 통과하는 그림">
+              <!-- 장애물 -->
+              <g>
+                <rect class="mt-ob" x="76"  y="24"  width="96" height="34" rx="9" fill="rgba(192,57,43,.09)" stroke="rgba(192,57,43,.32)"/>
+                <rect class="mt-ob" x="196" y="30"  width="92" height="34" rx="9" fill="rgba(192,57,43,.09)" stroke="rgba(192,57,43,.32)"/>
+                <rect class="mt-ob" x="66"  y="150" width="98" height="34" rx="9" fill="rgba(192,57,43,.09)" stroke="rgba(192,57,43,.32)"/>
+                <rect class="mt-ob" x="188" y="154" width="100" height="34" rx="9" fill="rgba(192,57,43,.09)" stroke="rgba(192,57,43,.32)"/>
+                <g font-size="11.5" font-weight="600" fill="#a33326" text-anchor="middle" pointer-events="none">
+                  <text x="124" y="45">레거시 코드</text>
+                  <text x="242" y="51">보안 정책</text>
+                  <text x="115" y="171">엣지 케이스</text>
+                  <text x="238" y="175">팀 컨벤션</text>
+                </g>
+              </g>
+
+              <!-- 출발 -->
+              <circle cx="26" cy="105" r="7" fill="var(--navy)"/>
+              <text x="26" y="128" font-size="11.5" font-weight="700" fill="var(--ink-2)" text-anchor="middle">요청</text>
+
+              <!-- 지도만 줬을 때: 헤매는 추측 경로 -->
+              <g class="mt-guess">
+                <path id="mtGuessPath" d="M26,105 C56,102 60,74 92,76 C124,78 118,112 148,118
+                         C178,124 176,152 206,150 C232,148 240,132 232,118"
+                      fill="none" stroke="var(--point)" stroke-width="2.6" stroke-dasharray="6 6" stroke-linecap="round"/>
+                <g transform="translate(232,112)">
+                  <circle r="11" fill="#fff" stroke="var(--point)" stroke-width="2.4"/>
+                  <text y="5" font-size="14" font-weight="800" fill="var(--point)" text-anchor="middle">✕</text>
+                </g>
+                <text x="290" y="105" font-size="11.5" font-weight="700" fill="var(--point)" text-anchor="middle">엉뚱한 결과</text>
+                <text x="180" y="205" font-size="12" fill="var(--point)" text-anchor="middle">지도에 없던 장애물을 만날 때마다 AI가 혼자 추측합니다.</text>
+              </g>
+
+              <!-- 영토를 담은 지도를 줬을 때: 곧장 통과 -->
+              <g class="mt-good">
+                <path id="mtGoodPath" d="M26,105 L326,105" fill="none" stroke="#2e7d32" stroke-width="3" stroke-linecap="round"/>
+                <g transform="translate(326,105)">
+                  <circle r="10" fill="#2e7d32"/>
+                  <text y="5" font-size="12" font-weight="800" fill="#fff" text-anchor="middle">✓</text>
+                </g>
+                <text x="180" y="205" font-size="12" fill="#2e7d32" text-anchor="middle">장애물을 미리 표시해 두면 — 추측할 일이 없습니다.</text>
+              </g>
+
+              <!-- 지도에 하나씩 적어 넣는 항목(경유지) -->
+              <g class="mt-wp" id="mtWp1">
+                <circle cx="106" cy="105" r="7" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/>
+                <text x="106" y="94" font-size="11" font-weight="700" fill="#2e7d32" text-anchor="middle">사각지대</text>
+              </g>
+              <g class="mt-wp" id="mtWp2">
+                <circle cx="186" cy="105" r="7" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/>
+                <text x="186" y="94" font-size="11" font-weight="700" fill="#2e7d32" text-anchor="middle">역질문</text>
+              </g>
+              <g class="mt-wp" id="mtWp3">
+                <circle cx="266" cy="105" r="7" fill="#fff" stroke="#2e7d32" stroke-width="2.4"/>
+                <text x="266" y="94" font-size="11" font-weight="700" fill="#2e7d32" text-anchor="middle">구현 노트</text>
+              </g>
+
+              <!-- 주행하는 AI -->
+              <text id="mtDot" x="26" y="111" font-size="17" text-anchor="middle" opacity="0">🤖</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="mt-ctrl">
+          <button class="btn" id="mtRun">▶ 이대로 AI 보내보기</button>
+          <button class="btn ghost" id="mtAdd">🖊️ 영토를 지도에 적기 (0/3)</button>
+          <span class="mt-state" id="mtState">지금: 지도만 던져준 상태입니다.</span>
+        </div>
+
+        <p class="viz-cap">같은 AI, 같은 요청입니다. 달라진 건 <b>지도의 정밀도</b> 하나뿐입니다. '영토를 지도에 적기'를 세 번 눌러 아래 세 카드의 방법을 하나씩 지도에 얹은 뒤, 다시 보내보세요.</p>
+      </div>
 
       <div class="cards">
         <div class="card"><div class="ic">🕳️</div><h4>사각지대 점검</h4><p>일부터 시키지 말고 먼저 물어보세요 — "내가 뭘 모르는지 알려주고, 내가 프롬프트를 더 잘 쓰게 도와줘."</p></div>
@@ -733,13 +957,12 @@
     <h2 class="sec-title">Claude Code, 어디서든 쓸 수 있습니다<br><span style="font-size:0.72em; color:var(--ink-2); font-weight:600;">— 그리고 '엔진'은 갈아끼울 수 있습니다</span></h2>
 
     <div class="block">
-      <h3>같은 Claude Code, 4가지 입구</h3>
+      <h3>같은 Claude Code, 3가지 입구</h3>
       <p class="hint">1편에서 배운 Claude Code는 이제 터미널(CLI)만의 도구가 아닙니다. 편한 곳에서 시작하면 됩니다.</p>
       <div class="cards">
-        <div class="card"><div class="ic">🖥️</div><h4>데스크탑 앱 <span class="pill green">쉬움</span></h4><p>Mac/Windows 앱. 설치하고 클릭하면 끝. 입문자에게 추천.</p></div>
+        <div class="card"><div class="ic">🖥️</div><h4>데스크탑 앱 <span class="pill green">쉬움</span></h4><p>Claude Code 전용 Mac/Windows 앱. 설치하고 클릭하면 끝. 입문자에게 추천 — 오늘 수업에서 쓰는 그 앱입니다.</p></div>
         <div class="card"><div class="ic">🧩</div><h4>IDE 확장 <span class="pill">중간</span></h4><p>VS Code · JetBrains 안에서 사용. 코드를 보면서 바로 대화.</p></div>
         <div class="card"><div class="ic">⌨️</div><h4>CLI (터미널) <span class="pill navy">자유도 최고</span></h4><p>1편에서 배운 원조. 자동화 · 스크립트 연동까지 전부 가능.</p></div>
-        <div class="card"><div class="ic">🌐</div><h4>웹 (claude.ai/code)</h4><p>브라우저에서 바로. 설치조차 필요 없음.</p></div>
       </div>
     </div>
 
@@ -957,6 +1180,30 @@
       </div>
     </div>
 
+    <div class="block">
+      <h3>마지막으로 — 이번 5일 교육의 진짜 의미</h3>
+      <p class="hint">이번 5일 과정은 단순 체험이 아니었습니다. 교육이면서 동시에 <b>실제로 동작하는 앱을 만들어 본 첫 실전</b> — 말하자면 <b>'파일럿 프로젝트'</b>였습니다. 그리고 결과물로 나온 앱만큼 중요한 것이, 그 과정에서 손에 익힌 것들 — <b>API 키, 환경변수(.env), 개발환경 세팅</b> — 입니다. 이 기초 체력을 제너럴하게 다지는 것이 지금 단계이고, 길은 이렇게 이어집니다.</p>
+
+      <div class="flow">
+        <span class="flow-step">1️⃣ 지금 — 바이브코딩 파일럿 · 기초 개념</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">2️⃣ 집현전(AI TF) 중 · 고급 심화</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">3️⃣ 실전 개발</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step hl">4️⃣ 레거시 통합 · 보안망 대응</span>
+      </div>
+
+      <div class="cards">
+        <div class="card"><div class="ic">🌱</div><h4>1️⃣ 파일럿 — 지금 여기</h4><p>배우면서 <b>실제로 앱까지 만들어 본</b> 단계. 여기서 손에 익힌 <b>API · .env · 개발환경</b>이 다음 단계의 기초 체력입니다.</p></div>
+        <div class="card"><div class="ic">📚</div><h4>2️⃣ 심화 — 집현전</h4><p><b>재정경제부 AI TF '집현전'</b>에서 중 · 고급 과정으로 — 하네스 설계, 에이전트 활용을 <b>체계적으로</b> 배웁니다.</p></div>
+        <div class="card"><div class="ic">🔨</div><h4>3️⃣ 실전 개발</h4><p>각자 찾아온 현업 문제를 <b>실제로 동작하는 앱</b>으로 만듭니다.</p></div>
+        <div class="card"><div class="ic">🏛️</div><h4>4️⃣ 통합 · 보안</h4><p>기존 <b>레거시 시스템과의 통합</b>, 그리고 <b>정부 보안망(망분리) 환경</b>에서 어떻게 운영할지 — 가장 깊게 배워야 할 영역입니다.</p></div>
+      </div>
+
+      <div class="note good"><b>정리하면:</b> 오늘은 끝이 아니라 <b>1단계</b>입니다. 파일럿으로 감을 잡고 → 집현전에서 실력을 쌓고 → 실전에서 만들고 → 마지막으로 우리 기관의 현실(레거시 · 보안망)에 녹여내는 것까지 — 거기까지 가야 개인이 도구를 써 보는 수준을 넘어, 조직에 <b>AI를 도입했다</b>고 말할 수 있습니다.</div>
+    </div>
+
     <div style="text-align:center; padding:34px 0 6px;">
       <svg width="120" height="63" viewBox="24 42 228 120" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-hidden="true">
         <rect x="30" y="84" width="216" height="24" fill="#F2A06E"/>
@@ -1021,6 +1268,175 @@
     }, 60);
     this.textContent = '다시 보기';
   });
+
+  /* ---------- 지능 추월 곡선: 재생 · 슬라이더 스크럽 ---------- */
+  (function(){
+    var svgEl = document.getElementById('iqSvg');
+    if(!svgEl) return;
+    var path  = document.getElementById('iqPath');
+    var dot   = document.getElementById('iqDot');
+    var range = document.getElementById('iqRange');
+    var play  = document.getElementById('iqPlay');
+    var live  = document.getElementById('iqLive');
+    var len   = path.getTotalLength();
+    path.style.strokeDasharray  = len;
+    path.style.strokeDashoffset = len;
+
+    /* 각 라벨(data-at = x좌표)이 등장할 진행률을 이분탐색으로 미리 계산 */
+    var labels = [].slice.call(svgEl.querySelectorAll('.iq-in'));
+    labels.forEach(function(el){
+      var at = parseFloat(el.dataset.at), lo = 0, hi = len;
+      for(var i = 0; i < 22; i++){
+        var mid = (lo + hi) / 2;
+        if(path.getPointAtLength(mid).x < at) lo = mid; else hi = mid;
+      }
+      el.dataset.p = lo / len;
+    });
+
+    var eras = [
+      [0.00, '2023–24 · GPT-4 세대 — 말은 잘하지만, 일은 아직 못 맡기는 수준입니다.'],
+      [0.32, '2025 · 에이전트 원년 — <b>숙련 실무자 평균</b>에 다가섭니다.'],
+      [0.60, '2026 상반기 — <b>인간 최고 전문가 수준</b>에 도달합니다.'],
+      [0.82, '<b>2026년 7월 · Mythos 5 · GPT-5.6 Sol — 인간 최고 지능을 넘어서기 시작했습니다.</b>']
+    ];
+
+    function setP(p){
+      path.style.strokeDashoffset = len * (1 - p);
+      var pt = path.getPointAtLength(len * p);
+      dot.setAttribute('cx', pt.x);
+      dot.setAttribute('cy', pt.y);
+      dot.setAttribute('opacity', p > 0.001 ? 1 : 0);
+      labels.forEach(function(el){ el.classList.toggle('on', p >= parseFloat(el.dataset.p)); });
+      if(p <= 0.001){
+        live.innerHTML = '▶ 재생을 누르거나, 슬라이더를 직접 끌어 2023 → 지금을 따라가 보세요.';
+      } else {
+        for(var i = eras.length - 1; i >= 0; i--){
+          if(p >= eras[i][0]){ live.innerHTML = eras[i][1]; break; }
+        }
+      }
+      range.value = Math.round(p * 1000);
+    }
+
+    range.addEventListener('input', function(){ setP(range.value / 1000); });
+
+    var raf = null;
+    function playFrom(start){
+      if(raf) cancelAnimationFrame(raf);
+      var t0 = performance.now(), dur = 3200 * (1 - start) + 200;
+      function fr(now){
+        var p = start + (1 - start) * Math.min(1, (now - t0) / dur);
+        setP(p);
+        if(p < 1){ raf = requestAnimationFrame(fr); } else { raf = null; }
+      }
+      raf = requestAnimationFrame(fr);
+    }
+    play.addEventListener('click', function(){
+      var cur = range.value / 1000;
+      playFrom(cur >= 0.99 ? 0 : cur);
+    });
+
+    /* 탭이 처음 열릴 때 한 번 자동 재생 */
+    var played = false;
+    var sec = document.getElementById('s_gpt56');
+    new MutationObserver(function(){
+      if(!played && sec.classList.contains('show')){
+        played = true;
+        setTimeout(function(){ playFrom(0); }, 400);
+      }
+    }).observe(sec, { attributes:true, attributeFilter:['class'] });
+  })();
+
+  /* ---------- 지도 vs 영토: AI 주행 데모 ---------- */
+  (function(){
+    var wrap = document.getElementById('mtWrap');
+    if(!wrap) return;
+    var runBtn = document.getElementById('mtRun');
+    var addBtn = document.getElementById('mtAdd');
+    var state  = document.getElementById('mtState');
+    var desc   = document.getElementById('mtDesc');
+    var dot    = document.getElementById('mtDot');
+    var guessPath = document.getElementById('mtGuessPath');
+    var goodPath  = document.getElementById('mtGoodPath');
+    var wps = [document.getElementById('mtWp1'), document.getElementById('mtWp2'), document.getElementById('mtWp3')];
+    var wpNames = ['사각지대 점검 — "내가 뭘 모르는지 알려줘"', '거꾸로 인터뷰 — AI가 나에게 역질문', '구현 노트 — 이탈 항목 기록'];
+
+    /* 장애물 중심 좌표 (충돌 번쩍임용) */
+    var obs = [].slice.call(wrap.querySelectorAll('.mt-ob')).map(function(r){
+      return {
+        el: r, cool: false,
+        cx: parseFloat(r.getAttribute('x')) + parseFloat(r.getAttribute('width')) / 2,
+        cy: parseFloat(r.getAttribute('y')) + parseFloat(r.getAttribute('height')) / 2
+      };
+    });
+
+    var steps = 0, running = false, raf = null;
+
+    function travel(path, dur, withHits, done){
+      var len = path.getTotalLength(), t0 = performance.now();
+      running = true; runBtn.disabled = true;
+      dot.setAttribute('opacity', 1);
+      function fr(now){
+        var p = Math.min(1, (now - t0) / dur);
+        var pt = path.getPointAtLength(len * p);
+        dot.setAttribute('x', pt.x);
+        dot.setAttribute('y', pt.y + 6);
+        if(withHits) obs.forEach(function(o){
+          if(!o.cool && Math.abs(pt.x - o.cx) < 55 && Math.abs(pt.y - o.cy) < 42){
+            o.cool = true;
+            o.el.classList.add('hit');
+            setTimeout(function(){ o.el.classList.remove('hit'); o.cool = false; }, 650);
+          }
+        });
+        if(p < 1){ raf = requestAnimationFrame(fr); }
+        else { running = false; runBtn.disabled = false; if(done) done(); }
+      }
+      raf = requestAnimationFrame(fr);
+    }
+
+    runBtn.addEventListener('click', function(){
+      if(running) return;
+      if(wrap.classList.contains('good')){
+        state.textContent = '주행 중… 경유지를 따라 직진합니다.';
+        travel(goodPath, 1600, false, function(){
+          state.textContent = '✓ 한 번에 도착 — 추측할 틈이 없었습니다.';
+        });
+      } else {
+        state.textContent = '주행 중… 장애물을 만날 때마다 혼자 추측합니다.';
+        travel(guessPath, 2600, true, function(){
+          state.textContent = '✕ 엉뚱한 결과 도착 — 장애물마다 AI가 혼자 추측했습니다.';
+        });
+      }
+    });
+
+    addBtn.addEventListener('click', function(){
+      if(running) return;
+      if(steps >= 3){
+        /* 처음 상태로 리셋 */
+        steps = 0;
+        wrap.classList.remove('good');
+        wps.forEach(function(w){ w.classList.remove('on'); });
+        dot.setAttribute('opacity', 0);
+        dot.setAttribute('x', 26); dot.setAttribute('y', 111);
+        addBtn.textContent = '🖊️ 영토를 지도에 적기 (0/3)';
+        runBtn.textContent = '▶ 이대로 AI 보내보기';
+        state.textContent  = '지금: 지도만 던져준 상태입니다.';
+        desc.textContent   = '지도에 없던 것들이 가득합니다 — AI는 그 틈을 혼자 추측합니다.';
+        return;
+      }
+      wps[steps].classList.add('on');
+      steps++;
+      state.textContent = '지도에 추가: ' + wpNames[steps - 1];
+      if(steps >= 3){
+        wrap.classList.add('good');
+        addBtn.textContent = '↺ 처음 상태로';
+        runBtn.textContent = '▶ 다시 AI 보내보기';
+        desc.textContent   = '장애물이 지도에 다 표시됐습니다 — 이제 다시 보내보세요.';
+        state.textContent  = '영토가 지도에 담겼습니다. ▶ 다시 보내보세요!';
+      } else {
+        addBtn.textContent = '🖊️ 영토를 지도에 적기 (' + steps + '/3)';
+      }
+    });
+  })();
 
   /* ---------- 야생마 비유 데모 (1편과 동일) ----------
      '장비 얹기'를 누를 때마다 장비 칩 하나가 켜지고, 통제력 게이지가 차오르고,
