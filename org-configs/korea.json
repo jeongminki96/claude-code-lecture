@@ -1,0 +1,23 @@
+{
+  "output": "llm-trends-korea-check.html",
+  "logoImages": [
+    { "file": "brand-assets/ku-crest.gif", "alt": "고려대학교 엠블럼" },
+    { "file": "brand-assets/ku-wordmark-kor.gif", "height": 19, "alt": "고려대학교" }
+  ],
+  "tokens": {
+    "ORG_NAME": "고려대학교",
+    "LANG_TOGGLE_HTML": "<a href=\"llm-trends-korea-en.html\" style=\"font-size:13px; font-weight:700; color:var(--navy); border:1.5px solid var(--navy); border-radius:999px; padding:6px 16px; text-decoration:none; white-space:nowrap;\">EN 🌐</a>",
+    "PROB_SENTENCE": "고려대학교는 오늘 신입생 모집요강을",
+    "PROB_W1": "발표했다",
+    "PROB_W2": "공개했다",
+    "PROB_W3": "확정했다",
+    "PROB_W4": "변경했다",
+    "TOKEN_SENTENCE": "고려대학교는 모집요강을 발표했다",
+    "TOKEN_SPLIT_HTML": "[<span class=\"y\">고려</span>][<span class=\"b\">대학교</span>][<span class=\"y\">는</span>] [<span class=\"b\">모집</span>][<span class=\"y\">요강을</span>] [<span class=\"b\">발표</span>][<span class=\"y\">했다</span>]",
+    "C_PRIMARY": "#8A0029",
+    "C_PRIMARY_2": "#A31C47",
+    "C_ACCENT": "#B8365B",
+    "C_TINT07": "rgba(138,0,41,.07)",
+    "C_TINT03": "rgba(138,0,41,.03)"
+  }
+}
