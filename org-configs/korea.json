@@ -1,5 +1,6 @@
 {
   "output": "llm-trends-korea-check.html",
+  "tokenFiles": { "TA_PROFILES_HTML": "org-configs/korea-ta.html" },
   "logoImages": [
     { "file": "brand-assets/ku-crest.gif", "alt": "고려대학교 엠블럼" },
     { "file": "brand-assets/ku-wordmark-kor.gif", "height": 19, "alt": "고려대학교" }

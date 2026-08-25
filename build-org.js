@@ -32,6 +32,13 @@ if(cfg.logoImages){
 }
 if(!('LANG_TOGGLE_HTML' in cfg.tokens)) cfg.tokens.LANG_TOGGLE_HTML = '';
 
+/* 긴 HTML 조각은 별도 파일로 관리: tokenFiles: {토큰명: 파일경로} */
+if(cfg.tokenFiles){
+  for(const [name, file] of Object.entries(cfg.tokenFiles)){
+    cfg.tokens[name] = fs.readFileSync(path.join(__dirname, file), 'utf8');
+  }
+}
+
 /* 토큰 치환 */
 const unresolved = [];
 h = h.replace(/\{\{([A-Z0-9_]+)\}\}/g, function(_, name){
