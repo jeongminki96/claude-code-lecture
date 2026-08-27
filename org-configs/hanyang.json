@@ -1,7 +1,11 @@
 {
   "output": "llm-trends-hanyang.html",
   "logoImages": [
-    { "file": "brand-assets/hyumc-logo.png", "height": 30, "alt": "한양대학교병원 로고" }
+    {
+      "file": "brand-assets/hyumc-logo.png",
+      "height": 30,
+      "alt": "한양대학교병원 로고"
+    }
   ],
   "_TA메모": "TA 예정: 원준영·최석재·이영호 — 소개 여부 보류 중(2026-08-26). 확정되면 TA_PROFILES_HTML에 프로필 블록 삽입.",
   "tokens": {
@@ -19,5 +23,8 @@
     "C_ACCENT": "#3E82CE",
     "C_TINT07": "rgba(14,74,132,.07)",
     "C_TINT03": "rgba(14,74,132,.03)"
+  },
+  "tokenFiles": {
+    "PROFILE_DL_HTML": "org-configs/profile-jmk-segmented.html"
   }
 }

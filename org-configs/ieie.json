@@ -1,0 +1,33 @@
+{
+  "output": "llm-trends-ieie.html",
+  "_TA메모": "TA 예정: 원준영·최석재·이영호 — 소개 여부 보류 중(2026-08-27). 확정되면 TA_PROFILES_HTML에 프로필 블록 삽입.",
+  "logoImages": [
+    {
+      "file": "brand-assets/ieie-logo.png",
+      "height": 38,
+      "alt": "대한전자공학회 로고"
+    }
+  ],
+  "tokens": {
+    "TA_PROFILES_HTML": "",
+    "ORG_NAME": "대한전자공학회",
+    "PROB_SENTENCE": "대한전자공학회는 오늘 학술대회 일정을",
+    "PROB_W1": "발표했다",
+    "PROB_W2": "공개했다",
+    "PROB_W3": "확정했다",
+    "PROB_W4": "변경했다",
+    "TOKEN_SENTENCE": "대한전자공학회는 학술대회 일정을 발표했다",
+    "TOKEN_SPLIT_HTML": "[<span class=\"y\">대한</span>][<span class=\"b\">전자공학회</span>][<span class=\"y\">는</span>] [<span class=\"b\">학술대회</span>][<span class=\"y\">일정을</span>] [<span class=\"b\">발표</span>][<span class=\"y\">했다</span>]",
+    "C_PRIMARY": "#1F3178",
+    "C_PRIMARY_2": "#3A4FA8",
+    "C_ACCENT": "#4C63C4",
+    "C_TINT07": "rgba(31,49,120,.07)",
+    "C_TINT03": "rgba(31,49,120,.03)"
+  },
+  "replace": {
+    "<span class=\"sec-tag\">SPEAKER</span>": "<span class=\"sec-tag\">INSTRUCTOR</span>"
+  },
+  "tokenFiles": {
+    "PROFILE_DL_HTML": "org-configs/profile-jmk-flat.html"
+  }
+}

@@ -52,5 +52,13 @@ if(unresolved.length){
   process.exit(1);
 }
 
+/* 기관별 추가 문구 치환: replace: {원문: 대체문} — 토큰 치환 후 적용 */
+if(cfg.replace){
+  for(const [from, to] of Object.entries(cfg.replace)){
+    if(h.indexOf(from) === -1){ console.error('⚠️ replace 원문 없음:', from.slice(0, 60)); process.exit(1); }
+    h = h.split(from).join(to);
+  }
+}
+
 fs.writeFileSync(path.join(__dirname, cfg.output), h);
 console.log('✅', cfg.output, '(' + h.length + ' bytes)');
