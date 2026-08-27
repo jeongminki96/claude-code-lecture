@@ -1,0 +1,29 @@
+{
+  "output": "llm-trends-hanyang.html",
+  "_메모": "대한전자공학회 강연을 한양대학교에서 진행 — 브랜딩은 한양대학교, 연혁에 IEIE 강연 포함(profile-jmk-flat.html). TA(원준영·최석재·이영호) 소개 여부 보류 중.",
+  "logoImages": [
+    { "file": "brand-assets/hyu-logo.svg", "height": 34, "alt": "한양대학교 로고" }
+  ],
+  "tokenFiles": {
+    "PROFILE_DL_HTML": "org-configs/profile-jmk-flat.html"
+  },
+  "tokens": {
+    "TA_PROFILES_HTML": "",
+    "ORG_NAME": "한양대학교",
+    "PROB_SENTENCE": "한양대학교는 오늘 신입생 모집요강을",
+    "PROB_W1": "발표했다",
+    "PROB_W2": "공개했다",
+    "PROB_W3": "확정했다",
+    "PROB_W4": "변경했다",
+    "TOKEN_SENTENCE": "한양대학교는 모집요강을 발표했다",
+    "TOKEN_SPLIT_HTML": "[<span class=\"y\">한양</span>][<span class=\"b\">대학교</span>][<span class=\"y\">는</span>] [<span class=\"b\">모집</span>][<span class=\"y\">요강을</span>] [<span class=\"b\">발표</span>][<span class=\"y\">했다</span>]",
+    "C_PRIMARY": "#004483",
+    "C_PRIMARY_2": "#1E5FA8",
+    "C_ACCENT": "#3E82CE",
+    "C_TINT07": "rgba(0,68,131,.07)",
+    "C_TINT03": "rgba(0,68,131,.03)"
+  },
+  "replace": {
+    "<span class=\"sec-tag\">SPEAKER</span>": "<span class=\"sec-tag\">INSTRUCTOR</span>"
+  }
+}
