@@ -393,6 +393,7 @@
     .block{ padding:20px 18px; }
     .prob-word{ flex-basis:76px; font-size:13.5px; }
   }
+  .prob-pct{ flex:0 0 46px; font-size:12.5px; font-weight:700; color:var(--ink-2); text-align:left; }
 </style>
 </head>
 <body>
@@ -643,11 +644,11 @@
       <button class="btn" id="probBtn">Compute the probabilities</button>
 
       <div id="probArea" style="margin-top:16px; display:none;">
-        <div class="prob-row top"><span class="prob-word">announced</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="62">62%</div></div></div>
-        <div class="prob-row"><span class="prob-word">released</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="21">21%</div></div></div>
-        <div class="prob-row"><span class="prob-word">finalized</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="9">9%</div></div></div>
-        <div class="prob-row"><span class="prob-word">revised</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="5">5%</div></div></div>
-        <div class="prob-row"><span class="prob-word">banana</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="1" style="background:var(--line-2); color:var(--muted);">0.1%</div></div></div>
+        <div class="prob-row top"><span class="prob-word">announced</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="62"></div></div><span class="prob-pct">62%</span></div>
+        <div class="prob-row"><span class="prob-word">released</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="21"></div></div><span class="prob-pct">21%</span></div>
+        <div class="prob-row"><span class="prob-word">finalized</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="9"></div></div><span class="prob-pct">9%</span></div>
+        <div class="prob-row"><span class="prob-word">revised</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="5"></div></div><span class="prob-pct">5%</span></div>
+        <div class="prob-row"><span class="prob-word">banana</span><div class="prob-bar-wrap"><div class="prob-bar" data-w="1" style="background:var(--line-2); color:var(--muted);"></div></div><span class="prob-pct">0.1%</span></div>
         <div class="note">This is how the model assigns <b>a probability to every candidate word</b> and picks a likely one. Repeat it one word at a time and you get long-form text. — Same principle as the "next token demo" from Part 1.</div>
       </div>
     </div>
@@ -1347,8 +1348,10 @@
   document.getElementById('probBtn').addEventListener('click', function(){
     var area = document.getElementById('probArea');
     area.style.display = 'block';
-      area.querySelectorAll('.prob-bar').forEach(function(b){ b.style.width = '0'; });
-      void area.offsetWidth; /* 리셋 반영 후 재애니메이션 */
+      var bars = area.querySelectorAll('.prob-bar');
+      bars.forEach(function(b){ b.style.transition = 'none'; b.style.width = '0'; });
+      void area.offsetWidth; /* 트랜지션 없이 즉시 리셋 */
+      bars.forEach(function(b){ b.style.transition = ''; });
     /* Animate the bars from 0 to their target widths */
     setTimeout(function(){
       area.querySelectorAll('.prob-bar').forEach(function(b){
