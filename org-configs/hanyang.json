@@ -7,7 +7,6 @@
       "alt": "한양대학교병원 로고"
     }
   ],
-  "_TA메모": "TA 예정: 원준영·최석재·이영호 — 소개 여부 보류 중(2026-08-26). 확정되면 TA_PROFILES_HTML에 프로필 블록 삽입.",
   "tokens": {
     "TA_PROFILES_HTML": "",
     "ORG_NAME": "한양대학교병원",
@@ -25,6 +24,10 @@
     "C_TINT03": "rgba(14,74,132,.03)"
   },
   "tokenFiles": {
-    "PROFILE_DL_HTML": "org-configs/profile-jmk-segmented.html"
-  }
+    "PROFILE_DL_HTML": "org-configs/profile-jmk-flat.html"
+  },
+  "replace": {
+    "<span class=\"sec-tag\">SPEAKER</span>": "<span class=\"sec-tag\">INSTRUCTOR</span>"
+  },
+  "_메모": "대한전자공학회 강연, 한양대학교병원 테마. 연혁은 통합 리스트(IEIE 강연 포함). TA(원준영·최석재·이영호) 소개 보류."
 }
