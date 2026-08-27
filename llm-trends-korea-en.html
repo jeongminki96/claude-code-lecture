@@ -1347,6 +1347,8 @@
   document.getElementById('probBtn').addEventListener('click', function(){
     var area = document.getElementById('probArea');
     area.style.display = 'block';
+      area.querySelectorAll('.prob-bar').forEach(function(b){ b.style.width = '0'; });
+      void area.offsetWidth; /* 리셋 반영 후 재애니메이션 */
     /* Animate the bars from 0 to their target widths */
     setTimeout(function(){
       area.querySelectorAll('.prob-bar').forEach(function(b){

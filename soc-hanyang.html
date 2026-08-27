@@ -1257,6 +1257,15 @@
 }
 /* ===== MOBILE-OPT END ===== */
 
+
+  /* 표지 CLI 말풍선 (llm-trends 표지 이식) */
+  .cli-bubble{ font-family:var(--mono, Consolas, monospace); background:#15233a; color:#e6edf3;
+    padding:0.8rem 1.2rem; border-radius:10px; font-size:1.05rem; line-height:1.6;
+    box-shadow:0 8px 22px rgba(0,0,0,0.18); white-space:nowrap; text-align:left; }
+  .cli-bubble .g{ color:#7ee787; }
+  .cursor{ display:inline-block; width:0.6em; height:1.05em; background:#e6edf3;
+    margin-left:2px; vertical-align:-0.18em; animation:blink 1.1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
 </style>
 </head>
 <body>
@@ -1294,25 +1303,38 @@
 
 
 <section class="slide show" id="s0">
-  <div class="cover">
-    <span class="cover-rule" aria-hidden="true"></span>
+  <div style="min-height:66vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:1.8rem; padding:3rem 1rem;">
 
-    
+      <div style="position:relative; display:inline-block;">
+        <div class="cli-bubble">
+          <span class="g">$</span> claude<br>
+          Hi 한양대학교병원<span class="cursor"></span>
+        </div>
+        <div style="position:absolute; left:50%; bottom:-9px; transform:translateX(-50%); width:0; height:0; border-left:9px solid transparent; border-right:9px solid transparent; border-top:10px solid #15233a;"></div>
+      </div>
 
-    
-    <h1>LLM 이해와<br><span class="o">최신 트렌드</span></h1>
+      <!-- Clawd 픽셀 캐릭터 -->
+      <svg width="190" height="100" viewBox="24 42 228 120" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="30" y="84" width="216" height="24" fill="#F2A06E"/>
+        <rect x="60" y="48" width="156" height="84" fill="#F2A06E"/>
+        <rect x="78"  y="132" width="12" height="24" fill="#F2A06E"/>
+        <rect x="102" y="132" width="18" height="24" fill="#F2A06E"/>
+        <rect x="162" y="132" width="12" height="24" fill="#F2A06E"/>
+        <rect x="186" y="132" width="18" height="24" fill="#F2A06E"/>
+        <rect x="84"  y="66" width="12" height="24" fill="#14110F"/>
+        <rect x="168" y="66" width="12" height="24" fill="#14110F"/>
+      </svg>
 
-    <p class="sub">클로드 코드와 AI 코딩 에이전트 — 공공·산업 현장 도입 사례를 중심으로</p>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:0.6rem;">
+        <h1 style="font-size:2.8rem; font-weight:900; color:var(--navy); line-height:1.15; margin:0;">LLM 이해와<br><span style="color:#E8723C;">최신 트렌드</span></h1>
+        <p style="font-size:0.9rem; color:var(--ink-2); margin:0.2rem 0 0; letter-spacing:0.04em;">클로드와 GPT — 에이전트 시대의 AI</p>
+      </div>
 
-    <span class="cover-stop" aria-hidden="true"></span>
-
-    <p class="cover-by">
-      <span class="by-role">재정경제부 부총리실 인공지능자문관</span>
-      <span class="by-name">정민기</span>
-    </p>
+      <div style="padding-top:1.4rem; border-top:1px solid var(--line); width:100%; max-width:320px;">
+        <p style="font-size:0.85rem; color:var(--muted); margin:0;">재정경제부 인공지능자문관 &nbsp;정민기</p>
+      </div>
   </div>
 
-  
   <div class="cover-qr">
     <img src="data:image/png;base64,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" alt="발표자료 접속 QR 코드" />
     <span>지금 이 자료 보기</span>
@@ -3423,6 +3445,8 @@
     btn.addEventListener('click', function(){
       var area = document.getElementById('probArea');
       area.style.display = 'block';
+      area.querySelectorAll('.prob-bar').forEach(function(b){ b.style.width = '0'; });
+      void area.offsetWidth; /* 리셋 반영 후 재애니메이션 */
       setTimeout(function(){
         area.querySelectorAll('.prob-bar').forEach(function(b){
           b.style.width = b.dataset.w + '%';
